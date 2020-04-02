@@ -9,19 +9,20 @@
 using namespace std;
 
 class Container {
+private:
     int weight;
     string destinationPort;
     string id;
 
 public:
-    Container(int weight, string destinationPort, string id);
+
+    Container(int weight, const string &destinationPort, const string &id);
 
     int getWeight() const;
 
-    const string getDestinationPort() const;
+    const string &getDestinationPort() const;
 
-    string getId() const;
-
+    const string &getId() const;
 };
 
 
