@@ -3,4 +3,4 @@ project(cpp_stowage)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(cpp_stowage main.cpp common/Container.cpp common/Container.h)
+add_executable(cpp_stowage main.cpp common/Container.cpp common/Container.h common/Ship.cpp common/Ship.h common/ShipPlan.cpp common/ShipPlan.h common/SpotContainers.cpp common/SpotContainers.h)

@@ -2,11 +2,12 @@
 // Created by Oz Zafar on 28/03/2020.
 //
 
-#ifndef CPP_PROJECTS_CONTAINER_H
-#define CPP_PROJECTS_CONTAINER_H
+#ifndef CPP_STOWAGE_CONTAINER_H
+#define CPP_STOWAGE_CONTAINER_H
 
 #include <string>
-using namespace std;
+
+using std::string ;
 
 class Container {
 private:
@@ -23,7 +24,9 @@ public:
     const string &getDestinationPort() const;
 
     const string &getId() const;
+
+    virtual ~Container();
 };
 
 
-#endif //CPP_PROJECTS_CONTAINER_H
+#endif //CPP_STOWAGE_CONTAINER_H
