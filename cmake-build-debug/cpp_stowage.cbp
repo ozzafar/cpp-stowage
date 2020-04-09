@@ -4,92 +4,134 @@
 	<Project>
 		<Option title="cpp_stowage"/>
 		<Option makefile_is_custom="1"/>
-		<Option compiler="gcc"/>
+		<Option compiler="msvc8"/>
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug"/>
+				<Option working_dir="C:/Users/Yarden/CLionProjects/cpp-stowage/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="rebuild_cache">
-				<Option working_dir="/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="edit_cache">
-				<Option working_dir="/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 all"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="cpp_stowage">
-				<Option output="/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/cpp_stowage" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug"/>
+				<Option output="C:/Users/Yarden/CLionProjects/cpp-stowage/cmake-build-debug/cpp_stowage.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/Yarden/CLionProjects/cpp-stowage/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
-				<Option compiler="gcc"/>
+				<Option compiler="msvc8"/>
 				<Compiler>
-					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
-					<Add directory="/System/Library/Frameworks"/>
-					<Add directory="/Library/Frameworks"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Tools\MSVC\14.16.27023\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 cpp_stowage"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 cpp_stowage"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="cpp_stowage/fast">
-				<Option output="/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/cpp_stowage" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug"/>
+				<Option output="C:/Users/Yarden/CLionProjects/cpp-stowage/cmake-build-debug/cpp_stowage.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="C:/Users/Yarden/CLionProjects/cpp-stowage/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
-				<Option compiler="gcc"/>
+				<Option compiler="msvc8"/>
 				<Compiler>
-					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/include"/>
-					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
-					<Add directory="/System/Library/Frameworks"/>
-					<Add directory="/Library/Frameworks"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\VC\Tools\MSVC\14.16.27023\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.17763.0\cppwinrt"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 cpp_stowage/fast"/>
-					<CompileFile command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j4 -f &quot;/Users/ozzafar/CLionProjects/cpp-stowage/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 cpp_stowage/fast"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="C:/Users/Yarden/CLionProjects/cpp-stowage/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 edit_cache"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="C:/Users/Yarden/CLionProjects/cpp-stowage/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f C:\Users\Yarden\CLionProjects\cpp-stowage\cmake-build-debug\Makefile VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/ozzafar/CLionProjects/cpp-stowage/common/Container.cpp">
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Algorithm.cpp">
 			<Option target="cpp_stowage"/>
 		</Unit>
-		<Unit filename="/Users/ozzafar/CLionProjects/cpp-stowage/common/Container.h">
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Algorithm.h">
 			<Option target="cpp_stowage"/>
 		</Unit>
-		<Unit filename="/Users/ozzafar/CLionProjects/cpp-stowage/main.cpp">
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Container.cpp">
 			<Option target="cpp_stowage"/>
 		</Unit>
-		<Unit filename="/Users/ozzafar/CLionProjects/cpp-stowage/CMakeLists.txt">
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Container.h">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/ContainersPosition.cpp">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/ContainersPosition.h">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Route.cpp">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Route.h">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Ship.cpp">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Ship.h">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/ShipPlan.cpp">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/ShipPlan.h">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Simulation.cpp">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/Simulation.h">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/WeightBalanceCalculator.cpp">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/common/WeightBalanceCalculator.h">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/main.cpp">
+			<Option target="cpp_stowage"/>
+		</Unit>
+		<Unit filename="C:/Users/Yarden/CLionProjects/cpp-stowage/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

@@ -8,6 +8,10 @@
 #define ROOT /tmp
 
 class Simulation {
+private:
+
+public:
+    Simulation();
 };
 
 
