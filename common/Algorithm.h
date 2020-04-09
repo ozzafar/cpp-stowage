@@ -18,6 +18,7 @@ private:
     Route shipRoute;
     WeightBalanceCalculator calculator;
 public:
+    Algorithm();
     void readShipPlan(const string& path);
     void readShipRoute(const string& path);
 };

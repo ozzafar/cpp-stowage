@@ -22,4 +22,6 @@ void Algorithm::readShipPlan(const string &path) {
 
 void Algorithm::readShipRoute(const string &path) {
 
+    std::ifstream planFile("C:/route.txt");
+
 }
