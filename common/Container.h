@@ -9,6 +9,9 @@
 
 using std::string ;
 
+#define SUCCESS 1;
+#define FAILURE 0;
+
 class Container {
 private:
     int weight;

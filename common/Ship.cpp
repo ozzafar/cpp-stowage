@@ -4,6 +4,5 @@
 
 #include "Ship.h"
 
-Ship::Ship(string path) {
-    *shipPlan = ShipPlan(path);
+Ship::Ship() {
 }

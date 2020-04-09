@@ -7,19 +7,20 @@
 
 #include <vector>
 #include <string>
-#include "SpotContainers.h"
+#include "ContainersPosition.h"
 
 using std::vector;
 
 class ShipPlan {
 
-    vector<vector<SpotContainers>> plan;
+    vector<vector<ContainersPosition>> plan;
 
 public:
+    ShipPlan();
 
-    ShipPlan(const string path);
+    ShipPlan(vector<vector<ContainersPosition>> &plan);
 
-    void load(int row, int column, Container& container);
+    void load(int row, int column, string& containerId);
 
     void unload(int row, int column, string& containerId);
 

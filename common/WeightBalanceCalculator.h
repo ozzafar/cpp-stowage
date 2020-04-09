@@ -1,0 +1,14 @@
+//
+// Created by Oz Zafar on 09/04/2020.
+//
+
+#ifndef CPP_STOWAGE_WEIGHTBALANCECALCULATOR_H
+#define CPP_STOWAGE_WEIGHTBALANCECALCULATOR_H
+
+
+class WeightBalanceCalculator {
+
+};
+
+
+#endif //CPP_STOWAGE_WEIGHTBALANCECALCULATOR_H

@@ -6,14 +6,18 @@
 #define CPP_STOWAGE_SHIP_H
 
 #include "ShipPlan.h"
+#include "Container.h"
+#include <map>
 
-typedef ShipPlan* ShipPlanP;
+using std::map;
+
 
 class Ship {
 private:
-    ShipPlanP shipPlan = nullptr;
+    ShipPlan* shipPlan;
+    map<string,Container> my_map;
 public:
-    Ship(string path);
+    Ship();
 };
 
 

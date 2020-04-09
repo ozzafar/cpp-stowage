@@ -11,13 +11,13 @@ ShipPlan::ShipPlan(string path) {
         int row;
         int column;
         int startFloor;
-        plan[row][column] = SpotContainers(startFloor,0);
+        plan[row][column] = ContainersPosition(startFloor, 0);
     }
     // --------- template ---------
 }
 
-void ShipPlan::load(int row, int column, Container &container) {
-    plan[row][column].load(container);
+void ShipPlan::load(int row, int column, string& containerId) {
+    plan[row][column].load(containerId);
 }
 
 void ShipPlan::unload(int row, int column, string &containerId) {
@@ -27,4 +27,6 @@ void ShipPlan::unload(int row, int column, string &containerId) {
 ShipPlan::~ShipPlan() {
 
 }
+
+ShipPlan::ShipPlan(vector<vector<ContainersPosition>> &plan) : plan(plan) {}
 
