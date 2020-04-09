@@ -5,16 +5,18 @@
 #ifndef CPP_STOWAGE_ROUTE_H
 #define CPP_STOWAGE_ROUTE_H
 
-using namespace std;
-
 #include <list>
 #include <string>
 
+using std::list;
+using std::string;
+
 class Route {
 private:
-    std::list<string> ports;
+    list<string> ports;
 public:
     Route();
+    Route(const list<string> &ports);
 };
 
 

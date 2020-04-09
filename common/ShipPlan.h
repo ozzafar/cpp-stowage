@@ -28,6 +28,8 @@ public:
 
     void setNumOfActiveFloorsInPosition(int x, int y, int numOfActiveFlours);
 
+    void printPlan();
+
     virtual ~ShipPlan();
 
 };
