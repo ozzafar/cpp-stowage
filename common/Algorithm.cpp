@@ -3,14 +3,15 @@
 //
 
 #include "Algorithm.h"
-#include "ShipPlan.h"
 #include <fstream>
 #include "ContainersPosition.h"
 
+Algorithm::Algorithm() {}
 
 void Algorithm::readShipPlan(const string &path) {
     int numOfFloors, X, Y;
-    std::ifstream planFile(path);
+    std::ifstream planFile;
+    planFile.open(path);
     planFile >> numOfFloors >> X >> Y;
     shipPlan.setNumberOfFloors(numOfFloors);
 
@@ -22,6 +23,8 @@ void Algorithm::readShipPlan(const string &path) {
 
 void Algorithm::readShipRoute(const string &path) {
 
-    std::ifstream planFile("C:/route.txt");
+}
 
+ShipPlan &Algorithm::getShipPlan() {
+    return shipPlan;
 }

@@ -35,6 +35,10 @@ public:
 
     void setStartFloor(int startFloor);
 
+    int getStartFloor() const;
+
+    int getNumOfActiveFloors() const;
+
     virtual ~ContainersPosition();
 
 };

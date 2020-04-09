@@ -4,8 +4,8 @@
 
 #ifndef CPP_STOWAGE_TRAVEL_H
 #define CPP_STOWAGE_TRAVEL_H
-#include "Route.h"
 #include "ShipPlan.h"
+#include "Route.h"
 
 
 class Travel {

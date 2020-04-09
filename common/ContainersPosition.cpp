@@ -49,6 +49,14 @@ void ContainersPosition::setStartFloor(int startFloor) {
     ContainersPosition::startFloor = startFloor;
 }
 
+int ContainersPosition::getStartFloor() const {
+    return startFloor;
+}
+
+int ContainersPosition::getNumOfActiveFloors() const {
+    return numOfActiveFloors;
+}
+
 
 
 // endregion

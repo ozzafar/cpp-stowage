@@ -6,16 +6,10 @@
 #define CPP_STOWAGE_SHIP_H
 
 #include "ShipPlan.h"
-#include "Container.h"
-#include <map>
-
-using std::map;
-
 
 class Ship {
 private:
     ShipPlan shipPlan;
-    map<string,Container> my_map;
 public:
     Ship();
 };
