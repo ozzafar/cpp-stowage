@@ -7,8 +7,10 @@
 
 ContainersPosition::ContainersPosition(int startFloor, int numOfFlours) : startFloor(startFloor), numOfActiveFloors(numOfFlours) {}
 
-// region methods
+ContainersPosition::ContainersPosition() {}
 
+
+// region methods
 
 //TODO after calling load - add container to the ship containers-mapping
 int ContainersPosition::load(string & containerId) {
@@ -38,9 +40,6 @@ int ContainersPosition::howManyAvailiable() {
     return (numOfActiveFloors - startFloor + 1) - containers.size();
 }
 
-ContainersPosition::~ContainersPosition() {
-}
-
 void ContainersPosition::setNumOfActiveFlours(int numOfActiveFlours) {
     ContainersPosition::numOfActiveFloors = numOfActiveFlours;
 }
@@ -57,6 +56,8 @@ int ContainersPosition::getNumOfActiveFloors() const {
     return numOfActiveFloors;
 }
 
+ContainersPosition::~ContainersPosition() {
+}
 
 
 // endregion
