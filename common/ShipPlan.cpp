@@ -7,8 +7,6 @@
 ShipPlan::ShipPlan() {
 }
 
-ShipPlan::ShipPlan(int numberOfFloors) : numberOfFloors(numberOfFloors) {}
-
 void ShipPlan::load(int row, int column, string& containerId) {
     plan[row][column].load(containerId);
 }
