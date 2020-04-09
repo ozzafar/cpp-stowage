@@ -4,7 +4,7 @@
 
 #include "ShipPlan.h"
 
-ShipPlan::ShipPlan(string path) {
+ShipPlan::ShipPlan() {
     // read input from file
     // --------- template ---------
     for (int i = 0; i < 10; ++i) {
