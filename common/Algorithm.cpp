@@ -9,7 +9,7 @@
 
 void readShipPlan(const string& full_path_and_file_name) {
     ShipPlan plan;
-    std::cin >> x >> y;
+    //std::cin >> x >> y;
 
     // read input from file
     // --------- template ---------
@@ -17,7 +17,7 @@ void readShipPlan(const string& full_path_and_file_name) {
             int row;
             int column;
             int startFloor;
-            plan[row][column] = ContainersPosition(startFloor, 0);
+            //plan[row][column] = ContainersPosition(startFloor, 0);
         }
     // --------- template ---------
 

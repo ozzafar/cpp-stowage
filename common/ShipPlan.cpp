@@ -21,5 +21,3 @@ ShipPlan::~ShipPlan() {
 
 }
 
-ShipPlan::ShipPlan(vector<vector<ContainersPosition>> &plan) : plan(plan) {}
-
