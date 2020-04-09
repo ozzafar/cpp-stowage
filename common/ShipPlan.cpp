@@ -5,16 +5,9 @@
 #include "ShipPlan.h"
 
 ShipPlan::ShipPlan() {
-    // read input from file
-    // --------- template ---------
-    for (int i = 0; i < 10; ++i) {
-        int row;
-        int column;
-        int startFloor;
-        plan[row][column] = ContainersPosition(startFloor, 0);
-    }
-    // --------- template ---------
 }
+
+ShipPlan::ShipPlan(vector<vector<ContainersPosition>> &plan) : plan(plan) {}
 
 void ShipPlan::load(int row, int column, string& containerId) {
     plan[row][column].load(containerId);
@@ -27,6 +20,4 @@ void ShipPlan::unload(int row, int column, string &containerId) {
 ShipPlan::~ShipPlan() {
 
 }
-
-ShipPlan::ShipPlan(vector<vector<ContainersPosition>> &plan) : plan(plan) {}
 
