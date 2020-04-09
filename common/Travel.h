@@ -9,8 +9,8 @@
 
 
 class Travel {
-    Route& route;
-    ShipPlan& shipPlan;
+    Route route;
+    ShipPlan shipPlan;
 };
 
 

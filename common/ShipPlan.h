@@ -12,19 +12,21 @@
 using std::vector;
 
 class ShipPlan {
-
+    int numberOfFloors;
     vector<vector<ContainersPosition>> plan;
 
 public:
     ShipPlan();
 
-    ShipPlan(vector<vector<ContainersPosition>> &plan);
-
-    ShipPlan(const vector<vector<ContainersPosition>> &plan);
-
     void load(int row, int column, string& containerId);
 
     void unload(int row, int column, string& containerId);
+
+    void setNumberOfFloors(int numberOfFloors);
+
+    void setStartFloorInPosition(int x, int y, int startFloor);
+
+    void setNumOfActiveFloorsInPosition(int x, int y, int numOfActiveFlours);
 
     virtual ~ShipPlan();
 

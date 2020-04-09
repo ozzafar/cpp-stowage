@@ -14,7 +14,7 @@ using std::map;
 
 class Ship {
 private:
-    ShipPlan* shipPlan;
+    ShipPlan shipPlan;
     map<string,Container> my_map;
 public:
     Ship();

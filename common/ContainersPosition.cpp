@@ -5,7 +5,7 @@
 #include "ContainersPosition.h"
 #include <iostream>
 
-ContainersPosition::ContainersPosition(int startFloor, int numOfFlours) : startFloor(startFloor), numOfActiveFlours(numOfFlours) {}
+ContainersPosition::ContainersPosition(int startFloor, int numOfFlours) : startFloor(startFloor), numOfActiveFloors(numOfFlours) {}
 
 // region methods
 
@@ -35,10 +35,20 @@ int ContainersPosition::unload(string& containerId){
 }
 
 int ContainersPosition::howManyAvailiable() {
-    return (numOfActiveFlours - startFloor + 1) - containers.size();
+    return (numOfActiveFloors - startFloor + 1) - containers.size();
 }
 
 ContainersPosition::~ContainersPosition() {
 }
+
+void ContainersPosition::setNumOfActiveFlours(int numOfActiveFlours) {
+    ContainersPosition::numOfActiveFloors = numOfActiveFlours;
+}
+
+void ContainersPosition::setStartFloor(int startFloor) {
+    ContainersPosition::startFloor = startFloor;
+}
+
+
 
 // endregion

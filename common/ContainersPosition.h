@@ -10,25 +10,30 @@
 #include <string>
 
 using std::stack;
-using std::string ;
+using std::string;
 
 class ContainersPosition{
 
 private:
-
-    stack<string> containers;
     int startFloor;
-    int numOfActiveFlours;
+    int numOfActiveFloors;
+    stack<string> containers;
 
 public:
 
     ContainersPosition(int startFloor, int numOfFlours);
+
+    ContainersPosition();
 
     int load(string& containerId);
 
     int unload(string& containerId);
 
     int howManyAvailiable();
+
+    void setNumOfActiveFlours(int numOfActiveFlours);
+
+    void setStartFloor(int startFloor);
 
     virtual ~ContainersPosition();
 

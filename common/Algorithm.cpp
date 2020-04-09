@@ -4,21 +4,22 @@
 
 #include "Algorithm.h"
 #include "ShipPlan.h"
+#include <fstream>
+#include "ContainersPosition.h"
 
 
+void Algorithm::readShipPlan(const string &path) {
+    int numOfFloors, X, Y;
+    std::ifstream planFile(path);
+    planFile >> numOfFloors >> X >> Y;
+    shipPlan.setNumberOfFloors(numOfFloors);
 
-void readShipPlan(const string& full_path_and_file_name) {
-    ShipPlan plan;
-    //std::cin >> x >> y;
+    int x, y, actualNumOfFloors;
+    while (planFile >> x >> y >> actualNumOfFloors){
+        shipPlan.setStartFloorInPosition(x,y,numOfFloors-actualNumOfFloors-1);
+    }
+}
 
-    // read input from file
-    // --------- template ---------
-        for (int i = 0; i < 10; ++i) {
-            int row;
-            int column;
-            int startFloor;
-            //plan[row][column] = ContainersPosition(startFloor, 0);
-        }
-    // --------- template ---------
+void Algorithm::readShipRoute(const string &path) {
 
 }

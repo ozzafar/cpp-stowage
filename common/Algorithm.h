@@ -6,12 +6,22 @@
 #define CPP_STOWAGE_ALGORITHM_H
 
 #include <string>
+#include "ShipPlan.h"
+#include "Route.h"
+#include "WeightBalanceCalculator.h"
+
 using std::string;
 
 class Algorithm {
-    void readShipPlan(const string& full_path_and_file_name);
-    void readShipRoute(const string& full_path_and_file_name);
+private:
+    ShipPlan shipPlan;
+    Route shipRoute;
+    WeightBalanceCalculator calculator;
+public:
+    void readShipPlan(const string& path);
+    void readShipRoute(const string& path);
 };
+
 
 
 #endif //CPP_STOWAGE_ALGORITHM_H
