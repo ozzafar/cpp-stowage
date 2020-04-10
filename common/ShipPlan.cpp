@@ -8,6 +8,9 @@
 ShipPlan::ShipPlan() {
 }
 
+ShipPlan::ShipPlan(int numberOfFloors, const vector<vector<ContainersPosition>> &plan) : numberOfFloors(numberOfFloors),
+                                                                                         plan(plan) {}
+
 void ShipPlan::load(int row, int column, string& containerId) {
     plan[row][column].load(containerId);
 }
@@ -39,5 +42,11 @@ void ShipPlan::printPlan() {
 
 ShipPlan::~ShipPlan() {
 }
+
+void ShipPlan::setPlan(vector<vector<ContainersPosition>> &plan) {
+    ShipPlan::plan = plan;
+}
+
+
 
 

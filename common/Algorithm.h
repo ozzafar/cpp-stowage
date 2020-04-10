@@ -17,7 +17,7 @@ using std::string;
 
 class Algorithm {
 private:
-    ShipPlan shipPlan;
+    ShipPlan* shipPlan;
     Route shipRoute;
     WeightBalanceCalculator calculator;
 
@@ -30,7 +30,9 @@ public:
     void readShipPlan(const string& path);
     void readShipRoute(const string& path);
 
-    ShipPlan &getShipPlan();
+    ShipPlan* getShipPlan();
+
+    void breakLineToWords(string &line, vector<string> &row) ;
 };
 
 

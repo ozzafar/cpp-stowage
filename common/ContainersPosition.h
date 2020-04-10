@@ -15,8 +15,8 @@ using std::string;
 class ContainersPosition{
 
 private:
-    int startFloor;
-    int numOfActiveFloors;
+    int startFloor = 0;
+    int numOfActiveFloors = 0;
     stack<string> containers;
 
 public:

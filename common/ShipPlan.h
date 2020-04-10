@@ -18,6 +18,8 @@ class ShipPlan {
 public:
     ShipPlan();
 
+    ShipPlan(int numberOfFloors, const vector<vector<ContainersPosition>> &plan);
+
     void load(int row, int column, string& containerId);
 
     void unload(int row, int column, string& containerId);
@@ -27,6 +29,8 @@ public:
     void setStartFloorInPosition(int x, int y, int startFloor);
 
     void setNumOfActiveFloorsInPosition(int x, int y, int numOfActiveFlours);
+
+    void setPlan(vector<vector<ContainersPosition>> &plan);
 
     void printPlan();
 
