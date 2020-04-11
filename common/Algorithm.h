@@ -18,10 +18,9 @@ using std::string;
 
 class Algorithm {
 private:
-    ShipPlan *shipPlan;
+    ShipPlan* shipPlan;
     Route shipRoute;
     WeightBalanceCalculator calculator;
-
     map<string, Container *> containerIdToContainer;
 
 public:
@@ -41,7 +40,7 @@ public:
     void writeOperation(const std::string& filename, CraneOperation op, const string& containerId, int floor, int x, int y);
 
 private:
-    void breakLineToWords(string &line, vector<string> &row);
+    void breakLineToWords(string &line, vector<string> &, char delimeter) ;
 };
 
 
