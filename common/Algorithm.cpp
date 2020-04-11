@@ -38,7 +38,15 @@ void Algorithm::readShipPlan(const string &path) {
             x = stoi(row[0]);
             y = stoi(row[1]);
             actualNumOfFloors = stoi(row[2]);
-            shipPlan->setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
+            if (actualNumOfFloors==numOfFloors){
+                std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: "<< actualNumOfFloors
+                << "is illegal (max number is " << numOfFloors -1 << std::endl;
+            }
+            else if (x < 0 || x >= X || y < 0 || y>=Y){
+                std::cout << "Warning: the position (" << x << "," << y << ") is illegal"<< std::endl;
+            } else {
+                shipPlan->setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
+            }
         }
         planFile.close();
     }

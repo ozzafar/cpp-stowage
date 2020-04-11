@@ -12,6 +12,11 @@ private:
     ShipPlan shipPlan;
 public:
     Ship();
+
+    void load(int row, int column, string& containerId);
+
+    void unload(int row, int column, string& containerId);
+
 };
 
 
