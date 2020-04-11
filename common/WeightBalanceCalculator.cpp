@@ -3,3 +3,7 @@
 //
 
 #include "WeightBalanceCalculator.h"
+
+WeightBalanceCalculator::BalanceStatus WeightBalanceCalculator::tryOperation(char loadUnload, int kg, int x, int y) {
+    return APPROVED;
+}

@@ -9,6 +9,7 @@
 #include "WeightBalanceCalculator.h"
 #include "Container.h"
 #include "Route.h"
+#include "CraneOperation.h"
 #include <string>
 #include <map>
 
@@ -17,22 +18,28 @@ using std::string;
 
 class Algorithm {
 private:
-    ShipPlan* shipPlan;
+    ShipPlan *shipPlan;
     Route shipRoute;
     WeightBalanceCalculator calculator;
 
-    map<string,Container> containerIdToContainer;
+    map<string, Container *> containerIdToContainer;
 
 public:
 
-    Algorithm();
+    void readShipPlan(const string &path);
 
-    void readShipPlan(const string& path);
-    void readShipRoute(const string& path);
+    void readShipRoute(const string &path);
 
-    ShipPlan* getShipPlan();
+    void getInstructionsForCargo(const string &input_path, const string &output_path);
 
-    void breakLineToWords(string &line, vector<string> &row) ;
+    vector<Container *> readContainerAwaitingAtPortFile(const string &path);
+
+    ShipPlan *getShipPlan(); // for testing
+
+    void updateContainerMapping(vector<Container*> containers);
+
+private:
+    void breakLineToWords(string &line, vector<string> &row);
 };
 
 

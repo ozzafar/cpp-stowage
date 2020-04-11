@@ -32,6 +32,10 @@ public:
 
     void printPlan();
 
+    int getPlanLength();
+
+    int getPlanWidth();
+
     virtual ~ShipPlan();
 
 };

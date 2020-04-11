@@ -43,6 +43,14 @@ const vector<vector<ContainersPosition>> &ShipPlan::getPlan() const {
 ShipPlan::~ShipPlan() {
 }
 
+int ShipPlan::getPlanLength() {
+    return plan.size();
+}
+
+int ShipPlan::getPlanWidth() {
+    return plan.at(0).size();
+}
+
 
 
 
