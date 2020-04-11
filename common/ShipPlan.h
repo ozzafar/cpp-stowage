@@ -20,17 +20,15 @@ public:
 
     ShipPlan(int numberOfFloors, const vector<vector<ContainersPosition>> &plan);
 
-    void load(int row, int column, string& containerId);
-
-    void unload(int row, int column, string& containerId);
-
-    void setNumberOfFloors(int numberOfFloors);
-
     void setStartFloorInPosition(int x, int y, int startFloor);
 
     void setNumOfActiveFloorsInPosition(int x, int y, int numOfActiveFlours);
 
     void setPlan(vector<vector<ContainersPosition>> &plan);
+
+    ContainersPosition& getContainerPosition(int x, int y);
+
+    const vector<vector<ContainersPosition>> &getPlan() const;
 
     void printPlan();
 

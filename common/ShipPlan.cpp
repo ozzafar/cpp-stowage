@@ -11,18 +11,6 @@ ShipPlan::ShipPlan() {
 ShipPlan::ShipPlan(int numberOfFloors, const vector<vector<ContainersPosition>> &plan) : numberOfFloors(numberOfFloors),
                                                                                          plan(plan) {}
 
-void ShipPlan::load(int row, int column, string& containerId) {
-    plan[row][column].load(containerId);
-}
-
-void ShipPlan::unload(int row, int column, string &containerId) {
-    plan[row][column].unload(containerId);
-}
-
-void ShipPlan::setNumberOfFloors(int numberOfFloors) {
-    ShipPlan::numberOfFloors = numberOfFloors;
-}
-
 void ShipPlan::setNumOfActiveFloorsInPosition(int x, int y, int numOfActiveFlours) {
     plan[x][y].setNumOfActiveFlours(numOfActiveFlours);
 }
@@ -40,11 +28,19 @@ void ShipPlan::printPlan() {
     }
 }
 
-ShipPlan::~ShipPlan() {
+ContainersPosition& ShipPlan::getContainerPosition(int x, int y) {
+    return plan[x][y];
 }
 
 void ShipPlan::setPlan(vector<vector<ContainersPosition>> &plan) {
     ShipPlan::plan = plan;
+}
+
+const vector<vector<ContainersPosition>> &ShipPlan::getPlan() const {
+    return plan;
+}
+
+ShipPlan::~ShipPlan() {
 }
 
 
