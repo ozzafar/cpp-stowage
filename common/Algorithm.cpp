@@ -132,12 +132,11 @@ void Algorithm::readShipRoute(const string &path) {
             std::cout << "Reading input route file, line " << rowIndex << std::endl;
             breakLineToWords(line, row, ' ');
 
-            if(!checkPortNumberInput(row))
-            {
+            if (!checkPortNumberInput(row)) {
                 continue;
             }
 
-            std::transform(row[0].begin(), row[0].end(),row[0].begin(), ::toupper);
+            std::transform(row[0].begin(), row[0].end(), row[0].begin(), ::toupper);
             ports.push_back(row[0]);
         }
         planFile.close();
@@ -196,7 +195,7 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
 
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
-            breakLineToWords(line, row);
+            breakLineToWords(line, row,',');
             string containerId = row[0];
             int weight = stoi(row[1]);
             string destinationPort = row[2];
@@ -213,7 +212,7 @@ void Algorithm::updateContainerMapping(vector<Container*> containers) {
     }
 }
 
-void writeOperation(const std::string& filename, CraneOperation& op, string& containerId, int floor, int x, int y)
+void Algorithm::writeOperation(const std::string& filename, CraneOperation op, const string& containerId, int floor, int x, int y)
 {
     std::ofstream fout;
     fout.open(filename);
@@ -222,5 +221,7 @@ void writeOperation(const std::string& filename, CraneOperation& op, string& con
         fout << (char)op << "," << containerId << "," << floor << "," << x << "," << y << '\n';
         fout.close();
     }
-    else std::cout << "Unable to open file";
+    else {
+        std::cout << "Unable to open file";
+    }
 }

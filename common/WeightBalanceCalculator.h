@@ -6,6 +6,8 @@
 #define CPP_STOWAGE_WEIGHTBALANCECALCULATOR_H
 
 
+#include "ShipPlan.h"
+
 class WeightBalanceCalculator {
 private:
     ShipPlan shipPlan;
