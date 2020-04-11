@@ -66,20 +66,37 @@ ShipPlan* Algorithm::getShipPlan() {
 
 // input_path is Containers-awaiting-at-port file
 void Algorithm::getInstructionsForCargo(const string &input_path, const string &output_path) {
+
+    //---------------------- START UNLOAD -------------------------
+    //TODO unload all containers in destination
+    //---------------------- END UNLOAD -------------------------
+
     vector<Container*> containers = readContainerAwaitingAtPortFile(input_path);
     updateContainerMapping(containers);
+    // ---------------------- START LOAD -------------------------
     int amount = containers.size(), index = 0;
     for (int i = 0; i < shipPlan->getPlanLength(); ++i) {
         for (int j = 0; j < shipPlan->getPlanWidth(); ++j) {
             ContainersPosition containersPosition = shipPlan->getContainerPosition(i, j);
-            for (int k = 0 ; k < containersPosition.getNumOfActiveFloors(); k++) {
-                if (index < amount && calculator.tryOperation((char)CraneOperation::LOAD,containers.at(index)->getWeight(),i,j)){
-
+            for (int k = 0; k < containersPosition.getNumOfActiveFloors(); k++) {
+                if (index < amount) {
+                    if (calculator.tryOperation((char) CraneOperation::LOAD, containers.at(index)->getWeight(), i, j)) {
+                        index++;
+                        writeOperation(output_path,CraneOperation::LOAD,containers[index]->getId(),containersPosition.getTopFloorNumber(),i,j);
+                    }
+                } else {
+                    return;
                 }
-                index++;
             }
         }
     }
+    if (index < amount){
+        for (; index < amount ; index++){
+            writeOperation(output_path,CraneOperation::REJECT,containers[index]->getId(),-1,-1,-1);
+        }
+    }
+    // ---------------------- END LOAD -------------------------
+
 }
 
 vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path) {
@@ -107,3 +124,14 @@ void Algorithm::updateContainerMapping(vector<Container*> containers) {
     }
 }
 
+void writeOperation(const std::string& filename, CraneOperation& op, string& containerId, int floor, int x, int y)
+{
+    std::ofstream fout;
+    fout.open(filename);
+    if (fout.is_open())
+    {
+        fout << (char)op << "," << containerId << "," << floor << "," << x << "," << y << '\n';
+        fout.close();
+    }
+    else std::cout << "Unable to open file";
+}

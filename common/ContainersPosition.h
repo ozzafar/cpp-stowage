@@ -39,6 +39,8 @@ public:
 
     int getNumOfActiveFloors() const;
 
+    int getTopFloorNumber();
+
     virtual ~ContainersPosition();
 
 };

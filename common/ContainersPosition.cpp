@@ -13,7 +13,7 @@ ContainersPosition::ContainersPosition() {}
 // region methods
 
 //TODO after calling load - add container to the ship containers-mapping
-int ContainersPosition::load(string & containerId) {
+int ContainersPosition::load(string& containerId) {
     if (howManyAvailiable() > 0) {
         containers.push(containerId);
         std::cout << "Container with id: " + containerId + " was loaded" << std::endl;
@@ -31,7 +31,7 @@ int ContainersPosition::unload(string& containerId){
         std::cout << "Container with id: " + containerId + " was unloaded" << std::endl;
         return SUCCESS;
     } else {
-        std::cout << "Container with id: " + containerId + " wasn't found" << std::endl;
+        std::cout << "Container with id: " + containerId + " isn't on top of the position" << std::endl;
         return FAILURE;
     }
 }
@@ -57,6 +57,10 @@ int ContainersPosition::getNumOfActiveFloors() const {
 }
 
 ContainersPosition::~ContainersPosition() {
+}
+
+int ContainersPosition::getTopFloorNumber() {
+    return startFloor+numOfActiveFloors-1;
 }
 
 

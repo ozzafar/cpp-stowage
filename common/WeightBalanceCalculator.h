@@ -7,6 +7,8 @@
 
 
 class WeightBalanceCalculator {
+private:
+    ShipPlan shipPlan;
 public:
     enum BalanceStatus {
         APPROVED, X_IMBALANCED, Y_IMBALANCED, X_Y_IMBALANCED

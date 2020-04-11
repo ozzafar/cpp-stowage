@@ -11,9 +11,15 @@
 using std::string;
 
 class CraneManagement {
-    void load(ShipPlan& plan, int row, int column, string& containerId);
 
-    void unload(ShipPlan& plan,int row, int column, string& containerId);
+    // return value is SUCCESS / FAILURE:
+
+    int load(ShipPlan& plan, int row, int column, string& containerId);
+
+    int unload(ShipPlan& plan,int row, int column, string& containerId);
+
+    int move(ShipPlan& shipPlan,int oldRow, int oldColumn, int newRow, int newColumn, string& containerId);
+
 };
 
 

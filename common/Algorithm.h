@@ -38,6 +38,8 @@ public:
 
     void updateContainerMapping(vector<Container*> containers);
 
+    void writeOperation(const std::string& filename, CraneOperation op, const string& containerId, int floor, int x, int y);
+
 private:
     void breakLineToWords(string &line, vector<string> &row);
 };

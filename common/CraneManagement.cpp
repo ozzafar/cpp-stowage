@@ -4,13 +4,35 @@
 
 #include "CraneManagement.h"
 
-void CraneManagement::load(ShipPlan& shipPlan, int row, int column, string& containerId) {
-    shipPlan.getContainerPosition(row, column).load(containerId);
+int CraneManagement::load(ShipPlan& shipPlan, int row, int column, string& containerId) {
+    ContainersPosition position = shipPlan.getContainerPosition(row, column);
+    if (position.load(containerId)){
+        position.setNumOfActiveFlours(position.getNumOfActiveFloors()+1);
+        return SUCCESS;
+    } else{
+        return FAILURE;
+    }
 }
 
-void CraneManagement::unload(ShipPlan& shipPlan,int row, int column, string &containerId) {
-    shipPlan.getContainerPosition(row, column).unload(containerId);
+int CraneManagement::unload(ShipPlan& shipPlan,int row, int column, string &containerId) {
+    ContainersPosition position = shipPlan.getContainerPosition(row, column);
+    if (shipPlan.getContainerPosition(row, column).unload(containerId)){
+        position.setNumOfActiveFlours(position.getNumOfActiveFloors()-1);
+        return SUCCESS;
+    } else {
+        return FAILURE;
+    }
 }
+
+int CraneManagement::move(ShipPlan &shipPlan, int oldRow, int oldColumn, int newRow, int newColumn, string &containerId) {
+    int unload = shipPlan.getContainerPosition(oldRow, oldColumn).unload(containerId);
+    if (unload){
+        return shipPlan.getContainerPosition(newRow, newColumn).load(containerId);
+    }
+    return FAILURE;
+}
+
+
 
 
 
