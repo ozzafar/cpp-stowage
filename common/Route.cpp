@@ -5,6 +5,4 @@
 #include "Route.h"
 
 
-Route::Route(const list<string> &ports) : ports(ports) {}
-
-Route::Route() {}
+Route::Route() = default;

@@ -7,6 +7,7 @@
 
 #include <list>
 #include <string>
+#include <utility>
 
 using std::list;
 using std::string;
@@ -16,7 +17,7 @@ private:
     list<string> ports;
 public:
     Route();
-    Route(const list<string> &ports);
+    explicit Route(list<string> ports) : ports(std::move(ports)){}
 };
 
 
