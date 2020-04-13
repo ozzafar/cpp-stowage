@@ -18,31 +18,35 @@ using std::list;
 
 void Algorithm::readShipPlan(const string &path) {
     int numOfFloors, X, Y;
-    string line,word;
+    string line, word;
     std::ifstream planFile(path);
     vector<string> row;
 
-    getline(planFile, line);
-    breakLineToWords(line, row, ',');
-    numOfFloors = stoi(row[0]);
-    X = stoi(row[1]);
-    Y = stoi(row[2]);
-    vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y,ContainersPosition()));
-    shipPlan = new ShipPlan(numOfFloors,plan);
-
-    int x, y, actualNumOfFloors;
     if (planFile.is_open()) {
+        getline(planFile, line);
+        row = breakLineToWords(line, ',');
+        numOfFloors = stoi(row[0]);
+        X = stoi(row[1]);
+        Y = stoi(row[2]);
+        vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition()));
+        shipPlan = new ShipPlan(numOfFloors, plan);
+
+        int x, y, actualNumOfFloors;
         while (getline(planFile, line)) {
-            breakLineToWords(line, row, ',');
+            row = breakLineToWords(line, ',');
+            if (row.size() != 3){
+                std::cout << "Warning: bad input" << std::endl;
+                continue;
+            }
             x = stoi(row[0]);
             y = stoi(row[1]);
             actualNumOfFloors = stoi(row[2]);
-            if (actualNumOfFloors==numOfFloors){
-                std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: "<< actualNumOfFloors
-                << " is illegal (max number is " << numOfFloors -1 << ")" << std::endl;
-            }
-            else if (x < 0 || x >= X || y < 0 || y>=Y){
-                std::cout << "Warning: the position (" << x << "," << y << ") is illegal"<< std::endl;
+            if (actualNumOfFloors == numOfFloors) {
+                std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: "
+                          << actualNumOfFloors
+                          << " is illegal (max number is " << numOfFloors - 1 << ")" << std::endl;
+            } else if (x < 0 || x >= X || y < 0 || y >= Y) {
+                std::cout << "Warning: the position (" << x << "," << y << ") is illegal" << std::endl;
             } else {
                 shipPlan->setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
             }
@@ -51,14 +55,15 @@ void Algorithm::readShipPlan(const string &path) {
     }
 }
 
-void Algorithm::breakLineToWords(string &line, vector<string> &row, char delimeter) {
+vector<string> Algorithm::breakLineToWords(string &line, char delimeter) {
     string word;
-    row.clear();
+    vector<string>  row;
     stringstream ss(line);
     ws(ss);
     while (getline(ss, word, delimeter)){
         row.push_back(word);
     }
+    return row;
 }
 
 void print(std::list<std::string> const &list)
@@ -120,7 +125,7 @@ bool checkPortNumberInput(vector<string> portNumber)
 
 void Algorithm::readShipRoute(const string &path) {
     list<string> ports;
-    int rowIndex=0;
+    int rowIndex=  0;
     string line;
     vector<string> row;
 
@@ -130,7 +135,7 @@ void Algorithm::readShipRoute(const string &path) {
         while (getline(planFile, line)) {
             rowIndex++;
             std::cout << "Reading input route file, line " << rowIndex << std::endl;
-            breakLineToWords(line, row, ' ');
+            row = breakLineToWords(line, ' ');
 
             if (!checkPortNumberInput(row)) {
                 continue;
@@ -160,6 +165,7 @@ void Algorithm::getInstructionsForCargo(const string &input_path, const string &
     //---------------------- END UNLOAD -------------------------
 
     vector<Container*> containers = readContainerAwaitingAtPortFile(input_path);
+    //TODO sort containers according to port's order
     updateContainerMapping(containers);
     // ---------------------- START LOAD -------------------------
     int amount = containers.size(), index = 0;
@@ -195,10 +201,10 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
 
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
-            breakLineToWords(line, row,',');
+            row = breakLineToWords(line,',');
             string containerId = row[0];
             int weight = stoi(row[1]);
-            string destinationPort = row[2];
+            string destinationPort = row[2].substr(0,5); // remove \n
             containers.push_back(new Container(weight,destinationPort,containerId));
         }
         planFile.close();

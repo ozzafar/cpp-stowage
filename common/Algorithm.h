@@ -40,7 +40,7 @@ public:
     void writeOperation(const std::string& filename, CraneOperation op, const string& containerId, int floor, int x, int y);
 
 private:
-    void breakLineToWords(string &line, vector<string> &, char delimeter) ;
+    vector<string> breakLineToWords(string &line, char delimeter) ;
 };
 
 

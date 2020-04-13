@@ -21,18 +21,23 @@
 
 TEST(ReadShipPlan, printCreatedPlan){
     Algorithm algorithm;
-    algorithm.readShipPlan("/Users/ozzafar/CLionProjects/cpp-stowage/tests/test1.csv");
+    algorithm.readShipPlan("/Users/ozzafar/CLionProjects/cpp-stowage/tests/plan.csv");
     algorithm.getShipPlan()->printPlan();
     //EXPECT_EQ(0,0);
 }
 
 TEST(ReadShipPlan, printWarning){
     Algorithm algorithm;
-    algorithm.readShipPlan("/Users/ozzafar/CLionProjects/cpp-stowage/tests/test2-wrong.csv");
+    algorithm.readShipPlan("/Users/ozzafar/CLionProjects/cpp-stowage/tests/bad-plan.csv");
     algorithm.getShipPlan()->printPlan();
     //EXPECT_EQ(0,0);
 }
 
-TEST(ReadRoutePlan, printCreatedRoute){
-    //ASSERT_EQ(1,0);
+TEST(ContainerAwaitingAtPortFile, print){
+    Algorithm algorithm;
+    const vector<Container*> containers = algorithm.readContainerAwaitingAtPortFile(
+            "/Users/ozzafar/CLionProjects/cpp-stowage/tests/ILASH_1.cargo_data");
+    for (Container* container : containers){
+        std::cout << *container << std::endl;
+    }
 }

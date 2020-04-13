@@ -6,6 +6,7 @@
 #define CPP_STOWAGE_CONTAINER_H
 
 #include <string>
+#include <iostream>
 
 using std::string ;
 
@@ -27,6 +28,8 @@ public:
     const string &getDestinationPort() const;
 
     const string &getId() const;
+
+    friend std::ostream& operator<<(std::ostream& out, const Container& c);
 
     virtual ~Container();
 };
