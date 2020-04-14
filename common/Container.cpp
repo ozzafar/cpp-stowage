@@ -27,3 +27,5 @@ Container::~Container() {
 std::ostream &operator<<(std::ostream &out, const Container &c) {
     return out << "id: " << c.id << " destination: " << c.destinationPort << " weight: " << c.weight;
 }
+
+Container::Container() {}

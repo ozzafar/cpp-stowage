@@ -1,5 +1,5 @@
 //
-// Created by Oz Zafar on 09/04/2020.
+// Created by Oz Zafar on 13/04/2020.
 //
 
 #ifndef CPP_STOWAGE_ALGORITHM_H
@@ -10,39 +10,43 @@
 #include "Container.h"
 #include "Route.h"
 #include "CraneOperation.h"
+#include "Ship.h"
 #include <string>
 #include <map>
 
 using std::map;
 using std::string;
 
+
 class Algorithm {
-private:
-    ShipPlan* shipPlan;
-    Route shipRoute;
+public:
+    virtual ~Algorithm() = 0;
+
+protected:
+
+    Route *shipRoute;
+
     WeightBalanceCalculator calculator;
-    map<string, Container *> containerIdToContainer;
+
+    Ship *ship = new Ship();
+
+    map<string, vector<int>> portToIndexesInRoute;
 
 public:
+
+    virtual void getInstructionsForCargo(const string& port, const string &input_path, const string &output_path) = 0;
+
+    virtual string* getName() = 0;
 
     void readShipPlan(const string &path);
 
     void readShipRoute(const string &path);
 
-    void getInstructionsForCargo(const string &input_path, const string &output_path);
-
     vector<Container *> readContainerAwaitingAtPortFile(const string &path);
 
-    ShipPlan *getShipPlan(); // for testing
+    void writeOperation(const std::string &filename, CraneOperation op, const string &containerId, int floor, int x, int y);
 
-    void updateContainerMapping(vector<Container*> containers);
-
-    void writeOperation(const std::string& filename, CraneOperation op, const string& containerId, int floor, int x, int y);
-
-private:
-    vector<string> breakLineToWords(string &line, char delimeter) ;
+    Ship *getShip() const;
 };
-
-
 
 #endif //CPP_STOWAGE_ALGORITHM_H

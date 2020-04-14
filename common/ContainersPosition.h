@@ -6,18 +6,18 @@
 #define CPP_STOWAGE_CONTAINERSPOSITION_H
 
 #include "Container.h"
-#include <stack>
+#include <list>
 #include <string>
 
-using std::stack;
+using std::list;
 using std::string;
 
 class ContainersPosition{
 
 private:
+    int maxFloor;
     int startFloor = 0;
-    int numOfActiveFloors = 0;
-    stack<string> containers;
+    list<string> containers;
 
 public:
 
@@ -25,13 +25,11 @@ public:
 
     ContainersPosition();
 
-    int load(string& containerId);
+    int load(const string& containerId);
 
-    int unload(string& containerId);
+    int unload(const string& containerId);
 
     int howManyAvailiable();
-
-    void setNumOfActiveFlours(int numOfActiveFlours);
 
     void setStartFloor(int startFloor);
 
@@ -43,6 +41,13 @@ public:
 
     virtual ~ContainersPosition();
 
+    list<string, std::allocator<string>>::iterator begin();
+
+    list<string>::iterator end();
+
+    string& getTop();
+
+    // string& pop();
 };
 
 

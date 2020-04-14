@@ -11,10 +11,6 @@ ShipPlan::ShipPlan() {
 ShipPlan::ShipPlan(int numberOfFloors, const vector<vector<ContainersPosition>> &plan) : numberOfFloors(numberOfFloors),
                                                                                          plan(plan) {}
 
-void ShipPlan::setNumOfActiveFloorsInPosition(int x, int y, int numOfActiveFlours) {
-    plan[x][y].setNumOfActiveFlours(numOfActiveFlours);
-}
-
 void ShipPlan::setStartFloorInPosition(int x, int y, int startFloor) {
     plan[x][y].setStartFloor(startFloor);
 }

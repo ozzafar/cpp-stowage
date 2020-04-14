@@ -1,6 +1,6 @@
 #include <iostream>
 #include "common/Container.h"
-#include "common/Algorithm.h"
+#include "common/NaiveAlgorithm.h"
 #include <list>
 using std::list;
 

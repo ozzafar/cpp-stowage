@@ -20,6 +20,7 @@ private:
     string id;
 
 public:
+    Container();
 
     Container(int weight, const string &destinationPort, const string &id);
 

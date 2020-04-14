@@ -5,17 +5,16 @@
 #include "ContainersPosition.h"
 #include <iostream>
 
-ContainersPosition::ContainersPosition(int startFloor, int numOfFlours) : startFloor(startFloor), numOfActiveFloors(numOfFlours) {}
+ContainersPosition::ContainersPosition(int startFloor, int maxFloor) : startFloor(startFloor), maxFloor(maxFloor) {}
 
 ContainersPosition::ContainersPosition() {}
 
 
 // region methods
 
-//TODO after calling load - add container to the ship containers-mapping
-int ContainersPosition::load(string& containerId) {
+int ContainersPosition::load(const string& containerId) {
     if (howManyAvailiable() > 0) {
-        containers.push(containerId);
+        containers.push_back(containerId);
         std::cout << "Container with id: " + containerId + " was loaded" << std::endl;
         return SUCCESS;
     }
@@ -23,11 +22,10 @@ int ContainersPosition::load(string& containerId) {
     return FAILURE;
 }
 
-//TODO after calling load - remove container to the ship containers-mapping
-int ContainersPosition::unload(string& containerId){
-    string& topId = containers.top();
-    if (topId.compare(containerId) == 0){
-        containers.pop();
+int ContainersPosition::unload(const string& containerId){
+    string& topId = containers.back();
+    if (topId == containerId){
+        containers.pop_back();
         std::cout << "Container with id: " + containerId + " was unloaded" << std::endl;
         return SUCCESS;
     } else {
@@ -37,11 +35,7 @@ int ContainersPosition::unload(string& containerId){
 }
 
 int ContainersPosition::howManyAvailiable() {
-    return (numOfActiveFloors - startFloor + 1) - containers.size();
-}
-
-void ContainersPosition::setNumOfActiveFlours(int numOfActiveFlours) {
-    ContainersPosition::numOfActiveFloors = numOfActiveFlours;
+    return (maxFloor - startFloor + 1) - containers.size();
 }
 
 void ContainersPosition::setStartFloor(int startFloor) {
@@ -53,14 +47,29 @@ int ContainersPosition::getStartFloor() const {
 }
 
 int ContainersPosition::getNumOfActiveFloors() const {
-    return numOfActiveFloors;
+    return containers.size();
 }
 
 ContainersPosition::~ContainersPosition() {
 }
 
 int ContainersPosition::getTopFloorNumber() {
-    return startFloor+numOfActiveFloors-1;
+    return startFloor+getNumOfActiveFloors()-1;
+}
+
+list<string>::iterator ContainersPosition::begin()
+{
+    return containers.begin();
+}
+
+list<string>::iterator ContainersPosition::end()
+{
+    return containers.end();
+}
+
+
+string &ContainersPosition::getTop() {
+    return containers.back();
 }
 
 

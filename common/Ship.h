@@ -6,13 +6,28 @@
 #define CPP_STOWAGE_SHIP_H
 
 #include "ShipPlan.h"
+#include <map>
 
 class Ship {
 private:
     ShipPlan shipPlan;
+    std::map<string, Container *> containerIdToContainer;
 public:
     Ship();
 
+    Container& getContainerOfId(const string& id);
+
+    const string& containerIdToDestination(const string& id);
+
+    int containerIdToWeight(const string& id);
+
+    ShipPlan &getShipPlan();
+
+    void setShipPlan(ShipPlan &shipPlan);
+
+    bool knowContainerId(const string &id);
+
+    void updateContainerMapping(Container *container);
 };
 
 

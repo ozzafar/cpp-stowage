@@ -8,9 +8,11 @@
 #include <list>
 #include <string>
 #include <utility>
+#include <map>
 
 using std::list;
 using std::string;
+using std::map;
 
 class Route {
 private:

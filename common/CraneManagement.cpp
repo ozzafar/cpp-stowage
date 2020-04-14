@@ -7,7 +7,6 @@
 int CraneManagement::load(ShipPlan& shipPlan, int row, int column, string& containerId) {
     ContainersPosition position = shipPlan.getContainerPosition(row, column);
     if (position.load(containerId)){
-        position.setNumOfActiveFlours(position.getNumOfActiveFloors()+1);
         return SUCCESS;
     } else{
         return FAILURE;
@@ -17,7 +16,6 @@ int CraneManagement::load(ShipPlan& shipPlan, int row, int column, string& conta
 int CraneManagement::unload(ShipPlan& shipPlan,int row, int column, string &containerId) {
     ContainersPosition position = shipPlan.getContainerPosition(row, column);
     if (shipPlan.getContainerPosition(row, column).unload(containerId)){
-        position.setNumOfActiveFlours(position.getNumOfActiveFloors()-1);
         return SUCCESS;
     } else {
         return FAILURE;
