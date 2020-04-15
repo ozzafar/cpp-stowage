@@ -10,7 +10,7 @@
 
 class Ship {
 private:
-    ShipPlan shipPlan;
+    ShipPlan *shipPlan;
     std::map<string, Container *> containerIdToContainer;
 public:
     Ship();
@@ -21,9 +21,9 @@ public:
 
     int containerIdToWeight(const string& id);
 
-    ShipPlan &getShipPlan();
+    ShipPlan *getShipPlan();
 
-    void setShipPlan(ShipPlan &shipPlan);
+    void setShipPlan(ShipPlan *plan);
 
     bool knowContainerId(const string &id);
 

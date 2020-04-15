@@ -91,7 +91,9 @@ void Algorithm::readShipPlan(const string &path) {
         X = stoi(row[1]);
         Y = stoi(row[2]);
         vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition(numOfFloors)));
-        ship->setShipPlan(*new ShipPlan(numOfFloors, plan));
+        ShipPlan *shipPlan1 = new ShipPlan(numOfFloors, plan);
+
+        ship->setShipPlan(shipPlan1);
 
         while (getline(planFile, line)) {
             line = createPositionFromRowInput(numOfFloors, X, Y, line);
@@ -121,7 +123,7 @@ string & Algorithm::createPositionFromRowInput(int numOfFloors, int X, int Y, st
         } else if (x < 0 || x >= X || y < 0 || y >= Y) {
             std::cout << "Warning: the position (" << x << "," << y << ") is illegal" << std::endl;
         } else {
-            ship->getShipPlan().setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
+            ship->getShipPlan()->setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
         }
     }
     return line;
