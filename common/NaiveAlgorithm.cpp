@@ -52,19 +52,21 @@ void NaiveAlgorithm::getUnloadInstructions(const string& port, const string &out
             int lowestPlace = findLowestPlaceOfPortInPosition(port, containersPosition);
             if (lowestPlace != -1) {
                 vector<string> containersToReturn;
-                for (int k = 0; k < containersPosition.getNumOfActiveFloors()-lowestPlace; k++) {
+                int iterations = containersPosition.getNumOfActiveFloors()-lowestPlace;
+                for (int k = 0; k < iterations; k++) {
                     container = ship->getContainerOfId(containersPosition.getTop());
-                    if (container.getDestinationPort() == port) {
-                        if (calculator.tryOperation((char) CraneOperation::UNLOAD, container.getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
-                            writeOperation(output_path, CraneOperation::UNLOAD, container.getId(),containersPosition.getTopFloorNumber(), i, j);
+                    if (calculator.tryOperation((char) CraneOperation::UNLOAD, container.getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
+                        writeOperation(output_path, CraneOperation::UNLOAD, container.getId(),containersPosition.getTopFloorNumber(), i, j);
+                        if (container.getDestinationPort() != port) {
+                            containersToReturn.push_back(container.getId());
                         }
+                        containersPosition.unload(container.getId());
                     } else{
-                        containersToReturn.push_back(container.getId());
+
                     }
-                    containersPosition.unload(container.getId());
                 }
                 for (auto& containerId : containersToReturn){
-                    writeOperation(output_path, CraneOperation::LOAD, container.getId(),containersPosition.getTopFloorNumber(), i, j);
+                    writeOperation(output_path, CraneOperation::LOAD, container.getId(),containersPosition.getTopFloorNumber()+1, i, j);
                     containersPosition.load(containerId);
                 }
             }
