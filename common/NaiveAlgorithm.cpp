@@ -11,28 +11,24 @@ using std::stringstream;
 using std::string;
 using std::list;
 
-void NaiveAlgorithm::sortContainers(vector<Container*> containers){
-    std::sort(std::begin(containers), std::end(containers), [this](Container* a, Container* b)
-    {
-        int x = portToIndexesInRoute[a->getDestinationPort()][0];
-        int y = portToIndexesInRoute[b->getDestinationPort()][0];
-        return x > y;
-    });
+void NaiveAlgorithm::sortContainers(vector<Container*>& containers){
+    std::sort(std::begin(containers), std::end(containers),*this) ;
 }
 
 void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string &output_path) {
     vector<Container*> containers = readContainerAwaitingAtPortFile(input_path);
     NaiveAlgorithm::sortContainers(containers);
-    ShipPlan &shipPlan = ship->getShipPlan();
+    ShipPlan& shipPlan = ship->getShipPlan();
     int amount = containers.size(), index = 0, X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth();
     for (int i = 0; i < X ; ++i) {
         for (int j = 0; j < Y; ++j) {
-            ContainersPosition containersPosition = shipPlan.getContainerPosition(i, j);
-            for (int k = 0; k < containersPosition.getNumOfActiveFloors(); k++) {
+            ContainersPosition& containersPosition = shipPlan.getContainerPosition(i, j);
+            while (containersPosition.howManyAvailiable()) {
                 if (index < amount) {
-                    if (calculator.tryOperation((char) CraneOperation::LOAD, containers.at(index)->getWeight(), i, j)) {
+                    if (calculator.tryOperation((char) CraneOperation::LOAD, containers.at(index)->getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
+                        writeOperation(output_path, CraneOperation::LOAD, containers[index]->getId(), containersPosition.getTopFloorNumber()+1, i, j);
+                        containersPosition.load(containers[index]->getId());
                         index++;
-                        writeOperation(output_path, CraneOperation::LOAD, containers[index]->getId(), containersPosition.getTopFloorNumber(), i, j);
                     }
                 } else {
                     return;
@@ -41,10 +37,8 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
         }
     }
     // most far containers will be rejected if there is no enough space
-    if (index < amount){
-        for (; index < amount ; index++){
-            writeOperation(output_path, CraneOperation::REJECT, containers[index]->getId(), -1, -1, -1);
-        }
+    for (; index < amount ; index++){
+        writeOperation(output_path, CraneOperation::REJECT, containers[index]->getId(), -1, -1, -1);
     }
 }
 
@@ -54,14 +48,14 @@ void NaiveAlgorithm::getUnloadInstructions(const string& port, const string &out
     int X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth();
     for (int i = 0; i < X; ++i) {
         for (int j = 0; j < Y; ++j) {
-            ContainersPosition containersPosition = shipPlan.getContainerPosition(i, j);
+            ContainersPosition &containersPosition = shipPlan.getContainerPosition(i, j);
             int lowestPlace = findLowestPlaceOfPortInPosition(port, containersPosition);
             if (lowestPlace != -1) {
                 vector<string> containersToReturn;
-                for (int k = containersPosition.getNumOfActiveFloors(); k >= lowestPlace; k--) {
+                for (int k = 0; k < containersPosition.getNumOfActiveFloors()-lowestPlace; k++) {
                     container = ship->getContainerOfId(containersPosition.getTop());
-                    if (container.getId() == port) {
-                        if (calculator.tryOperation((char) CraneOperation::UNLOAD, container.getWeight(), i, j)) {
+                    if (container.getDestinationPort() == port) {
+                        if (calculator.tryOperation((char) CraneOperation::UNLOAD, container.getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
                             writeOperation(output_path, CraneOperation::UNLOAD, container.getId(),containersPosition.getTopFloorNumber(), i, j);
                         }
                     } else{
@@ -98,4 +92,5 @@ void NaiveAlgorithm::getInstructionsForCargo(const string& port, const string &i
 string* NaiveAlgorithm::getName() {
     return new string ("Naive");
 }
+
 

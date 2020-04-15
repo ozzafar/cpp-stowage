@@ -47,6 +47,8 @@ public:
     void writeOperation(const std::string &filename, CraneOperation op, const string &containerId, int floor, int x, int y);
 
     Ship *getShip() const;
+
+    string &createPositionFromRowInput(int numOfFloors, int X, int Y, string &line) const;
 };
 
 #endif //CPP_STOWAGE_ALGORITHM_H

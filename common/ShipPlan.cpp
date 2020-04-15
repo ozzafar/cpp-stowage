@@ -15,6 +15,10 @@ void ShipPlan::setStartFloorInPosition(int x, int y, int startFloor) {
     plan[x][y].setStartFloor(startFloor);
 }
 
+void ShipPlan::setNumOfFloorsInPosition(int x, int y, int numOfFloors) {
+    plan[x][y].setNumOfFloors(numOfFloors);
+}
+
 void ShipPlan::printPlan() {
     int m = plan.size(), n = plan[0].size();
     for (int i = 0 ; i < m ; i++) {

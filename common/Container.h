@@ -26,7 +26,7 @@ public:
 
     int getWeight() const;
 
-    const string &getDestinationPort() const;
+    string& getDestinationPort();
 
     const string &getId() const;
 

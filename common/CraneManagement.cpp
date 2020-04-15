@@ -5,7 +5,7 @@
 #include "CraneManagement.h"
 
 int CraneManagement::load(ShipPlan& shipPlan, int row, int column, string& containerId) {
-    ContainersPosition position = shipPlan.getContainerPosition(row, column);
+    ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.load(containerId)){
         return SUCCESS;
     } else{
@@ -14,7 +14,7 @@ int CraneManagement::load(ShipPlan& shipPlan, int row, int column, string& conta
 }
 
 int CraneManagement::unload(ShipPlan& shipPlan,int row, int column, string &containerId) {
-    ContainersPosition position = shipPlan.getContainerPosition(row, column);
+    ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (shipPlan.getContainerPosition(row, column).unload(containerId)){
         return SUCCESS;
     } else {

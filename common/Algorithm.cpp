@@ -97,29 +97,41 @@ void Algorithm::readShipPlan(const string &path) {
         numOfFloors = stoi(row[0]);
         X = stoi(row[1]);
         Y = stoi(row[2]);
-        vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition()));
+        vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition(numOfFloors)));
         ship->setShipPlan(*new ShipPlan(numOfFloors, plan));
 
-        int x, y, actualNumOfFloors;
         while (getline(planFile, line)) {
-            row = breakLineToWords(line, ',');
-            if (row.size() != 3){
-                std::cout << "Warning: bad input" << std::endl;
-                continue;
-            }
-            x = stoi(row[0]);
-            y = stoi(row[1]);
-            actualNumOfFloors = stoi(row[2]);
-            if (actualNumOfFloors == numOfFloors) {
-                std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: " << actualNumOfFloors << " is illegal (max number is " << numOfFloors - 1 << ")" << std::endl;
-            } else if (x < 0 || x >= X || y < 0 || y >= Y) {
-                std::cout << "Warning: the position (" << x << "," << y << ") is illegal" << std::endl;
-            } else {
-                ship->getShipPlan().setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
-            }
+            line = createPositionFromRowInput(numOfFloors, X, Y, line);
         }
         planFile.close();
     }
+}
+
+string & Algorithm::createPositionFromRowInput(int numOfFloors, int X, int Y, string &line) const {
+    int x, y, actualNumOfFloors;
+    vector<string> row = breakLineToWords(line, ',');
+    if (row.size() != 3){
+        std::cout << "Warning: bad input" << std::endl;
+    } else {
+        x = stoi(row[0]);
+        y = stoi(row[1]);
+        actualNumOfFloors = stoi(row[2]);
+        if (actualNumOfFloors > numOfFloors) {
+            std::cout << "Error: in position (" << x << "," << y << ") the actual number of floors: "
+                      << actualNumOfFloors << " is illegal (max number is " << numOfFloors << ")"
+                      << std::endl;
+        }
+        else if (actualNumOfFloors == numOfFloors) {
+            std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: "
+                      << actualNumOfFloors << " is the maximum number (" << numOfFloors << ")"
+                      << std::endl;
+        } else if (x < 0 || x >= X || y < 0 || y >= Y) {
+            std::cout << "Warning: the position (" << x << "," << y << ") is illegal" << std::endl;
+        } else {
+            ship->getShipPlan().setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
+        }
+    }
+    return line;
 }
 
 void Algorithm::readShipRoute(const string &path) {
@@ -136,9 +148,10 @@ void Algorithm::readShipRoute(const string &path) {
             std::cout << "Reading input route file, line " << rowIndex << std::endl;
             row = breakLineToWords(line, ' ');
 
-            if (!checkPortNumberInput(row)) {
-                continue;
-            }
+//            if (!checkPortNumberInput(row)) {
+//                continue;
+//            }
+            row[0]= row[0].substr(0,5);
             std::transform(row[0].begin(), row[0].end(), row[0].begin(), ::toupper);
             ports.push_back(row[0]);
             portToIndexesInRoute[row[0]].push_back(rowIndex);
@@ -167,7 +180,7 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
             else{
                 Container* newContainer = new Container(weight,destinationPort,containerId);
                 containers.push_back(newContainer);
-                ship->updateContainerMapping(newContainer);
+                ship->updateContainerMapping(new Container(weight,destinationPort,containerId));
             }
         }
         planFile.close();
@@ -178,7 +191,7 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
 void Algorithm::writeOperation(const std::string& filename, CraneOperation op, const string& containerId, int floor, int x, int y)
 {
     std::ofstream fout;
-    fout.open(filename);
+    fout.open(filename,std::fstream::app);
     if (fout.is_open())
     {
         fout << (char)op << "," << containerId << "," << floor << "," << x << "," << y << '\n';
@@ -191,10 +204,6 @@ void Algorithm::writeOperation(const std::string& filename, CraneOperation op, c
 
 Ship *Algorithm::getShip() const {
     return ship;
-}
-
-void Algorithm::getInstructionsForCargo(const string &port, const string &input_path, const string &output_path) {
-
 }
 
 

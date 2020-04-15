@@ -22,6 +22,8 @@ public:
 
     void setStartFloorInPosition(int x, int y, int startFloor);
 
+    void setNumOfFloorsInPosition(int x, int y, int numOfFloors);
+
     void setPlan(vector<vector<ContainersPosition>> &plan);
 
     ContainersPosition& getContainerPosition(int x, int y);

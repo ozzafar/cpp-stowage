@@ -5,9 +5,9 @@
 #include "ContainersPosition.h"
 #include <iostream>
 
-ContainersPosition::ContainersPosition(int startFloor, int maxFloor) : startFloor(startFloor), maxFloor(maxFloor) {}
+ContainersPosition::ContainersPosition(int startFloor, int numOfFloors) : startFloor(startFloor), numOfFloors(numOfFloors) {}
 
-ContainersPosition::ContainersPosition() {}
+ContainersPosition::ContainersPosition(int numOfFloors) : numOfFloors(numOfFloors) {}
 
 
 // region methods
@@ -35,7 +35,7 @@ int ContainersPosition::unload(const string& containerId){
 }
 
 int ContainersPosition::howManyAvailiable() {
-    return (maxFloor - startFloor + 1) - containers.size();
+    return (numOfFloors - startFloor) - containers.size();
 }
 
 void ContainersPosition::setStartFloor(int startFloor) {
@@ -70,6 +70,10 @@ list<string>::iterator ContainersPosition::end()
 
 string &ContainersPosition::getTop() {
     return containers.back();
+}
+
+void ContainersPosition::setNumOfFloors(int numOfFloors) {
+    ContainersPosition::numOfFloors = numOfFloors;
 }
 
 

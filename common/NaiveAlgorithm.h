@@ -20,13 +20,17 @@ using std::string;
 class NaiveAlgorithm : public Algorithm {
 
 public:
-    void sortContainers(vector<Container *> containers);
+    void sortContainers(vector<Container *>& containers);
 
     virtual void getInstructionsForCargo(const string& port, const string &input_path, const string &output_path) override;
 
-    virtual string* getName() override ;
+    virtual string* getName() override;
 
 // private:
+
+    bool operator()(Container *a, Container *b) {
+        return portToIndexesInRoute[a->getDestinationPort()][0] <= portToIndexesInRoute[b->getDestinationPort()][0];
+    }
 
     int findLowestPlaceOfPortInPosition(const string &containerId, ContainersPosition &position); // private
 

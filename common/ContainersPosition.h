@@ -15,7 +15,7 @@ using std::string;
 class ContainersPosition{
 
 private:
-    int maxFloor;
+    int numOfFloors;
     int startFloor = 0;
     list<string> containers;
 
@@ -23,7 +23,7 @@ public:
 
     ContainersPosition(int startFloor, int numOfFlours);
 
-    ContainersPosition();
+    ContainersPosition(int numOfFlours);
 
     int load(const string& containerId);
 
@@ -32,6 +32,8 @@ public:
     int howManyAvailiable();
 
     void setStartFloor(int startFloor);
+
+    void setNumOfFloors(int numOfFloors);
 
     int getStartFloor() const;
 

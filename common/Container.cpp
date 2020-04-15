@@ -12,7 +12,7 @@ int Container::getWeight() const {
     return weight;
 }
 
-const string &Container::getDestinationPort() const {
+string& Container::getDestinationPort()  {
     return destinationPort;
 }
 

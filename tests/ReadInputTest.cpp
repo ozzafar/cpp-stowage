@@ -20,24 +20,25 @@
 #include "../common/CraneManagement.cpp"
 #include "../common/CraneOperation.h"
 
+string prefix = "/Users/ozzafar/CLionProjects/cpp-stowage/tests/";
+
 
 // region Read Input tests
 TEST(ReadShipPlan, printCreatedPlan){
     NaiveAlgorithm algorithm;
-    algorithm.readShipPlan("/Users/ozzafar/CLionProjects/cpp-stowage/tests/plan.csv");
+    algorithm.readShipPlan(prefix+"plan.csv");
     algorithm.getShip()->getShipPlan().printPlan();
 }
 
 TEST(ReadShipPlan, printWarning){
     NaiveAlgorithm algorithm;
-    algorithm.readShipPlan("/Users/ozzafar/CLionProjects/cpp-stowage/tests/bad-plan.csv");
+    algorithm.readShipPlan(prefix+"/bad-plan.csv");
     algorithm.getShip()->getShipPlan().printPlan();
 }
 
 TEST(ContainerAwaitingAtPortFile, print){
     NaiveAlgorithm algorithm;
-    const vector<Container*> containers = algorithm.readContainerAwaitingAtPortFile(
-            "/Users/ozzafar/CLionProjects/cpp-stowage/tests/ILASH_1.cargo_data");
+    const vector<Container*> containers = algorithm.readContainerAwaitingAtPortFile(prefix+"SSSSS.cargo_data");
     for (Container* container : containers){
         std::cout << *container << std::endl;
     }
@@ -50,38 +51,52 @@ TEST(ContainerAwaitingAtPortFile, print){
 TEST(ContainersPosition, basicFunctionality){
     ContainersPosition position(2,5);
     EXPECT_EQ(0,position.getNumOfActiveFloors());
-    EXPECT_EQ(4,position.howManyAvailiable());
+    EXPECT_EQ(3,position.howManyAvailiable());
     position.load("containerId1");
     EXPECT_EQ("containerId1",position.getTop());
     EXPECT_EQ(1,position.getNumOfActiveFloors());
     EXPECT_EQ(2,position.getTopFloorNumber());
-    EXPECT_EQ(3,position.howManyAvailiable());
+    EXPECT_EQ(2,position.howManyAvailiable());
     position.load("containerId2");
     EXPECT_EQ("containerId2",position.getTop());
     EXPECT_EQ(2,position.getNumOfActiveFloors());
     EXPECT_EQ(3,position.getTopFloorNumber());
-    EXPECT_EQ(2,position.howManyAvailiable());
+    EXPECT_EQ(1,position.howManyAvailiable());
     position.unload("containerId1");
     EXPECT_EQ("containerId2",position.getTop());
     EXPECT_EQ(2,position.getNumOfActiveFloors());
     EXPECT_EQ(3,position.getTopFloorNumber());
-    EXPECT_EQ(2,position.howManyAvailiable());
+    EXPECT_EQ(1,position.howManyAvailiable());
     position.unload("containerId2");
     EXPECT_EQ("containerId1",position.getTop());
     EXPECT_EQ(1,position.getNumOfActiveFloors());
     EXPECT_EQ(2,position.getTopFloorNumber());
-    EXPECT_EQ(3,position.howManyAvailiable());
+    EXPECT_EQ(2,position.howManyAvailiable());
+
+    ContainersPosition position2(2,3);
+    EXPECT_EQ(1,position2.howManyAvailiable());
+    position2.load("containerId");
+    EXPECT_EQ(0,position2.howManyAvailiable());
 }
 
 // endregion
 
 // region Algorithms tests
 
-TEST(NaiveAlgorithm, test1){
+TEST(NaiveAlgorithm, sortPortsInRoute) {
     NaiveAlgorithm algorithm;
-    algorithm.readShipPlan("/Users/ozzafar/CLionProjects/cpp-stowage/tests/plan.csv");
-    algorithm.readShipRoute("/Users/ozzafar/CLionProjects/cpp-stowage/tests/plan.csv");
-    algorithm.getLoadInstructions("ILASH_1.cargo_data","NaiveAlgorithm-test1");
+    algorithm.readShipRoute(prefix+"route.csv");
+    vector<Container*> containers = algorithm.readContainerAwaitingAtPortFile(prefix+"SSSSS.cargo_data");
+    algorithm.sortContainers(containers);
+}
+
+TEST(NaiveAlgorithm, getLoadInstructionsANDgetUnloadInstructions){
+    NaiveAlgorithm algorithm;
+    algorithm.readShipPlan(prefix+"plan2.csv");
+    algorithm.getShip()->getShipPlan().printPlan();
+    algorithm.readShipRoute(prefix+"route.csv");
+    algorithm.getLoadInstructions(prefix+"SSSSS.cargo_data",prefix+"NaiveAlgorithm-test1.csv");
+    algorithm.getUnloadInstructions("FFFFF",prefix+"NaiveAlgorithm-test1.csv");
 }
 
 // endregion
