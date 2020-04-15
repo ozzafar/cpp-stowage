@@ -96,7 +96,7 @@ TEST(NaiveAlgorithm, getLoadInstructionsANDgetUnloadInstructions){
     algorithm.getShip()->getShipPlan().printPlan();
     algorithm.readShipRoute(prefix+"route.csv");
     algorithm.getLoadInstructions(prefix+"SSSSS.cargo_data",prefix+"NaiveAlgorithm-test1.csv");
-    algorithm.getUnloadInstructions("FFFFF",prefix+"NaiveAlgorithm-test1.csv");
+    algorithm.getUnloadInstructions("DDDDD",prefix+"NaiveAlgorithm-test1.csv");
 }
 
 // endregion
