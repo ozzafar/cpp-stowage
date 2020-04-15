@@ -8,6 +8,7 @@
 #include "Container.h"
 #include <list>
 #include <string>
+#include <iostream>
 
 using std::list;
 using std::string;

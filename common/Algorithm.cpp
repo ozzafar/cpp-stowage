@@ -3,14 +3,7 @@
 //
 
 #include "Algorithm.h"
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include "ContainersPosition.h"
-#include "CraneOperation.h"
-#include <list>
-#include <string>
-#include <algorithm>
+
 
 using std::stringstream;
 using std::string;
@@ -204,6 +197,10 @@ void Algorithm::writeOperation(const std::string& filename, CraneOperation op, c
 
 Ship *Algorithm::getShip() const {
     return ship;
+}
+
+Route *Algorithm::getShipRoute() const {
+    return shipRoute;
 }
 
 

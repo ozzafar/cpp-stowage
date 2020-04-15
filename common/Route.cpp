@@ -6,3 +6,7 @@
 
 
 Route::Route() = default;
+
+const list<string> &Route::getPorts() const {
+    return ports;
+}

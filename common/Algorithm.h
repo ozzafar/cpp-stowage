@@ -13,6 +13,14 @@
 #include "Ship.h"
 #include <string>
 #include <map>
+#include <fstream>
+#include <sstream>
+#include <iostream>
+#include "ContainersPosition.h"
+#include "CraneOperation.h"
+#include <list>
+#include <string>
+#include <algorithm>
 
 using std::map;
 using std::string;
@@ -47,6 +55,8 @@ public:
     void writeOperation(const std::string &filename, CraneOperation op, const string &containerId, int floor, int x, int y);
 
     Ship *getShip() const;
+
+    Route *getShipRoute() const;
 
     string &createPositionFromRowInput(int numOfFloors, int X, int Y, string &line) const;
 };

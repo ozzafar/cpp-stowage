@@ -3,9 +3,7 @@
 //
 
 #include "NaiveAlgorithm.h"
-#include "ContainersPosition.h"
-#include "CraneOperation.h"
-#include <algorithm>
+
 
 using std::stringstream;
 using std::string;

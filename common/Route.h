@@ -20,6 +20,10 @@ private:
 public:
     Route();
     explicit Route(list<string> ports) : ports(std::move(ports)){}
+
+    const list<string> &getPorts() const;
+
+
 };
 
 
