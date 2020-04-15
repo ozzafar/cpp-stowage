@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 #include "ContainersPosition.h"
+#include <iostream>
 
 using std::vector;
 

@@ -3,7 +3,7 @@
 //
 
 #include "ContainersPosition.h"
-#include <iostream>
+
 
 ContainersPosition::ContainersPosition(int startFloor, int numOfFloors) : startFloor(startFloor), numOfFloors(numOfFloors) {}
 

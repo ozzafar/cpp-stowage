@@ -31,6 +31,8 @@ public:
 
     bool portInNextStops(string& port);
 
+    const list<string> &getPorts() const;
+
 };
 
 

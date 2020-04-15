@@ -205,5 +205,9 @@ Ship *Algorithm::getShip() const {
     return ship;
 }
 
+Route *Algorithm::getShipRoute() const {
+    return shipRoute;
+}
+
 
 // endregion

@@ -2,7 +2,7 @@
 // Created by Oz Zafar on 03/04/2020.
 //
 
-#include <iostream>
+
 #include "ShipPlan.h"
 
 ShipPlan::ShipPlan() {

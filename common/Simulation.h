@@ -7,7 +7,23 @@
 
 #define ROOT /tmp
 
+#include "Algorithm.h"
+#include <list>
+#include <filesystem>
+
 class Simulation {
+private:
+    list<Algorithm*> algorithms;
+    string rootPath;
+
+public:
+    Simulation(const list<Algorithm*> &algorithms, const string &rootPath);
+
+    virtual ~Simulation();
+
+    void RunSimulation();
+
+
 };
 
 

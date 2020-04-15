@@ -13,6 +13,8 @@
 #include "Algorithm.h"
 #include <string>
 #include <map>
+#include "ContainersPosition.h"
+#include <algorithm>
 
 using std::map;
 using std::string;
