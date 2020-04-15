@@ -100,3 +100,13 @@ TEST(NaiveAlgorithm, getLoadInstructionsANDgetUnloadInstructions){
 }
 
 // endregion
+
+// region Crane Management tests
+TEST(CraneManagement, readAndExecuteInstructions) {
+    NaiveAlgorithm algorithm;
+    algorithm.readShipPlan(prefix+"plan.csv");
+    ShipPlan &shipPlan = algorithm.getShip()->getShipPlan();
+    CraneManagement craneManagement;
+    craneManagement.readAndExecuteInstructions(shipPlan,prefix+"NaiveAlgorithm-test1.csv");
+}
+// endregion

@@ -12,13 +12,16 @@ using std::string;
 
 class CraneManagement {
 
+public:
+
     // return value is SUCCESS / FAILURE:
+    int load(ShipPlan& plan, string& containerId, int floor, int row, int column);
 
-    int load(ShipPlan& plan, int row, int column, string& containerId);
+    int unload(ShipPlan& plan, string& containerId, int floor, int row, int column);
 
-    int unload(ShipPlan& plan,int row, int column, string& containerId);
+    int move(ShipPlan &shipPlan,string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor);
 
-    int move(ShipPlan& shipPlan,int oldRow, int oldColumn, int newRow, int newColumn, string& containerId);
+    void readAndExecuteInstructions(ShipPlan &shipPlan, const string &input_path);
 
 };
 

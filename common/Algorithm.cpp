@@ -8,15 +8,12 @@
 #include <iostream>
 #include "ContainersPosition.h"
 #include "CraneOperation.h"
-#include <list>
 #include <string>
 #include <algorithm>
 
 using std::stringstream;
 using std::string;
-using std::list;
-
-Algorithm::~Algorithm() {}
+using std::vector;
 
 // region HELP FUNCTIONS
 
@@ -31,7 +28,7 @@ vector<string> breakLineToWords(string &line, char delimeter) {
     return row;
 }
 
-void print(std::list<std::string> const &list)
+void print(vector<string> const &list)
 {
     for (auto const& i: list) {
         std::cout << i << "\n";
@@ -81,32 +78,6 @@ bool checkPortNumberInput(vector<string> portNumber) {
     return true;
 }
 
-// endregion
-
-// region MAIN FUNCTIONS
-
-void Algorithm::readShipPlan(const string &path) {
-    int numOfFloors, X, Y;
-    string line, word;
-    std::ifstream planFile(path);
-    vector<string> row;
-
-    if (planFile.is_open()) {
-        getline(planFile, line);
-        row = breakLineToWords(line, ',');
-        numOfFloors = stoi(row[0]);
-        X = stoi(row[1]);
-        Y = stoi(row[2]);
-        vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition(numOfFloors)));
-        ship->setShipPlan(*new ShipPlan(numOfFloors, plan));
-
-        while (getline(planFile, line)) {
-            line = createPositionFromRowInput(numOfFloors, X, Y, line);
-        }
-        planFile.close();
-    }
-}
-
 string & Algorithm::createPositionFromRowInput(int numOfFloors, int X, int Y, string &line) const {
     int x, y, actualNumOfFloors;
     vector<string> row = breakLineToWords(line, ',');
@@ -134,8 +105,50 @@ string & Algorithm::createPositionFromRowInput(int numOfFloors, int X, int Y, st
     return line;
 }
 
+void Algorithm::writeOperation(const std::string& filename, CraneOperation op, const string& containerId, int floor, int x, int y)
+{
+    std::ofstream fout;
+    fout.open(filename,std::fstream::app);
+    if (fout.is_open())
+    {
+        fout << (char)op << "," << containerId << "," << floor << "," << x << "," << y << '\n';
+        fout.close();
+    }
+    else {
+        std::cout << "Unable to open file";
+    }
+}
+
+// endregion
+
+// region MAIN FUNCTIONS
+
+Algorithm::~Algorithm() {}
+
+void Algorithm::readShipPlan(const string &path) {
+    int numOfFloors, X, Y;
+    string line, word;
+    std::ifstream planFile(path);
+    vector<string> row;
+
+    if (planFile.is_open()) {
+        getline(planFile, line);
+        row = breakLineToWords(line, ',');
+        numOfFloors = stoi(row[0]);
+        X = stoi(row[1]);
+        Y = stoi(row[2]);
+        vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition(numOfFloors)));
+        ship->setShipPlan(*new ShipPlan(numOfFloors, plan));
+
+        while (getline(planFile, line)) {
+            line = createPositionFromRowInput(numOfFloors, X, Y, line);
+        }
+        planFile.close();
+    }
+}
+
 void Algorithm::readShipRoute(const string &path) {
-    list<string> ports;
+    vector<string> ports;
     int rowIndex=  0;
     string line;
     vector<string> row;
@@ -151,7 +164,7 @@ void Algorithm::readShipRoute(const string &path) {
 //            if (!checkPortNumberInput(row)) {
 //                continue;
 //            }
-            row[0]= row[0].substr(0,5);
+            row[0]= row[0].substr(0,5); //TODO fix this
             std::transform(row[0].begin(), row[0].end(), row[0].begin(), ::toupper);
             ports.push_back(row[0]);
             portToIndexesInRoute[row[0]].push_back(rowIndex);
@@ -186,20 +199,6 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
         planFile.close();
     }
     return containers;
-}
-
-void Algorithm::writeOperation(const std::string& filename, CraneOperation op, const string& containerId, int floor, int x, int y)
-{
-    std::ofstream fout;
-    fout.open(filename,std::fstream::app);
-    if (fout.is_open())
-    {
-        fout << (char)op << "," << containerId << "," << floor << "," << x << "," << y << '\n';
-        fout.close();
-    }
-    else {
-        std::cout << "Unable to open file";
-    }
 }
 
 Ship *Algorithm::getShip() const {

@@ -5,21 +5,32 @@
 #ifndef CPP_STOWAGE_ROUTE_H
 #define CPP_STOWAGE_ROUTE_H
 
-#include <list>
 #include <string>
 #include <utility>
-#include <map>
 
-using std::list;
 using std::string;
-using std::map;
+using std::vector;
 
 class Route {
+
 private:
-    list<string> ports;
+
+    vector<string> ports;
+
+    int currentPort = 0;
+
 public:
+
     Route();
-    explicit Route(list<string> ports) : ports(std::move(ports)){}
+
+    Route(vector<string> ports);
+
+    void incrementCurrentPort();
+
+    int getCurrentPort() const;
+
+    bool portInNextStops(string& port);
+
 };
 
 
