@@ -125,7 +125,6 @@ void Algorithm::writeOperation(const std::string& filename, CraneOperation op, c
 
 // region MAIN FUNCTIONS
 
-Algorithm::~Algorithm() {}
 
 void Algorithm::readShipPlan(const string &path) {
     int numOfFloors, X, Y;

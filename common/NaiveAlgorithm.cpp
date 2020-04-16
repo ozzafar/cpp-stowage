@@ -16,11 +16,11 @@ void NaiveAlgorithm::sortContainers(vector<Container*>& containers){
 void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string &output_path) {
     vector<Container*> containers = readContainerAwaitingAtPortFile(input_path);
     NaiveAlgorithm::sortContainers(containers);
-    ShipPlan *shipPlan = ship->getShipPlan();
-    int amount = containers.size(), index = 0, X = shipPlan->getPlanLength(), Y = shipPlan->getPlanWidth();
+    ShipPlan shipPlan = ship->getShipPlan();
+    int amount = containers.size(), index = 0, X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth();
     for (int i = 0; i < X ; ++i) {
         for (int j = 0; j < Y; ++j) {
-            ContainersPosition& containersPosition = shipPlan->getContainerPosition(i, j);
+            ContainersPosition& containersPosition = shipPlan.getContainerPosition(i, j);
             while (containersPosition.howManyAvailiable()) {
                 if (index < amount) {
                     if (calculator.tryOperation((char) CraneOperation::LOAD, containers.at(index)->getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
@@ -52,11 +52,11 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
 
 void NaiveAlgorithm::getUnloadInstructions(const string& port, const string &output_path) {
     Container container;
-    ShipPlan *shipPlan = ship->getShipPlan();
-    int X = shipPlan->getPlanLength(), Y = shipPlan->getPlanWidth();
+    ShipPlan shipPlan = ship->getShipPlan();
+    int X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth();
     for (int i = 0; i < X; ++i) {
         for (int j = 0; j < Y; ++j) {
-            ContainersPosition &containersPosition = shipPlan->getContainerPosition(i, j);
+            ContainersPosition &containersPosition = shipPlan.getContainerPosition(i, j);
             int lowestPlace = findLowestPlaceOfPortInPosition(port, containersPosition);
             if (lowestPlace != -1) {
                 vector<string> containersToReturn;
