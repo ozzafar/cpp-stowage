@@ -103,10 +103,19 @@ TEST(NaiveAlgorithm, getLoadInstructionsANDgetUnloadInstructions){
 
 // region Crane Management tests
 TEST(CraneManagement, readAndExecuteInstructions) {
+
+    std::ofstream fout;
+    string filename = prefix+"simulation.errors.csv";
+    fout.open(filename,std::fstream::app);
+    if (fout.is_open()) {
+        fout << "NaiveAlgorithm,";
+    }
+    fout.close();
+
     NaiveAlgorithm algorithm;
     algorithm.readShipPlan(prefix+"plan.csv");
     ShipPlan shipPlan = algorithm.getShip()->getShipPlan();
-    CraneManagement craneManagement;
-    craneManagement.readAndExecuteInstructions(shipPlan,prefix+"NaiveAlgorithm-test1.csv");
+    CraneManagement craneManagement(prefix+"simulation.errors.csv");
+    const CraneManagement::CraneManagementAnswer &answer = craneManagement.readAndExecuteInstructions(shipPlan, prefix + "NaiveAlgorithm-test1.csv");
 }
 // endregion

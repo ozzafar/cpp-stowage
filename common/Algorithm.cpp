@@ -37,14 +37,11 @@ void print(vector<string> const &list)
     }
 }
 
-bool isAlphabetString(const string& str)
-{
+bool isAlphabetString(const string &str) {
     char ch;
-    for(char i : str)
-    {
+    for (char i : str) {
         ch = i;
-        if((ch < 65) || (ch > 122) || (ch > 90 && ch < 97))
-        {
+        if ((ch < 65) || (ch > 122) || (ch > 90 && ch < 97)) {
             return false;
         }
     }
@@ -113,7 +110,16 @@ void Algorithm::writeOperation(const std::string& filename, CraneOperation op, c
     fout.open(filename,std::fstream::app);
     if (fout.is_open())
     {
-        fout << (char)op << "," << containerId << "," << floor << "," << x << "," << y << '\n';
+        if (op == CraneOperation::LOAD || op == CraneOperation::UNLOAD){
+            fout << (char)op << "," << containerId << "," << floor << "," << x << "," << y << '\n';
+        }
+        else if (op == CraneOperation::REJECT){
+            fout << (char)op << "," << containerId << '\n';
+        }
+        else{
+            // op == CraneOperation::MOVE
+            // TODO - complete for HW2
+        }
         fout.close();
     }
     else {

@@ -21,7 +21,7 @@ public:
 
     int containerIdToWeight(const string& id);
 
-    ShipPlan getShipPlan();
+    ShipPlan& getShipPlan();
 
     void setShipPlan(ShipPlan plan);
 
