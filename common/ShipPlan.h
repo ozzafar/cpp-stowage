@@ -6,11 +6,13 @@
 #define CPP_STOWAGE_SHIPPLAN_H
 
 #include <vector>
+#include <map>
 #include <string>
 #include "ContainersPosition.h"
 #include <iostream>
 
 using std::vector;
+using std::map;
 
 class ShipPlan {
     int numberOfFloors;
