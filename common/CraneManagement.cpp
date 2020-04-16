@@ -37,9 +37,9 @@ int CraneManagement::unload(ShipPlan& shipPlan, string &containerId, int floor,i
 }
 
 int CraneManagement::move(ShipPlan &shipPlan, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
-    int unload = shipPlan.getContainerPosition(oldRow, oldColumn).unload(containerId);
+    int unload = CraneManagement::unload(shipPlan,containerId,oldFloor,oldFloor,oldColumn);
     if (unload){
-        return shipPlan.getContainerPosition(newRow, newColumn).load(containerId);
+        return CraneManagement::load(shipPlan,containerId,newFloor,newRow,newColumn);
     }
     return FAILURE;
 }

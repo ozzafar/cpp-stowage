@@ -31,6 +31,12 @@ public:
 // private: (in comment for tests)
 
     bool operator()(Container *a, Container *b) {
+        if (portToIndexesInRoute.count(a->getDestinationPort())==0){
+            portToIndexesInRoute[a->getDestinationPort()].push_back(INT32_MAX);
+        }
+        if (portToIndexesInRoute.count(b->getDestinationPort())==0){
+            portToIndexesInRoute[b->getDestinationPort()].push_back(INT32_MAX);
+        }
         return portToIndexesInRoute[a->getDestinationPort()][0] <= portToIndexesInRoute[b->getDestinationPort()][0]; // private
     }
 
