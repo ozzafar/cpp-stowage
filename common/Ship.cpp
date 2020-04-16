@@ -11,11 +11,11 @@ void Ship::updateContainerMapping(Container* container) {
     this->containerIdToContainer[container->getId()] = container;
 }
 
-ShipPlan &Ship::getShipPlan() {
+ShipPlan *Ship::getShipPlan() {
     return shipPlan;
 }
 
-void Ship::setShipPlan(ShipPlan &shipPlan) {
+void Ship::setShipPlan(ShipPlan *shipPlan) {
     Ship::shipPlan = shipPlan;
 }
 

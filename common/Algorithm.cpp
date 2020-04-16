@@ -15,6 +15,8 @@ using std::stringstream;
 using std::string;
 using std::vector;
 
+Algorithm::~Algorithm() {}
+
 // region HELP FUNCTIONS
 
 vector<string> breakLineToWords(string &line, char delimeter) {
