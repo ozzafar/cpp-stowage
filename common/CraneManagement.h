@@ -7,6 +7,7 @@
 
 #include <map>
 #include "ShipPlan.h"
+#include "CraneOperation.h"
 
 using std::map;
 

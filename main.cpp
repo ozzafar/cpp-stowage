@@ -12,7 +12,7 @@ int main() {
     NaiveAlgorithm *naiveAlgorithm = new NaiveAlgorithm();
     list<Algorithm*> algorithms;
     algorithms.push_back(naiveAlgorithm);
-    //Simulation simulation(algorithms, "C:/input");
-    //simulation.RunSimulation();
+    Simulation simulation(algorithms, "C:/input");
+    simulation.RunSimulation();
     return 0;
 }

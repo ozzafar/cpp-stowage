@@ -27,3 +27,7 @@ bool Route::portInNextStops(string &port) {
     return false;
 }
 
+const vector<string> &Route::getPorts() const {
+    return ports;
+}
+

@@ -17,6 +17,7 @@ private:
     string rootPath;
 
 public:
+
     Simulation(const list<Algorithm*> &algorithms, const string &rootPath);
 
     virtual ~Simulation();

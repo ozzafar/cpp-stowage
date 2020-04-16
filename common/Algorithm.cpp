@@ -168,9 +168,9 @@ void Algorithm::readShipRoute(const string &path) {
             std::cout << "Reading input route file, line " << rowIndex << std::endl;
             row = breakLineToWords(line, ' ');
 
-//            if (!checkPortNumberInput(row)) {
-//                continue;
-//            }
+            if (!checkPortNumberInput(row)) {
+                continue;
+            }
             row[0]= row[0].substr(0,5); //TODO fix this
             std::transform(row[0].begin(), row[0].end(), row[0].begin(), ::toupper);
             ports.push_back(row[0]);
