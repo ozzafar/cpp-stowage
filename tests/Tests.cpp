@@ -20,20 +20,20 @@
 #include "../common/CraneManagement.cpp"
 #include "../common/CraneOperation.h"
 
-string prefix = "C://Users/yarden/CLionProjects/cpp-stowage/tests/";
+string prefix = "/Users/ozzafar/CLionProjects/cpp-stowage/tests/";
 
 
 // region Read Input tests
 TEST(ReadShipPlan, printCreatedPlan){
     NaiveAlgorithm algorithm;
     algorithm.readShipPlan(prefix+"plan.csv");
-    algorithm.getShip()->getShipPlan()->printPlan();
+    algorithm.getShip()->getShipPlan().printPlan();
 }
 
 TEST(ReadShipPlan, printWarning){
     NaiveAlgorithm algorithm;
     algorithm.readShipPlan(prefix+"/bad-plan.csv");
-    algorithm.getShip()->getShipPlan()->printPlan();
+    algorithm.getShip()->getShipPlan().printPlan();
 }
 
 TEST(ContainerAwaitingAtPortFile, print){
@@ -93,7 +93,7 @@ TEST(NaiveAlgorithm, sortPortsInRoute) {
 TEST(NaiveAlgorithm, getLoadInstructionsANDgetUnloadInstructions){
     NaiveAlgorithm algorithm;
     algorithm.readShipPlan(prefix+"plan2.csv");
-    algorithm.getShip()->getShipPlan()->printPlan();
+    algorithm.getShip()->getShipPlan().printPlan();
     algorithm.readShipRoute(prefix+"route.csv");
     algorithm.getLoadInstructions(prefix+"SSSSS.cargo_data",prefix+"NaiveAlgorithm-test1.csv");
     algorithm.getUnloadInstructions("DDDDD",prefix+"NaiveAlgorithm-test1.csv");
@@ -105,7 +105,7 @@ TEST(NaiveAlgorithm, getLoadInstructionsANDgetUnloadInstructions){
 TEST(CraneManagement, readAndExecuteInstructions) {
     NaiveAlgorithm algorithm;
     algorithm.readShipPlan(prefix+"plan.csv");
-    ShipPlan &shipPlan = algorithm.getShip()->getShipPlan();
+    ShipPlan shipPlan = algorithm.getShip()->getShipPlan();
     CraneManagement craneManagement;
     craneManagement.readAndExecuteInstructions(shipPlan,prefix+"NaiveAlgorithm-test1.csv");
 }
