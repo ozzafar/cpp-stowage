@@ -97,6 +97,13 @@ TEST(NaiveAlgorithm, getLoadInstructionsANDgetUnloadInstructions){
     algorithm.readShipRoute(prefix+"route.csv");
     algorithm.getLoadInstructions(prefix+"SSSSS.cargo_data",prefix+"NaiveAlgorithm-test1.csv");
     algorithm.getUnloadInstructions("DDDDD",prefix+"NaiveAlgorithm-test1.csv");
+    algorithm.getUnloadInstructions("AAAAA",prefix+"NaiveAlgorithm-test1.csv");
+    algorithm.getUnloadInstructions("BBBBB",prefix+"NaiveAlgorithm-test1.csv");
+    algorithm.getUnloadInstructions("CCCCC",prefix+"NaiveAlgorithm-test1.csv");
+    algorithm.getUnloadInstructions("EEEEE",prefix+"NaiveAlgorithm-test1.csv");
+    algorithm.getUnloadInstructions("FFFFF",prefix+"NaiveAlgorithm-test1.csv");
+    algorithm.getUnloadInstructions("GGGGG",prefix+"NaiveAlgorithm-test1.csv");
+    EXPECT_EQ(0,algorithm.getShip()->getAmountOfContainers());
 }
 
 // endregion

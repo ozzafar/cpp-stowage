@@ -35,3 +35,13 @@ bool Ship::knowContainerId(const string& id) {
     return containerIdToContainer.count(id) > 0;
 }
 
+int Ship::getAmountOfContainers() {
+    int amount = 0;
+    for (int i = 0 ; i < shipPlan.getPlanLength() ; i++){
+        for (int j = 0 ; j < shipPlan.getPlanWidth() ; j ++){
+            amount+=shipPlan.getContainerPosition(i,j).getNumOfActiveFloors();
+        }
+    }
+    return amount;
+}
+

@@ -1,4 +1,6 @@
 //
+//
+// Created by Oz Zafar on 11/04/2020.
 
 #include <fstream>
 #include <sstream>
@@ -7,11 +9,8 @@
 #include "CraneManagement.h"
 #include "CraneOperation.h"
 
-//
-// Created by Oz Zafar on 11/04/2020.
 
-
-CraneManagement::CraneManagement(string filename) : errorsFilePath(std::move(errorsFilePath)) {}
+CraneManagement::CraneManagement(string errorsFilePath) : errorsFilePath(errorsFilePath) { }
 
 vector<string> breakLineToWords2(string &line, char delimeter) {
     string word;
@@ -24,7 +23,8 @@ vector<string> breakLineToWords2(string &line, char delimeter) {
     return row;
 }
 
-int CraneManagement::load(ShipPlan& shipPlan, string& containerId, int floor, int row, int column) {
+int CraneManagement::load(Ship* ship, string& containerId, int floor, int row, int column) {
+    ShipPlan& shipPlan = ship->getShipPlan();
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor-1){
         fout.open(errorsFilePath,std::fstream::app);
@@ -38,7 +38,8 @@ int CraneManagement::load(ShipPlan& shipPlan, string& containerId, int floor, in
 }
 
 
-int CraneManagement::unload(ShipPlan& shipPlan, string &containerId, int floor,int row, int column) {
+int CraneManagement::unload(Ship* ship, string &containerId, int floor,int row, int column) {
+    ShipPlan& shipPlan = ship->getShipPlan();
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor-1){
         fout.open(errorsFilePath,std::fstream::app);
@@ -51,17 +52,17 @@ int CraneManagement::unload(ShipPlan& shipPlan, string &containerId, int floor,i
     return shipPlan.getContainerPosition(row, column).unload(containerId);
 }
 
-int CraneManagement::move(ShipPlan &shipPlan, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
-    int unload = CraneManagement::unload(shipPlan,containerId,oldFloor,oldFloor,oldColumn);
+int CraneManagement::move(Ship* ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
+    int unload = CraneManagement::unload(ship,containerId,oldFloor,oldFloor,oldColumn);
     if (unload){
-        return CraneManagement::load(shipPlan,containerId,newFloor,newRow,newColumn);
+        return CraneManagement::load(ship,containerId,newFloor,newRow,newColumn);
     }
     return FAILURE;
 }
 
 /* ignores extra param in line
  * print error message is line has less params then expected */
-CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructions(ShipPlan &shipPlan, const string &input_path) {
+CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructions(Ship* ship, const string &input_path) {
     string line;
     vector<string> row;
     std::ifstream instructionsFile(input_path);
@@ -84,14 +85,17 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                     if (row.size() < 5) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     }else{
-                        if (load(shipPlan, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]))){
+                        string containerId = row[1];
+                        if (load(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))){
                             if (changedContainers.count(row[1])>0){
                                 changedContainers.erase(row[1]);
                             }
                             else{
-                                changedContainers[row[1]] = CraneOperation::LOAD;
+                                changedContainers[containerId] = CraneOperation::LOAD;
                             }
                             count++;
+                            string destination = ship->containerIdToDestination(containerId);
+                            ship->portToContainers[destination].insert(containerId);
                         }
                     }
                     break;
@@ -99,9 +103,12 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                     if (row.size() < 5) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     } else{
-                        if (unload(shipPlan, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]))){
-                            changedContainers[row[1]] = CraneOperation::UNLOAD;
+                        string containerId = row[1];
+                        if (unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))){
+                            changedContainers[containerId] = CraneOperation::UNLOAD;
                             count++;
+                            string destination = ship->containerIdToDestination(containerId);
+                            ship->portToContainers[destination].erase(containerId);
                         }
                     }
                     break;
@@ -114,7 +121,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                     if (row.size() < 8) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     } else {
-                        if (move(shipPlan, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[4]), stoi(row[5]),
+                        if (move(ship, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[4]), stoi(row[5]),
                              stoi(row[6]))){
                             count++;
                         }
@@ -127,3 +134,4 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
     }
     return {changedContainers,count};
 }
+

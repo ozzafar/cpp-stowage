@@ -7,12 +7,20 @@
 
 #include "ShipPlan.h"
 #include <map>
+#include <set>
 
 class Ship {
+
 private:
+
     ShipPlan shipPlan;
+
     std::map<string, Container *> containerIdToContainer;
+
 public:
+
+    std::map<string, std::set<string>> portToContainers;
+
     Ship();
 
     Container& getContainerOfId(const string& id);
@@ -28,6 +36,9 @@ public:
     bool knowContainerId(const string &id);
 
     void updateContainerMapping(Container *container);
+
+    int getAmountOfContainers();
+
 };
 
 

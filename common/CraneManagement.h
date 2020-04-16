@@ -7,6 +7,8 @@
 
 #include <map>
 #include "ShipPlan.h"
+#include "Ship.h"
+#include "CraneOperation.h"
 #include "CraneOperation.h"
 
 using std::map;
@@ -19,14 +21,14 @@ class CraneManagement {
 
 public:
 
-    CraneManagement(string errorsFilePath);
+    CraneManagement(string errorsFilePath) ;
 
     // return value is SUCCESS / FAILURE:
-    int load(ShipPlan &plan, string &containerId, int floor, int row, int column);
+    int load(Ship* ship, string &containerId, int floor, int row, int column);
 
-    int unload(ShipPlan &plan, string &containerId, int floor, int row, int column);
+    int unload(Ship* ship, string &containerId, int floor, int row, int column);
 
-    int move(ShipPlan &shipPlan, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn,
+    int move(Ship* ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn,
          int newFloor);
 
 
@@ -35,7 +37,7 @@ public:
         int numOfOperations;
     } CraneManagementAnswer;
 
-    CraneManagementAnswer readAndExecuteInstructions(ShipPlan &shipPlan, const string &input_path);
+    CraneManagementAnswer readAndExecuteInstructions(Ship* ship, const string &input_path);
 };
 
 #endif //CPP_STOWAGE_CRANEMANAGEMENT_H
