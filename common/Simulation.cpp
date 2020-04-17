@@ -18,6 +18,7 @@ void print(std::list<std::string> const &list)
 
 
 void Simulation::RunSimulation() {
+    std::cout <<"Starting simulation" << std::endl;
     string path, fileName;
     int i, totalOperations = 0, index = 0;
     Route *shipRoute;
@@ -30,11 +31,15 @@ void Simulation::RunSimulation() {
     std::map<string,int> indexOfFirstContainersAwaitingAtPortInputFile;
 
 
-    for(auto& p: std::filesystem::directory_iterator(rootPath)){
-        path = p.path().string();
-        CraneManagement craneManagement(path + "/simulation.errors.csv");
-        std::cout <<path << std::endl;
 
+    for(auto& p: std::filesystem::directory_iterator(rootPath)){
+
+        path = p.path().string();
+        std::cout <<"Starting simulate " << path << std::endl;
+        CraneManagement craneManagement(path + "/simulation.errors.csv");
+
+
+        std::cout <<"update containersAwaitingAtPortInputFiles and totalNumbersOfVisitingPort" << std::endl;
         for(auto& p: std::filesystem::directory_iterator(path))
         {
             fileName = p.path().stem().string();
@@ -48,22 +53,32 @@ void Simulation::RunSimulation() {
 
         sort(containersAwaitingAtPortInputFiles.begin(), containersAwaitingAtPortInputFiles.end());
 
+        std::cout <<"finish update containersAwaitingAtPortInputFiles and totalNumbersOfVisitingPort" << std::endl;
+
 
         std::ofstream fout;
         fout.open(path + "/simulation.results.csv", std::fstream::app);
 
         for(Algorithm *algorithm: algorithms)
         {
+            std::cout <<"starting simulate " << algorithm->getName() << " on " << path << std::endl;
+
             if(fout.is_open())
             {
                 fout << algorithm->getName() << ",";
                 fout.close();
             }
+
+            std::cout <<"Reading ship plan..." << std::endl;
             algorithm->readShipPlan(path + "\\ship_plan.txt");
+            std::cout <<"Reading route..." << std::endl;
             algorithm->readShipRoute(path + "\\route.txt");
             shipRoute = algorithm->getShipRoute();
             vector <string> route = shipRoute->getPorts();
             ship = *(algorithm->getShip());
+
+
+            std::cout <<"Updating indexOfFirstContainersAwaitingAtPortInputFile..." << std::endl;
 
             for(i=0 ; i<containersAwaitingAtPortInputFiles.size() ; i++)
             {
@@ -73,7 +88,11 @@ void Simulation::RunSimulation() {
                 }
             }
 
+            std::cout <<"Finished pdating indexOfFirstContainersAwaitingAtPortInputFile..." << std::endl;
+
             for(i = 0; i< route.size() ; i++) {
+
+                std::cout <<"Ship Arrived to port " << route[i] << std::endl;
                 if(indexOfVisitAtPort[route[i]]+1 > totalNumbersOfVisitingPort[route[i]])
                 {
                     std::cout << "no containers awaiting at port input file for " << route[i] << "for visiting number " << indexOfVisitAtPort[route[i]] << std::endl;
@@ -90,6 +109,7 @@ void Simulation::RunSimulation() {
                 totalOperations += craneManagementAnswer.numOfOperations;
                 checkForErrorsAfterPort(ship, route[i], fout);
                 indexOfVisitAtPort[route[i]]++;
+                std::cout <<"Ship left port " << route[i] << std::endl;
             }
 
             if(fout.is_open())
