@@ -33,6 +33,7 @@ public:
 
     void setShipPlan(ShipPlan plan);
 
+    // check if the ship has encountered this container Id
     bool knowContainerId(const string &id);
 
     void updateContainerMapping(Container *container);

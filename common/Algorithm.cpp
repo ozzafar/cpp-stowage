@@ -177,7 +177,6 @@ void Algorithm::readShipRoute(const string &path) {
             portToIndexesInRoute[row[0]].push_back(rowIndex);
         }
         planFile.close();
-        print(ports);
     }
     shipRoute = new Route(ports);
 }
@@ -197,7 +196,19 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
             }
             string containerId = row[0];
             int weight = stoi(row[1]);
-            string destinationPort = row[2].substr(0,5); // remove \n
+            string destinationPort = row[2];
+            //TODO fix this
+//            if (!isAlphabetString(destinationPort)){
+//                std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id contains non alphabet chars" << std::endl;
+//                continue;
+//            }
+//            if (!destinationPort.size() == 5) {
+//                std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id isn't in the correct size" << std::endl;
+//                continue;
+//            }
+            //TODO fix this
+
+            destinationPort = destinationPort.substr(0,5); // remove \n TODO fix this
             if (ship->knowContainerId(containerId)){
                 std::cout << "Warning: container " << containerId << " appears twice" << std::endl;
             }
@@ -218,6 +229,10 @@ Ship *Algorithm::getShip() const {
 
 Route *Algorithm::getShipRoute() const {
     return shipRoute;
+}
+
+void Algorithm::setCalculator(WeightBalanceCalculator &calculator) {
+    Algorithm::calculator = calculator;
 }
 
 

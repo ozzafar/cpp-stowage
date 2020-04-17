@@ -44,6 +44,7 @@ public:
 
     vector<Container *> readContainerAwaitingAtPortFile(const string &path);
 
+    // writes single operation to output file
     void writeOperation(const std::string &filename, CraneOperation op, const string &containerId, int floor, int x, int y);
 
     Ship *getShip() const;
@@ -51,6 +52,8 @@ public:
     Route *getShipRoute() const;
 
     string &createPositionFromRowInput(int numOfFloors, int X, int Y, string &line) const;
+
+    void setCalculator(WeightBalanceCalculator &calculator);
 };
 
 #endif //CPP_STOWAGE_ALGORITHM_H

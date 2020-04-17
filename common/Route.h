@@ -33,6 +33,8 @@ public:
 
     const vector<string> &getPorts() const;
 
+    bool inLastStop();
+
 };
 
 

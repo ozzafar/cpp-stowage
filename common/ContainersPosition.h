@@ -30,6 +30,7 @@ public:
 
     int unload(const string& containerId);
 
+    // return how many places are available for loading containers
     int howManyAvailiable();
 
     void setStartFloor(int startFloor);
@@ -38,8 +39,10 @@ public:
 
     int getStartFloor() const;
 
+    // how many places are occupied by containers
     int getNumOfActiveFloors() const;
 
+    // return number of the top floor which has a container
     int getTopFloorNumber();
 
     virtual ~ContainersPosition();
@@ -50,7 +53,6 @@ public:
 
     string& getTop();
 
-    // string& pop();
 };
 
 

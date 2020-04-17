@@ -100,7 +100,9 @@ int NaiveAlgorithm::findLowestPlaceOfPortInPosition(const string &port, Containe
 // input_path is Containers-awaiting-at-port file
 void NaiveAlgorithm::getInstructionsForCargo(const string& port, const string &input_path, const string &output_path)  {
     getUnloadInstructions(port, output_path);
-    getLoadInstructions(input_path, output_path);
+    if (!shipRoute->inLastStop()){
+        getLoadInstructions(input_path, output_path);
+    }
 }
 
 string NaiveAlgorithm::getName() {
