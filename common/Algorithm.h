@@ -51,6 +51,8 @@ public:
     Route *getShipRoute() const;
 
     string &createPositionFromRowInput(int numOfFloors, int X, int Y, string &line) const;
+
+    void setCalculator(WeightBalanceCalculator &calculator);
 };
 
 #endif //CPP_STOWAGE_ALGORITHM_H

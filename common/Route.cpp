@@ -27,3 +27,7 @@ bool Route::portInNextStops(string &port) {
     return false;
 }
 
+bool Route::inLastStop() {
+    return currentPort == ports.size();
+}
+
