@@ -28,7 +28,7 @@ public:
     virtual string* getName() override;
 
 
-// private: (in comment for tests)
+// private: (in comment for tests) TODO return it to private
 
     bool operator()(Container *a, Container *b) {
         if (portToIndexesInRoute.count(a->getDestinationPort())==0){
@@ -42,7 +42,9 @@ public:
 
     void sortContainers(vector<Container *>& containers);
 
-    int findLowestPlaceOfPortInPosition(const string &containerId, ContainersPosition &position); // private
+    /* find the lowest position in port which
+     * contains a container of specific destination*/
+    int findLowestPlaceOfPortInPosition(const string &port, ContainersPosition &position); // private
 
     void getLoadInstructions(const string &input_path, const string &output_path); // private
 

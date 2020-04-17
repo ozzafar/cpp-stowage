@@ -44,6 +44,7 @@ public:
 
     vector<Container *> readContainerAwaitingAtPortFile(const string &path);
 
+    // writes single operation to output file
     void writeOperation(const std::string &filename, CraneOperation op, const string &containerId, int floor, int x, int y);
 
     Ship *getShip() const;

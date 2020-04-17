@@ -30,6 +30,7 @@ public:
 
     const string &getId() const;
 
+    // toString of container
     friend std::ostream& operator<<(std::ostream& out, const Container& c);
 
     virtual ~Container();
