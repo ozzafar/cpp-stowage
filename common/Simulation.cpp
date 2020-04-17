@@ -3,8 +3,7 @@
 //
 
 #include "Simulation.h"
-#include "NaiveAlgorithm.h"
-#include <regex>
+#include "CraneManagement.h"
 
 
 Simulation::Simulation(const list<Algorithm*> &algorithms, const string &rootPath) : algorithms(algorithms), rootPath(rootPath) {}
@@ -18,13 +17,20 @@ void print(std::list<std::string> const &list)
 
 void Simulation::RunSimulation() {
     string path, fileName;
+    int i, index=0;
     Route *shipRoute;
-    Ship ship;
-    list <string> containersAwaitingAtPortInputFiles;
+    Ship *ship;
+    CraneManagement::CraneManagementAnswer craneManagementAnswer;
+
+    vector <string> containersAwaitingAtPortInputFiles;
     std::map<string,int> indexOfVisitAtPort;
+    std::map<string,int> totalNumbersOfVisitingPort;
+    std::map<string,int> indexOfFirstContainersAwaitingAtPortInputFile;
+
 
     for(auto& p: std::filesystem::directory_iterator(rootPath)){
         path = p.path().string();
+        CraneManagement craneManagement(path + "/errors.txt");
         std::cout <<path << std::endl;
 
         for(auto& p: std::filesystem::directory_iterator(path))
@@ -33,30 +39,46 @@ void Simulation::RunSimulation() {
             if (fileName.substr(5, 1) == "_") {
                 if (isdigit(fileName.substr(6, 1).front()) != 0) {
                     containersAwaitingAtPortInputFiles.push_back(fileName);
+                    totalNumbersOfVisitingPort[fileName.substr(0, 5)]++;
                 }
             }
         }
 
-        containersAwaitingAtPortInputFiles.sort();
-        containersAwaitingAtPortInputFiles.unique();
+        sort(containersAwaitingAtPortInputFiles.begin(), containersAwaitingAtPortInputFiles.end());
 
-        std::cout <<"------------------" <<std::endl;
-        print(containersAwaitingAtPortInputFiles);
-        std::cout <<"------------------"<< std::endl;
 
         for(Algorithm *algorithm: algorithms)
-
         {
             /*algorithm->readShipPlan(path + "/ship_plan.txt");*/
             algorithm->readShipPlan(path + "\\ship_plan.txt");
             algorithm->readShipRoute(path + "\\route.txt");
             shipRoute = algorithm->getShipRoute();
             vector <string> route = shipRoute->getPorts();
+            ship = algorithm->getShip();
 
-
-            for(int i = 0; i< route.size() ; i++) {
-                indexOfVisitAtPort.insert(std::pair<string, int>(route[i],0));
+            for(i=0 ; i<containersAwaitingAtPortInputFiles.size() ; i++)
+            {
+                if(indexOfFirstContainersAwaitingAtPortInputFile.find(containersAwaitingAtPortInputFiles[i].substr(0, 5))==indexOfFirstContainersAwaitingAtPortInputFile.end())
+                {
+                    indexOfFirstContainersAwaitingAtPortInputFile.insert(std::pair<string, int>(containersAwaitingAtPortInputFiles[i].substr(0, 5),i));
+                }
             }
+
+            for(i = 0; i< route.size()-1 ; i++) {
+                if(indexOfVisitAtPort[route[i]] > totalNumbersOfVisitingPort[route[i]])
+                {
+                    algorithm->getInstructionsForCargo(route[i], "", path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                }
+                else
+                {
+                    string a = path + "/" + containersAwaitingAtPortInputFiles[indexOfFirstContainersAwaitingAtPortInputFile[route[i]]+indexOfVisitAtPort[route[i]]]+".txt";
+                    algorithm->getInstructionsForCargo(route[i], path + "/" + containersAwaitingAtPortInputFiles[indexOfFirstContainersAwaitingAtPortInputFile[route[i]]+indexOfVisitAtPort[route[i]]]+".txt",path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                }
+
+                craneManagementAnswer = craneManagement.readAndExecuteInstructions(&(*ship), path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                indexOfVisitAtPort[route[i]]++;
+            }
+
 
 
 

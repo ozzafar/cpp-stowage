@@ -10,6 +10,7 @@
 #include "Ship.h"
 #include "CraneOperation.h"
 #include "CraneOperation.h"
+#include <fstream>
 
 using std::map;
 

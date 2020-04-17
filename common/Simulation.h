@@ -10,6 +10,7 @@
 #include "Algorithm.h"
 #include <list>
 #include <filesystem>
+#include "NaiveAlgorithm.h"
 
 class Simulation {
 private:
