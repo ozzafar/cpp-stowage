@@ -12,21 +12,29 @@ ContainersPosition::ContainersPosition(int numOfFloors) : numOfFloors(numOfFloor
 
 // region methods
 
-int ContainersPosition::load(const string& containerId) {
+int ContainersPosition::load(const string& containerId, bool print) {
     if (howManyAvailiable() > 0) {
         containers.push_back(containerId);
-        std::cout << "Container with id: " + containerId + " was loaded" << std::endl;
+        if(print)
+        {
+            std::cout << "Container with id: " + containerId + " was loaded" << std::endl;
+        }
+
         return SUCCESS;
     }
     std::cout << "No available place for container with id: " + containerId << std::endl;
     return FAILURE;
 }
 
-int ContainersPosition::unload(const string& containerId){
+int ContainersPosition::unload(const string& containerId, bool print){
     string& topId = containers.back();
     if (topId == containerId){
         containers.pop_back();
-        std::cout << "Container with id: " + containerId + " was unloaded" << std::endl;
+        if(print)
+        {
+            std::cout << "Container with id: " + containerId + " was unloaded" << std::endl;
+        }
+
         return SUCCESS;
     } else {
         std::cout << "Container with id: " + containerId + " isn't on top of the position" << std::endl;
@@ -35,11 +43,11 @@ int ContainersPosition::unload(const string& containerId){
 }
 
 int ContainersPosition::howManyAvailiable() {
-    return (numOfFloors - startFloor) - containers.size();
+    return numOfFloors - startFloor - containers.size();
 }
 
-void ContainersPosition::setStartFloor(int startFloor) {
-    ContainersPosition::startFloor = startFloor;
+void ContainersPosition::setStartFloor(int startFloorP) {
+    ContainersPosition::startFloor = startFloorP;
 }
 
 int ContainersPosition::getStartFloor() const {

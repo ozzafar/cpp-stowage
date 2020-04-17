@@ -4,23 +4,24 @@
 
 #include "Ship.h"
 
-Ship::Ship() {
-}
+#include <utility>
+
+Ship::Ship() = default;
 
 void Ship::updateContainerMapping(Container* container) {
     this->containerIdToContainer[container->getId()] = container;
 }
 
-void Ship::setContainerIdToContainerMap(map<string, Container *> &containerIdToContainer) {
-    Ship::containerIdToContainer = containerIdToContainer;
+void Ship::setContainerIdToContainerMap(map<string, Container *> &containerIdToContainerP) {
+    Ship::containerIdToContainer = containerIdToContainerP;
 }
 
 ShipPlan& Ship::getShipPlan() {
     return shipPlan;
 }
 
-void Ship::setShipPlan(ShipPlan shipPlan) {
-    Ship::shipPlan = shipPlan;
+void Ship::setShipPlan(ShipPlan shipPlanP) {
+    Ship::shipPlan = std::move(shipPlanP);
 }
 
 string& Ship::containerIdToDestination(string &id) {

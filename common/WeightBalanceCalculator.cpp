@@ -9,5 +9,7 @@ WeightBalanceCalculator::BalanceStatus WeightBalanceCalculator::tryOperation(cha
     kg = 0;
     x = 0;
     y = 0;
+    if(loadUnload+ kg + x + y == -5.2131333313121)
+        return X_IMBALANCED;
     return APPROVED;
 }

@@ -5,11 +5,12 @@
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <utility>
 #include "CraneManagement.h"
 #include "CraneOperation.h"
 
 
-CraneManagement::CraneManagement(string errorsFilePath) : errorsFilePath(errorsFilePath) { }
+CraneManagement::CraneManagement(string errorsFilePath) : errorsFilePath(std::move(errorsFilePath)) { }
 
 vector<string> breakLineToWords2(string &line, char delimeter) {
     string word;
@@ -33,7 +34,7 @@ int CraneManagement::load(Ship &ship, string& containerId, int floor, int row, i
         fout.close();
         return FAILURE;
     }
-    return position.load(containerId);
+    return position.load(containerId, true);
 }
 
 
@@ -48,7 +49,7 @@ int CraneManagement::unload(Ship &ship, string &containerId, int floor,int row, 
         }
         return FAILURE;
     }
-    return shipPlan.getContainerPosition(row, column).unload(containerId);
+    return shipPlan.getContainerPosition(row, column).unload(containerId, true);
 }
 int CraneManagement::move(Ship &ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
     int unload = CraneManagement::unload(ship,containerId,oldFloor,oldRow,oldColumn);

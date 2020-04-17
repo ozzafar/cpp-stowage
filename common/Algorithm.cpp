@@ -15,7 +15,7 @@ using std::stringstream;
 using std::string;
 using std::vector;
 
-Algorithm::~Algorithm() {}
+Algorithm::~Algorithm() = default;
 
 // region HELP FUNCTIONS
 
@@ -190,7 +190,7 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
             row = breakLineToWords(line,',');
-            if(row.size() == 0)
+            if(row.empty())
             {
                 continue;
             }
@@ -217,7 +217,7 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
                 std::cout << "Warning: container " << containerId << " appears twice" << std::endl;
             }
             else{
-                Container* newContainer = new Container(weight,destinationPort,containerId);
+                auto* newContainer = new Container(weight,destinationPort,containerId);
                 containers.push_back(newContainer);
                 ship->updateContainerMapping(new Container(weight,destinationPort,containerId));
             }
@@ -235,8 +235,8 @@ Route *Algorithm::getShipRoute() const {
     return shipRoute;
 }
 
-void Algorithm::setCalculator(WeightBalanceCalculator &calculator) {
-    Algorithm::calculator = calculator;
+void Algorithm::setCalculator(WeightBalanceCalculator &calculatorP) {
+    Algorithm::calculator = calculatorP;
 }
 
 

@@ -30,7 +30,7 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
                         }
                         else{
                             writeOperation(output_path, CraneOperation::LOAD, containers[index]->getId(), containersPosition.getTopFloorNumber()+1, i, j);
-                            containersPosition.load(containers[index]->getId());
+                            containersPosition.load(containers[index]->getId(), false);
 
                         }
 
@@ -72,14 +72,14 @@ void NaiveAlgorithm::getUnloadInstructions(const string& port, const string &out
                         if (container.getDestinationPort() != port) {
                             containersToReturn.push_back(container.getId());
                         }
-                        containersPosition.unload(container.getId());
+                        containersPosition.unload(container.getId(), false);
                     } else{
 
                     }
                 }
                 for (auto& containerId : containersToReturn){
                     writeOperation(output_path, CraneOperation::LOAD, containerId,containersPosition.getTopFloorNumber()+1, i, j);
-                    containersPosition.load(containerId);
+                    containersPosition.load(containerId, false);
                 }
             }
         }
@@ -100,7 +100,7 @@ int NaiveAlgorithm::findLowestPlaceOfPortInPosition(const string &port, Containe
 // input_path is Containers-awaiting-at-port file
 void NaiveAlgorithm::getInstructionsForCargo(const string& port, const string &input_path, const string &output_path)  {
     getUnloadInstructions(port, output_path);
-    if (!shipRoute->inLastStop() && output_path!=""){
+    if (!shipRoute->inLastStop() && !output_path.empty()){
         getLoadInstructions(input_path, output_path);
     }
 }

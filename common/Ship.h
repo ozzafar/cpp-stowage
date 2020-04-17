@@ -31,7 +31,7 @@ public:
 
     ShipPlan& getShipPlan();
 
-    void setShipPlan(ShipPlan plan);
+    void setShipPlan(ShipPlan planP);
 
     // check if the ship has encountered this container Id
     bool knowContainerId(const string &id);
@@ -40,7 +40,7 @@ public:
 
     int getAmountOfContainers();
 
-    void setContainerIdToContainerMap(map<string, Container *> &containerIdToContainer);
+    void setContainerIdToContainerMap(map<string, Container *> &containerIdToContainerP);
 
     map<string, Container *> &getContainerIdToContainerMap();
 };

@@ -24,21 +24,21 @@ public:
 
     ContainersPosition(int startFloor, int numOfFlours);
 
-    ContainersPosition(int numOfFlours);
+    explicit ContainersPosition(int numOfFlours);
 
-    int load(const string& containerId);
+    int load(const string& containerId, bool print);
 
-    int unload(const string& containerId);
+    int unload(const string& containerId, bool print);
 
     // return how many places are available for loading containers
     int howManyAvailiable();
 
-    void setStartFloor(int startFloor);
+    void setStartFloor(int startFloorP);
 
-    int getStartFloor() const;
+    [[nodiscard]] int getStartFloor() const;
 
     // how many places are occupied by containers
-    int getNumOfActiveFloors() const;
+    [[nodiscard]] int getNumOfActiveFloors() const;
 
     // return number of the top floor which has a container
     int getTopFloorNumber();
