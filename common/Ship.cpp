@@ -11,6 +11,10 @@ void Ship::updateContainerMapping(Container* container) {
     this->containerIdToContainer[container->getId()] = container;
 }
 
+void Ship::setContainerIdToContainerMap(map<string, Container *> &containerIdToContainer) {
+    Ship::containerIdToContainer = containerIdToContainer;
+}
+
 ShipPlan& Ship::getShipPlan() {
     return shipPlan;
 }
@@ -43,5 +47,9 @@ int Ship::getAmountOfContainers() {
         }
     }
     return amount;
+}
+
+map<string, Container *> &Ship::getContainerIdToContainer() {
+    return containerIdToContainer;
 }
 

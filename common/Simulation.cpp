@@ -15,11 +15,14 @@ void print(std::list<std::string> const &list)
     }
 }
 
+
+
 void Simulation::RunSimulation() {
+    std::cout <<"Starting simulation" << std::endl;
     string path, fileName;
-    int i, index=0;
+    int i, totalOperations = 0, index = 0;
     Route *shipRoute;
-    Ship *ship;
+    Ship ship;
     CraneManagement::CraneManagementAnswer craneManagementAnswer;
 
     vector <string> containersAwaitingAtPortInputFiles;
@@ -28,11 +31,15 @@ void Simulation::RunSimulation() {
     std::map<string,int> indexOfFirstContainersAwaitingAtPortInputFile;
 
 
-    for(auto& p: std::filesystem::directory_iterator(rootPath)){
-        path = p.path().string();
-        CraneManagement craneManagement(path + "/errors.txt");
-        std::cout <<path << std::endl;
 
+    for(auto& p: std::filesystem::directory_iterator(rootPath)){
+
+        path = p.path().string();
+        std::cout <<"Starting simulate " << path << std::endl;
+        CraneManagement craneManagement(path + "/simulation.errors.csv");
+
+
+        std::cout <<"update containersAwaitingAtPortInputFiles and totalNumbersOfVisitingPort" << std::endl;
         for(auto& p: std::filesystem::directory_iterator(path))
         {
             fileName = p.path().stem().string();
@@ -46,15 +53,32 @@ void Simulation::RunSimulation() {
 
         sort(containersAwaitingAtPortInputFiles.begin(), containersAwaitingAtPortInputFiles.end());
 
+        std::cout <<"finish update containersAwaitingAtPortInputFiles and totalNumbersOfVisitingPort" << std::endl;
+
+
+        std::ofstream fout;
+        fout.open(path + "/simulation.results.csv", std::fstream::app);
 
         for(Algorithm *algorithm: algorithms)
         {
-            /*algorithm->readShipPlan(path + "/ship_plan.txt");*/
+            std::cout <<"starting simulate " << algorithm->getName() << " on " << path << std::endl;
+
+            if(fout.is_open())
+            {
+                fout << algorithm->getName() << ",";
+                fout.close();
+            }
+
+            std::cout <<"Reading ship plan..." << std::endl;
             algorithm->readShipPlan(path + "\\ship_plan.txt");
+            std::cout <<"Reading route..." << std::endl;
             algorithm->readShipRoute(path + "\\route.txt");
             shipRoute = algorithm->getShipRoute();
             vector <string> route = shipRoute->getPorts();
-            ship = algorithm->getShip();
+            ship = *(algorithm->getShip());
+
+
+            std::cout <<"Updating indexOfFirstContainersAwaitingAtPortInputFile..." << std::endl;
 
             for(i=0 ; i<containersAwaitingAtPortInputFiles.size() ; i++)
             {
@@ -64,26 +88,43 @@ void Simulation::RunSimulation() {
                 }
             }
 
-            for(i = 0; i< route.size()-1 ; i++) {
-                if(indexOfVisitAtPort[route[i]] > totalNumbersOfVisitingPort[route[i]])
+            std::cout <<"Finished pdating indexOfFirstContainersAwaitingAtPortInputFile..." << std::endl;
+
+            for(i = 0; i< route.size() ; i++) {
+
+                std::cout <<"Ship Arrived to port " << route[i] << std::endl;
+                if(indexOfVisitAtPort[route[i]]+1 > totalNumbersOfVisitingPort[route[i]])
                 {
-                    algorithm->getInstructionsForCargo(route[i], "", path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                    std::cout << "no containers awaiting at port input file for " << route[i] << "for visiting number " << indexOfVisitAtPort[route[i]] << std::endl;
+                    getInstructionsForCargoFromAlgorithm(*algorithm, ship,route[i], "", path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
                 }
                 else
                 {
                     string a = path + "/" + containersAwaitingAtPortInputFiles[indexOfFirstContainersAwaitingAtPortInputFile[route[i]]+indexOfVisitAtPort[route[i]]]+".txt";
-                    algorithm->getInstructionsForCargo(route[i], path + "/" + containersAwaitingAtPortInputFiles[indexOfFirstContainersAwaitingAtPortInputFile[route[i]]+indexOfVisitAtPort[route[i]]]+".txt",path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                    getInstructionsForCargoFromAlgorithm(*algorithm, ship, route[i], path + "/" + containersAwaitingAtPortInputFiles[indexOfFirstContainersAwaitingAtPortInputFile[route[i]]+indexOfVisitAtPort[route[i]]] + ".txt",path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
                 }
 
-                craneManagementAnswer = craneManagement.readAndExecuteInstructions(&(*ship), path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                fout.open(path + "/simulation.results.csv", std::fstream::app);
+                totalOperations += craneManagementAnswer.numOfOperations;
+                checkForErrorsAfterPort(ship, route[i], fout);
                 indexOfVisitAtPort[route[i]]++;
+                std::cout <<"Ship left port " << route[i] << std::endl;
             }
 
-
-
+            if(fout.is_open())
+            {
+                fout << totalOperations << ",";
+            }
+            totalOperations = 0;
 
 
         }
+        if(fout.is_open())
+        {
+            fout << std::endl;
+        }
+
     }
 
 }
@@ -91,3 +132,16 @@ void Simulation::RunSimulation() {
 Simulation::~Simulation() {
 
 }
+
+void Simulation::getInstructionsForCargoFromAlgorithm(Algorithm &algorithm,Ship &ship, const string& port, const string &input_path, const string &output_path) {
+    algorithm.getInstructionsForCargo(port, input_path, output_path);
+    ship.setContainerIdToContainerMap(algorithm.getShip()->getContainerIdToContainer());
+
+}
+
+void Simulation::checkForErrorsAfterPort(Ship &ship, const string &port, std::ofstream &fout) {
+
+
+}
+
+

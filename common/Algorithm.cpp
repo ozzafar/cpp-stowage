@@ -190,6 +190,10 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
             row = breakLineToWords(line,',');
+            if(row.size() == 0)
+            {
+                continue;
+            }
             string containerId = row[0];
 //            if (!Container::isValidID(containerId)){
 //                //std::cout << "Bad input: invalid container id" << std::endl;

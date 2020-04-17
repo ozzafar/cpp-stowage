@@ -40,6 +40,9 @@ public:
 
     int getAmountOfContainers();
 
+    void setContainerIdToContainerMap(map<string, Container *> &containerIdToContainer);
+
+    map<string, Container *> &getContainerIdToContainer();
 };
 
 
