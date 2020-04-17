@@ -27,6 +27,10 @@ bool Route::portInNextStops(string &port) {
     return false;
 }
 
+const vector<string> &Route::getPorts() const {
+    return ports;
+}
+
 bool Route::inLastStop() {
     return currentPort == ports.size();
 }

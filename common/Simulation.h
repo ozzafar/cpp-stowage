@@ -10,6 +10,7 @@
 #include "Algorithm.h"
 #include <list>
 #include <filesystem>
+#include "NaiveAlgorithm.h"
 
 class Simulation {
 private:
@@ -17,6 +18,7 @@ private:
     string rootPath;
 
 public:
+
     Simulation(const list<Algorithm*> &algorithms, const string &rootPath);
 
     virtual ~Simulation();
