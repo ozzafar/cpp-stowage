@@ -25,7 +25,7 @@ public:
 
     void getInstructionsForCargo(const string& port, const string &input_path, const string &output_path) override;
 
-    virtual string* getName() override;
+    virtual string getName() override;
 
 
 // private: (in comment for tests)

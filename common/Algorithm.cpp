@@ -191,6 +191,10 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
             row = breakLineToWords(line,',');
+            if(row.size() == 0)
+            {
+                continue;
+            }
             string containerId = row[0];
             int weight = stoi(row[1]);
             string destinationPort = row[2].substr(0,5); // remove \n

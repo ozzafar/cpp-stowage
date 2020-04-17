@@ -23,8 +23,8 @@ vector<string> breakLineToWords2(string &line, char delimeter) {
     return row;
 }
 
-int CraneManagement::load(Ship* ship, string& containerId, int floor, int row, int column) {
-    ShipPlan& shipPlan = ship->getShipPlan();
+int CraneManagement::load(Ship &ship, string& containerId, int floor, int row, int column) {
+    ShipPlan& shipPlan = ship.getShipPlan();
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor-1){
         fout.open(errorsFilePath,std::fstream::app);
@@ -38,10 +38,10 @@ int CraneManagement::load(Ship* ship, string& containerId, int floor, int row, i
 }
 
 
-int CraneManagement::unload(Ship* ship, string &containerId, int floor,int row, int column) {
-    ShipPlan& shipPlan = ship->getShipPlan();
+int CraneManagement::unload(Ship &ship, string &containerId, int floor,int row, int column) {
+    ShipPlan& shipPlan = ship.getShipPlan();
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
-    if (position.getTopFloorNumber()!=floor-1){
+    if (position.getTopFloorNumber()!=floor){
         fout.open(errorsFilePath,std::fstream::app);
         if (fout.is_open()) {
             fout << "Error: can't unload the container " << containerId << " from floor " << floor << " in position "
@@ -52,7 +52,7 @@ int CraneManagement::unload(Ship* ship, string &containerId, int floor,int row, 
     return shipPlan.getContainerPosition(row, column).unload(containerId);
 }
 
-int CraneManagement::move(Ship* ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
+int CraneManagement::move(Ship &ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
     int unload = CraneManagement::unload(ship,containerId,oldFloor,oldFloor,oldColumn);
     if (unload){
         return CraneManagement::load(ship,containerId,newFloor,newRow,newColumn);
@@ -62,7 +62,7 @@ int CraneManagement::move(Ship* ship, string &containerId, int oldFloor, int old
 
 /* ignores extra param in line
  * print error message is line has less params then expected */
-CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructions(Ship* ship, const string &input_path) {
+CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructions(Ship &ship, const string &input_path) {
     string line;
     vector<string> row;
     std::ifstream instructionsFile(input_path);
@@ -94,8 +94,8 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                                 changedContainers[containerId] = CraneOperation::LOAD;
                             }
                             count++;
-                            string destination = ship->containerIdToDestination(containerId);
-                            ship->portToContainers[destination].insert(containerId);
+                            string destination = ship.containerIdToDestination(containerId);
+                            ship.portToContainers[destination].insert(containerId);
                         }
                     }
                     break;
@@ -107,8 +107,8 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         if (unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))){
                             changedContainers[containerId] = CraneOperation::UNLOAD;
                             count++;
-                            string destination = ship->containerIdToDestination(containerId);
-                            ship->portToContainers[destination].erase(containerId);
+                            string destination = ship.containerIdToDestination(containerId);
+                            ship.portToContainers[destination].erase(containerId);
                         }
                     }
                     break;

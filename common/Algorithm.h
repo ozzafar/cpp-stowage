@@ -36,7 +36,7 @@ public:
 
     virtual void getInstructionsForCargo(const string& port, const string &input_path, const string &output_path) = 0;
 
-    virtual string* getName() = 0;
+    virtual string getName() = 0;
 
     void readShipPlan(const string &path);
 
