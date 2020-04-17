@@ -50,9 +50,6 @@ int ContainersPosition::getNumOfActiveFloors() const {
     return containers.size();
 }
 
-ContainersPosition::~ContainersPosition() {
-}
-
 int ContainersPosition::getTopFloorNumber() {
     return startFloor+getNumOfActiveFloors()-1;
 }
@@ -71,10 +68,5 @@ list<string>::iterator ContainersPosition::end()
 string &ContainersPosition::getTop() {
     return containers.back();
 }
-
-void ContainersPosition::setNumOfFloors(int numOfFloors) {
-    ContainersPosition::numOfFloors = numOfFloors;
-}
-
 
 // endregion

@@ -23,7 +23,7 @@ void Ship::setShipPlan(ShipPlan shipPlan) {
     Ship::shipPlan = shipPlan;
 }
 
-const string& Ship::containerIdToDestination(const string &id) {
+string& Ship::containerIdToDestination(string &id) {
     return containerIdToContainer[id]->getDestinationPort();
 }
 
@@ -49,7 +49,7 @@ int Ship::getAmountOfContainers() {
     return amount;
 }
 
-map<string, Container *> &Ship::getContainerIdToContainer() {
+map<string, Container *> &Ship::getContainerIdToContainerMap() {
     return containerIdToContainer;
 }
 

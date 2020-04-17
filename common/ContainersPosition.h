@@ -16,8 +16,8 @@ using std::string;
 class ContainersPosition{
 
 private:
-    int numOfFloors;
     int startFloor = 0;
+    int numOfFloors;
     list<string> containers;
 
 public:
@@ -35,8 +35,6 @@ public:
 
     void setStartFloor(int startFloor);
 
-    void setNumOfFloors(int numOfFloors);
-
     int getStartFloor() const;
 
     // how many places are occupied by containers
@@ -44,8 +42,6 @@ public:
 
     // return number of the top floor which has a container
     int getTopFloorNumber();
-
-    virtual ~ContainersPosition();
 
     list<string, std::allocator<string>>::iterator begin();
 

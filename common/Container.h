@@ -34,8 +34,6 @@ public:
     friend std::ostream& operator<<(std::ostream& out, const Container& c);
 
     static bool isValidID(const string& id);
-
-    virtual ~Container();
 };
 
 

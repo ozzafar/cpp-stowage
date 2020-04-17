@@ -35,6 +35,8 @@ public:
 
     bool inLastStop();
 
+    int nextStopForPort(string& port);
+
 };
 
 

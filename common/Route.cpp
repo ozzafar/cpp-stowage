@@ -19,7 +19,7 @@ void Route::incrementCurrentPort() {
 }
 
 bool Route::portInNextStops(string &port) {
-    for (int i = currentPort; i < ports.size() ; i++) {
+    for (size_t i = currentPort; i < ports.size() ; i++) {
         if (ports.at(i) == port){
             return true;
         }
@@ -32,6 +32,15 @@ const vector<string> &Route::getPorts() const {
 }
 
 bool Route::inLastStop() {
-    return currentPort == ports.size();
+    return (size_t) currentPort == ports.size();
+}
+
+int Route::nextStopForPort(string& port) {
+    for (size_t i = currentPort ; i < ports.size() ; i++){
+        if (ports[i]==port){
+            return i;
+        }
+    }
+    return INT32_MAX;
 }
 

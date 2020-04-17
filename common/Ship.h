@@ -25,7 +25,7 @@ public:
 
     Container& getContainerOfId(const string& id);
 
-    const string& containerIdToDestination(const string& id);
+    string& containerIdToDestination(string& id);
 
     int containerIdToWeight(const string& id);
 
@@ -42,7 +42,7 @@ public:
 
     void setContainerIdToContainerMap(map<string, Container *> &containerIdToContainer);
 
-    map<string, Container *> &getContainerIdToContainer();
+    map<string, Container *> &getContainerIdToContainerMap();
 };
 
 

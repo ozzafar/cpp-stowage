@@ -34,7 +34,7 @@ public:
 
 
     typedef struct {
-        map<string, CraneOperation> changedContainers;
+        map<CraneOperation,vector<string>> changedContainers;
         int numOfOperations;
     } CraneManagementAnswer;
 

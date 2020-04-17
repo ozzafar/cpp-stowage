@@ -20,8 +20,8 @@ void print(std::list<std::string> const &list)
 void Simulation::RunSimulation() {
     std::cout <<"Starting simulation" << std::endl;
     string path, fileName;
-    int i, totalOperations = 0, index = 0;
-    Route *shipRoute;
+    size_t i, totalOperations = 0;
+    Route *shipRoute; // todo change to non-pointer
     Ship ship;
     CraneManagement::CraneManagementAnswer craneManagementAnswer;
 
@@ -40,7 +40,7 @@ void Simulation::RunSimulation() {
 
 
         std::cout <<"update containersAwaitingAtPortInputFiles and totalNumbersOfVisitingPort" << std::endl;
-        for(auto& p: std::filesystem::directory_iterator(path))
+        for(auto& p: std::filesystem::directory_iterator(path)) // todo rename p
         {
             fileName = p.path().stem().string();
             if (fileName.substr(5, 1) == "_") {
@@ -66,8 +66,8 @@ void Simulation::RunSimulation() {
             if(fout.is_open())
             {
                 fout << algorithm->getName() << ",";
-                fout.close();
             }
+            fout.close();
 
             std::cout <<"Reading ship plan..." << std::endl;
             algorithm->readShipPlan(path + "\\ship_plan.txt");
@@ -76,6 +76,7 @@ void Simulation::RunSimulation() {
             shipRoute = algorithm->getShipRoute();
             vector <string> route = shipRoute->getPorts();
             ship = *(algorithm->getShip());
+
 
 
             std::cout <<"Updating indexOfFirstContainersAwaitingAtPortInputFile..." << std::endl;
@@ -90,12 +91,11 @@ void Simulation::RunSimulation() {
 
             std::cout <<"Finished pdating indexOfFirstContainersAwaitingAtPortInputFile..." << std::endl;
 
-            for(i = 0; i< route.size() ; i++) {
-
+            for (i = 0; i < route.size(); i++) {
                 std::cout <<"Ship Arrived to port " << route[i] << std::endl;
                 if(indexOfVisitAtPort[route[i]]+1 > totalNumbersOfVisitingPort[route[i]])
                 {
-                    std::cout << "no containers awaiting at port input file for " << route[i] << "for visiting number " << indexOfVisitAtPort[route[i]] << std::endl;
+                    std::cout << "No containers awaiting at port input file for " << route[i] << "for visiting number " << indexOfVisitAtPort[route[i]] << std::endl;
                     getInstructionsForCargoFromAlgorithm(*algorithm, ship,route[i], "", path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
                 }
                 else
@@ -107,7 +107,7 @@ void Simulation::RunSimulation() {
                 craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
                 fout.open(path + "/simulation.results.csv", std::fstream::app);
                 totalOperations += craneManagementAnswer.numOfOperations;
-                checkForErrorsAfterPort(ship, route[i], fout);
+                checkForErrorsAfterPort(ship, route[i], fout, craneManagementAnswer, *shipRoute);
                 indexOfVisitAtPort[route[i]]++;
                 std::cout <<"Ship left port " << route[i] << std::endl;
             }
@@ -117,8 +117,6 @@ void Simulation::RunSimulation() {
                 fout << totalOperations << ",";
             }
             totalOperations = 0;
-
-
         }
         if(fout.is_open())
         {
@@ -129,19 +127,35 @@ void Simulation::RunSimulation() {
 
 }
 
-Simulation::~Simulation() {
-
-}
-
 void Simulation::getInstructionsForCargoFromAlgorithm(Algorithm &algorithm,Ship &ship, const string& port, const string &input_path, const string &output_path) {
     algorithm.getInstructionsForCargo(port, input_path, output_path);
     ship.setContainerIdToContainerMap(algorithm.getShip()->getContainerIdToContainer());
 
 }
 
-void Simulation::checkForErrorsAfterPort(Ship &ship, const string &port, std::ofstream &fout) {
-
-
+void Simulation::checkForErrorsAfterPort(Ship &ship, const string &port, std::ofstream &fout, CraneManagement::CraneManagementAnswer& answer,Route& route) {
+    if (fout.is_open()){
+        if (ship.portToContainers.count(port)>0){
+            fout << "Not all of the containers of this port were unloaded,";
+        }
+        if (answer.changedContainers.count(CraneOperation::REJECT) > 0) {
+            for (auto& rejected : answer.changedContainers[CraneOperation::REJECT]) {
+                for (auto &loaded : answer.changedContainers[CraneOperation::LOAD]) {
+                    if (route.nextStopForPort(ship.containerIdToDestination(rejected)) <
+                        route.nextStopForPort(ship.containerIdToDestination(loaded))) {
+                        fout << "Rejected container " << rejected << " with higher priority,";
+                    }
+                }
+            }
+        }
+        if (route.inLastStop()) {
+            int amountOfContainers = ship.getAmountOfContainers() > 0;
+            if (amountOfContainers>0){
+                fout << "Ship arrived to last port in route but there are still " << amountOfContainers << " containers on the ship,";
+            }
+        }
+    }
 }
+
 
 

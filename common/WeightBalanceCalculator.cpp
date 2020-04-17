@@ -5,5 +5,9 @@
 #include "WeightBalanceCalculator.h"
 
 WeightBalanceCalculator::BalanceStatus WeightBalanceCalculator::tryOperation(char loadUnload, int kg, int x, int y) {
+    loadUnload = 0;
+    kg = 0;
+    x = 0;
+    y = 0;
     return APPROVED;
 }

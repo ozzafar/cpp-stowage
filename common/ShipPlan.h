@@ -15,31 +15,22 @@ using std::vector;
 using std::map;
 
 class ShipPlan {
-    int numberOfFloors;
     vector<vector<ContainersPosition>> plan;
 
 public:
     ShipPlan();
 
-    ShipPlan(int numberOfFloors, const vector<vector<ContainersPosition>> &plan);
+    ShipPlan(const vector<vector<ContainersPosition>> &plan);
 
     void setStartFloorInPosition(int x, int y, int startFloor);
 
-    void setNumOfFloorsInPosition(int x, int y, int numOfFloors);
-
-    void setPlan(vector<vector<ContainersPosition>> &plan);
-
     ContainersPosition& getContainerPosition(int x, int y);
-
-    const vector<vector<ContainersPosition>> &getPlan() const;
 
     void printPlan();
 
     int getPlanLength();
 
     int getPlanWidth();
-
-    virtual ~ShipPlan();
 
 };
 

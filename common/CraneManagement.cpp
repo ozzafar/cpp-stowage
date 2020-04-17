@@ -50,9 +50,8 @@ int CraneManagement::unload(Ship &ship, string &containerId, int floor,int row, 
     }
     return shipPlan.getContainerPosition(row, column).unload(containerId);
 }
-
 int CraneManagement::move(Ship &ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
-    int unload = CraneManagement::unload(ship,containerId,oldFloor,oldFloor,oldColumn);
+    int unload = CraneManagement::unload(ship,containerId,oldFloor,oldRow,oldColumn);
     if (unload){
         return CraneManagement::load(ship,containerId,newFloor,newRow,newColumn);
     }
@@ -66,7 +65,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
     vector<string> row;
     std::ifstream instructionsFile(input_path);
     char command;
-    map<string,CraneOperation> changedContainers;
+    map<CraneOperation,vector<string>> changedContainers;
     int count = 0;
 
     if (instructionsFile.is_open()) {
@@ -86,12 +85,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                     }else{
                         string containerId = row[1];
                         if (load(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))){
-                            if (changedContainers.count(row[1])>0){
-                                changedContainers.erase(row[1]);
-                            }
-                            else{
-                                changedContainers[containerId] = CraneOperation::LOAD;
-                            }
+                            changedContainers[CraneOperation::LOAD].push_back(containerId);
                             count++;
                             string destination = ship.containerIdToDestination(containerId);
                             ship.portToContainers[destination].insert(containerId);
@@ -104,7 +98,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                     } else{
                         string containerId = row[1];
                         if (unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))){
-                            changedContainers[containerId] = CraneOperation::UNLOAD;
+                            changedContainers[CraneOperation::UNLOAD].push_back(containerId);
                             count++;
                             string destination = ship.containerIdToDestination(containerId);
                             ship.portToContainers[destination].erase(containerId);
@@ -114,6 +108,8 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                 case (char) CraneOperation::REJECT :
                     if (row.size() < 2) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
+                    } else {
+                        changedContainers[CraneOperation::REJECT].push_back(row[1]);
                     }
                     break;
                 case (char) CraneOperation::MOVE :
@@ -123,6 +119,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         if (move(ship, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[4]), stoi(row[5]),
                              stoi(row[6]))){
                             count++;
+                            changedContainers[CraneOperation::MOVE].push_back(row[1]);
                         }
                     }
                     break;

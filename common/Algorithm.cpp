@@ -145,7 +145,7 @@ void Algorithm::readShipPlan(const string &path) {
         X = stoi(row[1]);
         Y = stoi(row[2]);
         vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition(numOfFloors)));
-        ship->setShipPlan(*new ShipPlan(numOfFloors, plan));
+        ship->setShipPlan(ShipPlan(plan));
 
         while (getline(planFile, line)) {
             line = createPositionFromRowInput(numOfFloors, X, Y, line);
