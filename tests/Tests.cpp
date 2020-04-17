@@ -121,8 +121,8 @@ TEST(CraneManagement, readAndExecuteInstructions) {
 
     NaiveAlgorithm algorithm;
     algorithm.readShipPlan(prefix+"plan.csv");
-    ShipPlan shipPlan = algorithm.getShip()->getShipPlan();
+    Ship* ship = algorithm.getShip();
     CraneManagement craneManagement(prefix+"simulation.errors.csv");
-    const CraneManagement::CraneManagementAnswer &answer = craneManagement.readAndExecuteInstructions(shipPlan, prefix + "NaiveAlgorithm-test1.csv");
+    craneManagement.readAndExecuteInstructions(ship, prefix + "NaiveAlgorithm-test1.csv");
 }
 // endregion

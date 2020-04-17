@@ -191,6 +191,10 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
         while (getline(planFile, line)) {
             row = breakLineToWords(line,',');
             string containerId = row[0];
+//            if (!Container::isValidID(containerId)){
+//                //std::cout << "Bad input: invalid container id" << std::endl;
+//                continue;
+//            }
             int weight = stoi(row[1]);
             string destinationPort = row[2];
             //TODO fix this
