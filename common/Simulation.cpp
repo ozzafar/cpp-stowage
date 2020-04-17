@@ -129,7 +129,7 @@ void Simulation::RunSimulation() {
 
 void Simulation::getInstructionsForCargoFromAlgorithm(Algorithm &algorithm,Ship &ship, const string& port, const string &input_path, const string &output_path) {
     algorithm.getInstructionsForCargo(port, input_path, output_path);
-    ship.setContainerIdToContainerMap(algorithm.getShip()->getContainerIdToContainer());
+    ship.setContainerIdToContainerMap(algorithm.getShip()->getContainerIdToContainerMap());
 
 }
 
