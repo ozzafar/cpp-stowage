@@ -42,7 +42,6 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
                     index++;
                 }
                 else {
-                    //shipRoute->incrementCurrentPort();
                     return;
                 }
             }
@@ -56,7 +55,6 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
             std::cout << "Warning: can't load container " << containers[index]->getId() << " because it's destination port " << containers[index]->getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
         }
     }
-    //shipRoute->incrementCurrentPort();
 }
 
 void NaiveAlgorithm::getUnloadInstructions(const string& port, const string &output_path) {
