@@ -23,20 +23,25 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
             ContainersPosition& containersPosition = shipPlan.getContainerPosition(i, j);
             while (containersPosition.howManyAvailiable()) {
                 if (index < amount) {
-                    if (calculator.tryOperation((char) CraneOperation::LOAD, containers.at(index)->getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
-                        if (!shipRoute->portInNextStops(containers[index]->getDestinationPort())){
-                            std::cout << "Error: can't load container " << containers[index]->getId() << " because it's destination port " << containers[index]->getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
-                            writeOperation(output_path, CraneOperation::REJECT, containers[index]->getId(), -1, -1, -1);
+                    if(containers[index]->getDestinationPort() != shipRoute->getPorts()[shipRoute->getCurrentPort()])
+                    {
+                        if (calculator.tryOperation((char) CraneOperation::LOAD, containers.at(index)->getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
+                            if (!shipRoute->portInNextStops(containers[index]->getDestinationPort())){
+                                std::cout << "Warning: can't load container " << containers[index]->getId() << " because it's destination port " << containers[index]->getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
+                                writeOperation(output_path, CraneOperation::REJECT, containers[index]->getId(), -1, -1, -1);
+                            }
+                            else {
+                                writeOperation(output_path, CraneOperation::LOAD, containers[index]->getId(), containersPosition.getTopFloorNumber()+1, i, j);
+                                containersPosition.load(containers[index]->getId(), false);
+                            }
                         }
-                        else{
-                            writeOperation(output_path, CraneOperation::LOAD, containers[index]->getId(), containersPosition.getTopFloorNumber()+1, i, j);
-                            containersPosition.load(containers[index]->getId(), false);
-
-                        }
-
-                        index++;
                     }
-                } else {
+                    else {
+                        std::cout << "Warning: conatainer with same destination port as current port was waiting for load ignored";
+                    }
+                    index++;
+                }
+                else {
                     shipRoute->incrementCurrentPort();
                     return;
                 }
@@ -100,7 +105,7 @@ int NaiveAlgorithm::findLowestPlaceOfPortInPosition(const string &port, Containe
 // input_path is Containers-awaiting-at-port file
 void NaiveAlgorithm::getInstructionsForCargo(const string& port, const string &input_path, const string &output_path)  {
     getUnloadInstructions(port, output_path);
-    if (!shipRoute->inLastStop() && !output_path.empty()){
+    if (!shipRoute->inLastStop() && !input_path.empty()){
         getLoadInstructions(input_path, output_path);
     }
 }

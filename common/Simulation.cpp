@@ -32,17 +32,17 @@ void Simulation::RunSimulation() {
 
 
 
-    for(auto& p: std::filesystem::directory_iterator(rootPath)){
+    for(auto& travel: std::filesystem::directory_iterator(rootPath)){
 
-        path = p.path().string();
+        path = travel.path().string();
         std::cout <<"Starting simulate " << path << std::endl;
-        CraneManagement craneManagement(path + "/simulation.errors.csv");
+
 
 
         std::cout <<"update containersAwaitingAtPortInputFiles and totalNumbersOfVisitingPort" << std::endl;
-        for(auto& p: std::filesystem::directory_iterator(path)) // todo rename p
+        for(auto& file: std::filesystem::directory_iterator(path)) // todo rename p
         {
-            fileName = p.path().stem().string();
+            fileName = file.path().stem().string();
             if (fileName.substr(5, 1) == "_") {
                 if (isdigit(fileName.substr(6, 1).front()) != 0) {
                     containersAwaitingAtPortInputFiles.push_back(fileName);
@@ -61,6 +61,7 @@ void Simulation::RunSimulation() {
 
         for(Algorithm *algorithm: algorithms)
         {
+            CraneManagement craneManagement(path + "/simulation.errors.csv");
             std::cout <<"starting simulate " << algorithm->getName() << " on " << path << std::endl;
 
             if(fout.is_open())
@@ -95,12 +96,11 @@ void Simulation::RunSimulation() {
                 std::cout <<"Ship Arrived to port " << route[i] << std::endl;
                 if(indexOfVisitAtPort[route[i]]+1 > totalNumbersOfVisitingPort[route[i]])
                 {
-                    std::cout << "No containers awaiting at port input file for " << route[i] << "for visiting number " << indexOfVisitAtPort[route[i]] << std::endl;
+                    std::cout << "No containers awaiting at port input file for " << route[i] << " for visiting number " << indexOfVisitAtPort[route[i]] + 1 << std::endl;
                     getInstructionsForCargoFromAlgorithm(*algorithm, ship,route[i], "", path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
                 }
                 else
                 {
-                    string a = path + "/" + containersAwaitingAtPortInputFiles[indexOfFirstContainersAwaitingAtPortInputFile[route[i]]+indexOfVisitAtPort[route[i]]]+".txt";
                     getInstructionsForCargoFromAlgorithm(*algorithm, ship, route[i], path + "/" + containersAwaitingAtPortInputFiles[indexOfFirstContainersAwaitingAtPortInputFile[route[i]]+indexOfVisitAtPort[route[i]]] + ".txt",path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
                 }
 

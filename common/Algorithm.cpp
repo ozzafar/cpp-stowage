@@ -171,7 +171,7 @@ void Algorithm::readShipRoute(const string &path) {
             if (!checkPortNumberInput(row)) {
                 continue;
             }
-            row[0]= row[0].substr(0,5); //TODO fix this
+            //row[0]= row[0].substr(0,5); //TODO fix this
             std::transform(row[0].begin(), row[0].end(), row[0].begin(), ::toupper);
             ports.push_back(row[0]);
             portToIndexesInRoute[row[0]].push_back(rowIndex);
@@ -195,22 +195,22 @@ vector<Container*> Algorithm::readContainerAwaitingAtPortFile(const string &path
                 continue;
             }
             string containerId = row[0];
-//            if (!Container::isValidID(containerId)){
-//                //std::cout << "Bad input: invalid container id" << std::endl;
-//                continue;
-//            }
+            if (!Container::isValidID(containerId) && 0){ //TODO remove && 0
+                //std::cout << "Bad input: invalid container id" << std::endl;
+                continue;
+            }
             int weight = stoi(row[1]);
             string destinationPort = row[2];
             //TODO fix this
-//            if (!isAlphabetString(destinationPort)){
-//                std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id contains non alphabet chars" << std::endl;
-//                continue;
-//            }
-//            if (!destinationPort.size() == 5) {
-//                std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id isn't in the correct size" << std::endl;
-//                continue;
-//            }
-            //TODO fix this
+            if (!isAlphabetString(destinationPort)){
+                std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id contains non alphabet chars" << std::endl;
+                continue;
+            }
+            if (destinationPort.size() != 5) {
+                std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id isn't in the correct size" << std::endl;
+                continue;
+            }
+
 
             destinationPort = destinationPort.substr(0,5); // remove \n TODO fix this
             if (ship->knowContainerId(containerId)){
