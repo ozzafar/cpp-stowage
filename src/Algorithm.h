@@ -19,7 +19,9 @@ using std::string;
 
 
 class Algorithm {
+
 public:
+
     virtual ~Algorithm() = 0;
 
 protected:
@@ -50,8 +52,6 @@ public:
     Ship *getShip() const;
 
     Route *getShipRoute() const;
-
-    string &createPositionFromRowInput(int numOfFloors, int X, int Y, string &line) const;
 
     void setCalculator(WeightBalanceCalculator &calculator);
 };

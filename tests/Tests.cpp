@@ -7,23 +7,34 @@
 //
 
 #include "gtest/gtest.h"
-#include "../common/Container.cpp"
-#include "../common/NaiveAlgorithm.cpp"
-#include "../common/Algorithm.cpp"
-#include "../common/Route.cpp"
-#include "../common/ContainersPosition.cpp"
-#include "../common/Travel.cpp"
-#include "../common/ShipPlan.cpp"
-#include "../common/Ship.cpp"
-#include "../common/Simulation.cpp"
-#include "../common/WeightBalanceCalculator.cpp"
-#include "../common/CraneManagement.cpp"
-#include "../common/CraneOperation.h"
+#include "../src/Container.cpp"
+#include "../src/NaiveAlgorithm.cpp"
+#include "../src/Algorithm.cpp"
+#include "../src/Route.cpp"
+#include "../src/ContainersPosition.cpp"
+#include "../src/Travel.cpp"
+#include "../src/ShipPlan.cpp"
+#include "../src/Ship.cpp"
+#include "../src/Simulation.cpp"
+#include "../src/WeightBalanceCalculator.cpp"
+#include "../src/CraneManagement.cpp"
+#include "../src/CraneOperation.h"
+#include "../common/IO.cpp"
 
 string prefix = "/Users/ozzafar/CLionProjects/cpp-stowage/tests/";
 
+// region Container tests
+
+TEST(Container, IdValidity){
+    Container container(0,"dest","CSQU3054383");
+    EXPECT_TRUE(Container::isValidID(container.getId()));
+}
+
+//endregion
+
 
 // region Read Input tests
+
 TEST(ReadShipPlan, printCreatedPlan){
     NaiveAlgorithm algorithm;
     algorithm.readShipPlan(prefix+"plan.csv");
@@ -52,22 +63,22 @@ TEST(ContainersPosition, basicFunctionality){
     ContainersPosition position(2,5);
     EXPECT_EQ(0,position.getNumOfActiveFloors());
     EXPECT_EQ(3,position.howManyAvailiable());
-    position.load("containerId1");
+    position.load("containerId1", true);
     EXPECT_EQ("containerId1",position.getTop());
     EXPECT_EQ(1,position.getNumOfActiveFloors());
     EXPECT_EQ(2,position.getTopFloorNumber());
     EXPECT_EQ(2,position.howManyAvailiable());
-    position.load("containerId2");
+    position.load("containerId2", true);
     EXPECT_EQ("containerId2",position.getTop());
     EXPECT_EQ(2,position.getNumOfActiveFloors());
     EXPECT_EQ(3,position.getTopFloorNumber());
     EXPECT_EQ(1,position.howManyAvailiable());
-    position.unload("containerId1");
+    position.unload("containerId1", true);
     EXPECT_EQ("containerId2",position.getTop());
     EXPECT_EQ(2,position.getNumOfActiveFloors());
     EXPECT_EQ(3,position.getTopFloorNumber());
     EXPECT_EQ(1,position.howManyAvailiable());
-    position.unload("containerId2");
+    position.unload("containerId2", true);
     EXPECT_EQ("containerId1",position.getTop());
     EXPECT_EQ(1,position.getNumOfActiveFloors());
     EXPECT_EQ(2,position.getTopFloorNumber());
@@ -75,7 +86,7 @@ TEST(ContainersPosition, basicFunctionality){
 
     ContainersPosition position2(2,3);
     EXPECT_EQ(1,position2.howManyAvailiable());
-    position2.load("containerId");
+    position2.load("containerId", true);
     EXPECT_EQ(0,position2.howManyAvailiable());
 }
 

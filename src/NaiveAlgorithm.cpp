@@ -23,7 +23,7 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
             ContainersPosition& containersPosition = shipPlan.getContainerPosition(i, j);
             while (containersPosition.howManyAvailiable()) {
                 if (index < amount) {
-                    if(containers[index]->getDestinationPort() != shipRoute->getPorts()[shipRoute->getCurrentPort()])
+                    if(containers[index]->getDestinationPort() != shipRoute->getCurrentPortName())
                     {
                         if (calculator.tryOperation((char) CraneOperation::LOAD, containers.at(index)->getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
                             if (!shipRoute->portInNextStops(containers[index]->getDestinationPort())){
@@ -53,7 +53,7 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
         if (shipRoute->portInNextStops(containers[index]->getDestinationPort())) {
             writeOperation(output_path, CraneOperation::REJECT, containers[index]->getId(), -1, -1, -1);
         } else {
-            std::cout << "Error: can't load container " << containers[index]->getId() << " because it's destination port " << containers[index]->getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
+            std::cout << "Warning: can't load container " << containers[index]->getId() << " because it's destination port " << containers[index]->getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
         }
     }
     shipRoute->incrementCurrentPort();

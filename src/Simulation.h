@@ -21,12 +21,12 @@ private:
 public:
     Simulation(const list<Algorithm*> &algorithms, const string &rootPath);
 
-    void RunSimulation();
+    void runSimulation();
 
-    void getInstructionsForCargoFromAlgorithm(Algorithm &algorithm,Ship &ship, const string& port, const string &input_path, const string &output_path);
+    void getInstructionsForCargoFromAlgorithm(Algorithm* algorithm,Ship* ship, const string& port, const string &input_path, const string &output_path);
 
-    void checkForErrorsAfterPort(Ship &ship, const string &port, std::ofstream &fout,
-                                 CraneManagement::CraneManagementAnswer& answer, Route& route);
+    void checkForErrorsAfterPort(Ship* ship, const string &port, std::ofstream &fout,
+                                 CraneManagement::CraneManagementAnswer& answer, Route* route);
 };
 
 

@@ -27,7 +27,9 @@ public:
 
     void incrementCurrentPort();
 
-    int getCurrentPort() const;
+    int getCurrentPortIndex() const;
+
+    string& getCurrentPortName();
 
     bool portInNextStops(string& port);
 

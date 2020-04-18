@@ -9,7 +9,7 @@ Route::Route(vector<string> ports) : ports(ports) {}
 
 Route::Route() {}
 
-int Route::getCurrentPort() const {
+int Route::getCurrentPortIndex() const {
     return currentPort;
 }
 
@@ -32,7 +32,7 @@ const vector<string> &Route::getPorts() const {
 }
 
 bool Route::inLastStop() {
-    return (size_t) currentPort == ports.size();
+    return (size_t) currentPort == ports.size()-1;
 }
 
 int Route::nextStopForPort(string& port) {
@@ -42,5 +42,9 @@ int Route::nextStopForPort(string& port) {
         }
     }
     return INT32_MAX;
+}
+
+string& Route::getCurrentPortName() {
+    return ports.at(currentPort);
 }
 

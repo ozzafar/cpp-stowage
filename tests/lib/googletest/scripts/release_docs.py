@@ -67,7 +67,7 @@ import os
 import re
 import sys
 
-import common
+import src
 
 
 # Wiki pages that shouldn't be branched for every gtest/gmock release.
@@ -90,7 +90,7 @@ class WikiBrancher(object):
   """Branches ..."""
 
   def __init__(self, dot_version):
-    self.project, svn_root_path = common.GetSvnInfo()
+    self.project, svn_root_path = src.GetSvnInfo()
     if self.project not in ('googletest', 'googlemock'):
       sys.exit('This script must be run in a gtest or gmock SVN workspace.')
     self.wiki_dir = svn_root_path + '/wiki'

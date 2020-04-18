@@ -19,7 +19,7 @@ private:
 
 public:
 
-    std::map<string, std::set<string>> portToContainers;
+    std::map<string, std::set<string>> portToContainers; //TODO Algorithm doesn't maintains this member
 
     Ship();
 
