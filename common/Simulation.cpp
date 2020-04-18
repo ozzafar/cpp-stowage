@@ -57,11 +57,12 @@ void Simulation::RunSimulation() {
 
 
         std::ofstream fout;
-        fout.open(path + "/simulation.results.csv", std::fstream::app);
 
         for(Algorithm *algorithm: algorithms)
         {
-            CraneManagement craneManagement(path + "/simulation.errors.csv");
+
+            fout.open(path + "/" + algorithm->getName() + "_simulation.results.csv", std::fstream::app);
+            CraneManagement craneManagement(path + "/" + algorithm->getName() + "_simulation.errors.csv");
             std::cout <<"starting simulate " << algorithm->getName() << " on " << path << std::endl;
 
             if(fout.is_open())
@@ -97,25 +98,28 @@ void Simulation::RunSimulation() {
                 if(indexOfVisitAtPort[route[i]]+1 > totalNumbersOfVisitingPort[route[i]])
                 {
                     std::cout << "No containers awaiting at port input file for " << route[i] << " for visiting number " << indexOfVisitAtPort[route[i]] + 1 << std::endl;
-                    getInstructionsForCargoFromAlgorithm(*algorithm, ship,route[i], "", path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                    getInstructionsForCargoFromAlgorithm(*algorithm, ship,route[i], "", path + "/" + route[i] + "_" + algorithm->getName() + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
                 }
                 else
                 {
-                    getInstructionsForCargoFromAlgorithm(*algorithm, ship, route[i], path + "/" + containersAwaitingAtPortInputFiles[indexOfFirstContainersAwaitingAtPortInputFile[route[i]]+indexOfVisitAtPort[route[i]]] + ".txt",path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                    getInstructionsForCargoFromAlgorithm(*algorithm, ship, route[i], path + "/" + containersAwaitingAtPortInputFiles[indexOfFirstContainersAwaitingAtPortInputFile[route[i]]+indexOfVisitAtPort[route[i]]] + ".txt",path + "/" + route[i] + "_" + algorithm->getName() + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
                 }
 
-                craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, path + "/" + route[i] + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
-                fout.open(path + "/simulation.results.csv", std::fstream::app);
+                craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, path + "/" + route[i] + "_" + algorithm->getName() + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
+                fout.open(path + "/" + algorithm->getName() + "_simulation.results.csv", std::fstream::app);
                 totalOperations += craneManagementAnswer.numOfOperations;
                 checkForErrorsAfterPort(ship, route[i], fout, craneManagementAnswer, *shipRoute);
                 indexOfVisitAtPort[route[i]]++;
                 std::cout <<"Ship left port " << route[i] << std::endl;
             }
 
+
+            fout.open(path + "/" + algorithm->getName() + "_simulation.results.csv", std::fstream::app);
             if(fout.is_open())
             {
                 fout << totalOperations << ",";
             }
+            fout.close();
             totalOperations = 0;
         }
         if(fout.is_open())
@@ -135,7 +139,7 @@ void Simulation::getInstructionsForCargoFromAlgorithm(Algorithm &algorithm,Ship 
 
 void Simulation::checkForErrorsAfterPort(Ship &ship, const string &port, std::ofstream &fout, CraneManagement::CraneManagementAnswer& answer,Route& route) {
     if (fout.is_open()){
-        if (ship.portToContainers.count(port)>0){
+        if (ship.portToContainers[port].size() > 0){
             fout << "Not all of the containers of this port were unloaded,";
         }
         if (answer.changedContainers.count(CraneOperation::REJECT) > 0) {
@@ -155,6 +159,7 @@ void Simulation::checkForErrorsAfterPort(Ship &ship, const string &port, std::of
             }
         }
     }
+    fout.close();
 }
 
 

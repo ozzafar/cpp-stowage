@@ -37,12 +37,12 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
                         }
                     }
                     else {
-                        std::cout << "Warning: conatainer with same destination port as current port was waiting for load ignored";
+                        std::cout << "Warning: conatainer with same destination port as current port was waiting for load ignored" << std::endl;
                     }
                     index++;
                 }
                 else {
-                    shipRoute->incrementCurrentPort();
+                    //shipRoute->incrementCurrentPort();
                     return;
                 }
             }
@@ -56,7 +56,7 @@ void NaiveAlgorithm::getLoadInstructions(const string &input_path, const string 
             std::cout << "Error: can't load container " << containers[index]->getId() << " because it's destination port " << containers[index]->getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
         }
     }
-    shipRoute->incrementCurrentPort();
+    //shipRoute->incrementCurrentPort();
 }
 
 void NaiveAlgorithm::getUnloadInstructions(const string& port, const string &output_path) {
@@ -108,6 +108,7 @@ void NaiveAlgorithm::getInstructionsForCargo(const string& port, const string &i
     if (!shipRoute->inLastStop() && !input_path.empty()){
         getLoadInstructions(input_path, output_path);
     }
+    shipRoute->incrementCurrentPort();
 }
 
 string NaiveAlgorithm::getName() {
