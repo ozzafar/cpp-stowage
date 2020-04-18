@@ -113,4 +113,9 @@ string NaiveAlgorithm::getName() {
     return "Naive";
 }
 
+NaiveAlgorithm::~NaiveAlgorithm() {
+    delete shipRoute;
+    delete ship;
+}
+
 
