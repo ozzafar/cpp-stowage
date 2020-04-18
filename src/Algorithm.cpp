@@ -15,7 +15,9 @@ using std::stringstream;
 using std::string;
 using std::vector;
 
-Algorithm::~Algorithm() = default;
+Algorithm::~Algorithm(){
+
+};
 
 // region HELP FUNCTIONS
 
