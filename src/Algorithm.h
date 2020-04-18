@@ -54,6 +54,8 @@ public:
     Route *getShipRoute() const;
 
     void setCalculator(WeightBalanceCalculator &calculator);
+
+    static Algorithm *createAlgorithmByName(string basicString);
 };
 
 #endif //CPP_STOWAGE_ALGORITHM_H

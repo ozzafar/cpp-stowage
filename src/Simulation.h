@@ -27,6 +27,8 @@ public:
 
     void checkForErrorsAfterPort(Ship* ship, const string &port, std::ofstream &fout,
                                  CraneManagement::CraneManagementAnswer& answer, Route* route);
+
+    void writeToFile(std::ofstream &fout, string& path,  string content);
 };
 
 

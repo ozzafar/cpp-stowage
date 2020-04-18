@@ -154,7 +154,6 @@ Route* IO::readShipRoute(const string &path) {
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
             rowIndex++;
-            std::cout << "Reading input route file, line " << rowIndex << std::endl;
             row = breakLineToWords(line, ' ');
 
             if (!checkPortNumberInput(row)) {

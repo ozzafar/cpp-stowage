@@ -8,6 +8,7 @@
 #include "ContainersPosition.h"
 #include "CraneOperation.h"
 #include "../common/IO.h"
+#include "NaiveAlgorithm.h"
 #include <algorithm>
 
 using std::stringstream;
@@ -70,6 +71,14 @@ void Algorithm::setCalculator(WeightBalanceCalculator &calculatorP) {
 
 vector<Container *> Algorithm::readContainerAwaitingAtPortFile(const string &path) {
     return IO::readContainerAwaitingAtPortFile(path,ship);
+}
+
+Algorithm *Algorithm::createAlgorithmByName(string algorithmName) {
+    if(algorithmName == "Naive")
+    {
+        return new NaiveAlgorithm();
+    }
+    return nullptr;
 }
 
 // endregion

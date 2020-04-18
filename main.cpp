@@ -6,7 +6,7 @@ using std::list;
 
 
 int main() {
-    string root = "/Users/ozzafar/CLionProjects/cpp-stowage/tests/input/";
+    string root = "C://input/";
 
     NaiveAlgorithm *naiveAlgorithm = new NaiveAlgorithm();
     list<Algorithm*> algorithms;
