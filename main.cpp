@@ -14,9 +14,5 @@ int main() {
     Simulation simulation(algorithms, root);
     simulation.runSimulation();
 
-    for (Algorithm* algorithm : algorithms){
-        delete algorithm;
-    }
-
     return 0;
 }

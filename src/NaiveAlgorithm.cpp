@@ -118,4 +118,8 @@ NaiveAlgorithm::~NaiveAlgorithm() {
     delete ship;
 }
 
+NaiveAlgorithm::NaiveAlgorithm() {
+
+}
+
 

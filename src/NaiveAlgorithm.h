@@ -23,13 +23,19 @@ class NaiveAlgorithm : public Algorithm {
 
 public:
 
+    NaiveAlgorithm();
+
+    NaiveAlgorithm(const NaiveAlgorithm &naiveAlgorithm) {
+        calculator = naiveAlgorithm.calculator, portToIndexesInRoute = naiveAlgorithm.portToIndexesInRoute,
+
+        shipRoute = new Route(naiveAlgorithm.shipRoute), ship = new Ship(naiveAlgorithm.ship);
+    }
+
     void getInstructionsForCargo(const string& port, const string &input_path, const string &output_path) override;
 
     virtual string getName() override;
 
     virtual ~NaiveAlgorithm();
-
-private:
 
     bool operator()(Container *a, Container *b) {
         if (portToIndexesInRoute.count(a->getDestinationPort())==0){

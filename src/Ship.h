@@ -19,6 +19,11 @@ private:
 
 public:
 
+    Ship(const Ship* ship)
+    {
+        shipPlan = (*ship).shipPlan, containerIdToContainer = (*ship).containerIdToContainer;
+    }
+
     std::map<string, std::set<string>> portToContainers; //TODO Algorithm doesn't maintains this member
 
     Ship();

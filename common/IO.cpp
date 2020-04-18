@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include "IO.h"
+#include <algorithm>
 
 //region HELP FUNCTIONS
 

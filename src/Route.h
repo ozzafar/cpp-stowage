@@ -23,6 +23,10 @@ public:
 
     Route();
 
+    Route(const Route* route) {
+        ports = (*route).ports, currentPort=(*route).currentPort;
+    }
+
     Route(vector<string> ports);
 
     void incrementCurrentPort();
