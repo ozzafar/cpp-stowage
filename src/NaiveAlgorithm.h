@@ -27,8 +27,9 @@ public:
 
     virtual string getName() override;
 
+    virtual ~NaiveAlgorithm();
 
-// private: (in comment for tests) TODO return it to private
+private:
 
     bool operator()(Container *a, Container *b) {
         if (portToIndexesInRoute.count(a->getDestinationPort())==0){

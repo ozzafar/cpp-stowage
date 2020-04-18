@@ -130,7 +130,7 @@ void Simulation::getInstructionsForCargoFromAlgorithm(Algorithm* algorithm,Ship*
 
 void Simulation::checkForErrorsAfterPort(Ship* ship, const string &port, std::ofstream &fout, CraneManagement::CraneManagementAnswer& answer,Route* route) {
     if (fout.is_open()){
-        if (ship.portToContainers[port].size() > 0){
+        if (ship->portToContainers[port].size() > 0){
             fout << "Not all of the containers of this port were unloaded,";
         }
         if (answer.changedContainers.count(CraneOperation::REJECT) > 0) {

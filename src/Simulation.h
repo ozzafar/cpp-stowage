@@ -14,8 +14,11 @@
 #include "CraneManagement.h"
 
 class Simulation {
+
 private:
+
     list<Algorithm*> algorithms;
+
     string rootPath;
 
 public:
