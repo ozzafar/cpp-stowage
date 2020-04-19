@@ -10,8 +10,17 @@
 //region HELP FUNCTIONS
 
 static bool isAlphabetString(const string &str) {
+    string strForCheck;
+
+    if(iscntrl(str[str.size()-1]))
+    {
+        strForCheck = str.substr(0, str.size()-1);
+    } else{
+        strForCheck = str;
+    }
+
     char ch;
-    for (char i : str) {
+    for (char i : strForCheck) {
         ch = i;
         if ((ch < 65) || (ch > 122) || (ch > 90 && ch < 97)) {
             return false;
@@ -62,8 +71,13 @@ static bool checkPortNumberInput(vector<string> portNumber) {
         return false;
     }
 
+    if(iscntrl(portNumber[0].at(portNumber[0].size()-1)))
+    {
+        portNumber[0] = portNumber[0].substr(0, portNumber[0].size()-1);
+    }
+
     if (portNumber[0].size() != 5) {
-        std::cout << "Bad input: line in route input file ignored because it has no 5 chars" << std::endl;
+        std::cout << "Bad input: line in route input file ignored because it has no 5 chars " << portNumber[0] << " size is " << portNumber[0].size() << std::endl;
         return false;
     }
 
@@ -98,6 +112,11 @@ vector<Container*> IO::readContainerAwaitingAtPortFile(const string &input_path,
             }
             int weight = stoi(row[1]);
             string destinationPort = row[2];
+
+            if(iscntrl(destinationPort.at(destinationPort.size()-1)))
+            {
+                destinationPort = destinationPort.substr(0, destinationPort.size()-1);
+            }
 
             if (!isAlphabetString(destinationPort)){
                 std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id contains non alphabet chars" << std::endl;

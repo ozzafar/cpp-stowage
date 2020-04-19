@@ -39,13 +39,18 @@ void Simulation::runSimulation() {
         for(auto& file: std::filesystem::directory_iterator(path))
         {
             fileName = file.path().stem().string();
-            if (fileName.substr(5, 1) == "_") {
+            std::cout << fileName << " " << fileName.size() << std::endl;
+            if (fileName.size() > 5 && fileName.at(5) == '_') {
+                std::cout << "first condition" << std::endl;
                 if (isdigit(fileName.substr(6, 1).front()) != 0) {
+                    std::cout << "second condition" << std::endl;
                     containersAwaitingAtPortInputFiles.push_back(fileName);
                     totalNumbersOfVisitingPort[fileName.substr(0, 5)]++;
+                    std::cout << "fileName.substr(0, 5)" << fileName.substr(0, 5) << std::endl;
                 }
             }
         }
+
 
         sort(containersAwaitingAtPortInputFiles.begin(), containersAwaitingAtPortInputFiles.end());
 
@@ -92,8 +97,9 @@ void Simulation::runSimulation() {
             for (i = 0; i < route.size(); i++)
             {
                 std::cout << "----------------" <<"Ship Arrived to port " << route[i] << "----------------" << std::endl;
-                if(indexOfVisitAtPort[route[i]]+1 > totalNumbersOfVisitingPort[route[i]])
+                if(indexOfVisitAtPort[route[i]]+1 > totalNumbersOfVisitingPort[route[i].substr(0,5)])
                 {
+                    std::cout << indexOfVisitAtPort[route[i]]+1 << totalNumbersOfVisitingPort[route[i]] << std::endl;
                     std::cout << "No containers awaiting at port input file for " << route[i] << " for visiting number " << indexOfVisitAtPort[route[i]] + 1 << std::endl;
                     getInstructionsForCargoFromAlgorithm(algorithm, ship,route[i], "", path + "/" + route[i] + "_" + algorithm->getName() + "_instructions_" + std::to_string(indexOfVisitAtPort[route[i]]) + ".txt");
                 }

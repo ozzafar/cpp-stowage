@@ -10,6 +10,8 @@
 #include "../src/Ship.h"
 #include "../src/Route.h"
 #include <vector>
+#include <stdio.h>
+#include <ctype.h>
 
 using std::vector;
 

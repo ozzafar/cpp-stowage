@@ -17,7 +17,7 @@ using std::vector;
 
 Algorithm::~Algorithm(){
 
-};
+}
 
 // region HELP FUNCTIONS
 
