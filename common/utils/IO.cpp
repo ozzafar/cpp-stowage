@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include "IO.h"
+#include "../errors/Errors.h"
 #include <algorithm>
 
 //region HELP FUNCTIONS
@@ -29,7 +30,8 @@ static bool isAlphabetString(const string &str) {
     return true;
 }
 
-static void createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, Ship* ship) {
+static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, ShipPlan& shipPlan) {
+    Errors errors;
     int x, y, actualNumOfFloors;
     vector<string> row = IO::breakLineToWords(line, ',');
     if (row.size() != 3){
@@ -50,9 +52,10 @@ static void createPositionFromRowInput(int numOfFloors, int X, int Y, string &li
         } else if (x < 0 || x >= X || y < 0 || y >= Y) {
             std::cout << "Warning: the position (" << x << "," << y << ") is illegal" << std::endl;
         } else {
-            ship->getShipPlan().setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
+            shipPlan.setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
         }
     }
+    return errors.getErrorsCode();
 }
 
 static bool checkPortNumberInput(vector<string> portNumber) {
@@ -92,11 +95,11 @@ static bool checkPortNumberInput(vector<string> portNumber) {
 
 // region MAIN FUNCTIONS
 
-vector<Container*> IO::readContainerAwaitingAtPortFile(const string &input_path, Ship* ship) {
+int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers) {
+    Errors errors;
     string line;
     std::ifstream planFile(input_path);
     vector<string> row;
-    vector<Container*> containers;
 
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
@@ -127,21 +130,22 @@ vector<Container*> IO::readContainerAwaitingAtPortFile(const string &input_path,
                 continue;
             }
 
-            if (ship->knowContainerId(containerId)){
+            if (ship.knowContainerId(containerId)){
                 std::cout << "Warning: container " << containerId << " appears twice" << std::endl;
             }
             else{
-                auto* newContainer = new Container(weight,destinationPort,containerId);
-                containers.push_back(newContainer);
-                ship->updateContainerMapping(new Container(weight,destinationPort,containerId));
+                Container newContainer(weight,destinationPort,containerId);
+                waitingContainers.push_back(newContainer);
+                ship.updateContainerMapping(newContainer);
             }
         }
         planFile.close();
     }
-    return containers;
+    return errors.getErrorsCode();
 }
 
-void IO::readShipPlan(const string &path, Ship* ship) {
+int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
+    Errors errors;
     int numOfFloors, X, Y;
     string line, word;
     std::ifstream planFile(path);
@@ -154,16 +158,18 @@ void IO::readShipPlan(const string &path, Ship* ship) {
         X = stoi(row[1]);
         Y = stoi(row[2]);
         vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition(numOfFloors)));
-        ship->setShipPlan(ShipPlan(plan));
+        shipPlan = ShipPlan(plan);
 
         while (getline(planFile, line)) {
-            createPositionFromRowInput(numOfFloors, X, Y, line, ship);
+            createPositionFromRowInput(numOfFloors, X, Y, line, shipPlan);
         }
         planFile.close();
     }
+    return errors.getErrorsCode();
 }
 
-Route* IO::readShipRoute(const string &path) {
+int IO::readShipRoute(const string &path, Route& route) {
+    Errors errors;
     vector<string> ports;
     int rowIndex = 0;
     string line;
@@ -184,7 +190,8 @@ Route* IO::readShipRoute(const string &path) {
         }
         planFile.close();
     }
-    return new Route(ports);
+    route = Route(ports);
+    return errors.getErrorsCode();
 }
 
 vector<string> IO::breakLineToWords(string &line, char delimeter) {

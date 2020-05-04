@@ -15,7 +15,7 @@ private:
 
     ShipPlan shipPlan;
 
-    std::map<string, Container *> containerIdToContainer;
+    std::map<string, Container> containerIdToContainer;
 
 public:
 
@@ -41,13 +41,10 @@ public:
     // check if the ship has encountered this container Id
     bool knowContainerId(const string &id);
 
-    void updateContainerMapping(Container *container);
+    void updateContainerMapping(Container container);
 
     int getAmountOfContainers();
 
-    void setContainerIdToContainerMap(map<string, Container *> &containerIdToContainerP);
-
-    map<string, Container *> &getContainerIdToContainerMap();
 };
 
 

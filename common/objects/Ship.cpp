@@ -8,32 +8,25 @@
 
 Ship::Ship() = default;
 
-void Ship::updateContainerMapping(Container* container) {
-    this->containerIdToContainer[container->getId()] = container;
+void Ship::updateContainerMapping(Container container) {
+    this->containerIdToContainer[container.getId()] = container;
 }
 
-void Ship::setContainerIdToContainerMap(map<string, Container *> &containerIdToContainerP) {
-    Ship::containerIdToContainer = containerIdToContainerP;
-}
 
 ShipPlan& Ship::getShipPlan() {
     return shipPlan;
 }
 
-void Ship::setShipPlan(ShipPlan shipPlanP) {
-    Ship::shipPlan = std::move(shipPlanP);
-}
-
 string& Ship::containerIdToDestination(string &id) {
-    return containerIdToContainer[id]->getDestinationPort();
+    return containerIdToContainer[id].getDestinationPort();
 }
 
 int Ship::containerIdToWeight(const string &id) {
-    return containerIdToContainer[id]->getWeight();
+    return containerIdToContainer[id].getWeight();
 }
 
 Container& Ship::getContainerOfId(const string &id) {
-    return *containerIdToContainer[id];
+    return containerIdToContainer[id];
 }
 
 bool Ship::knowContainerId(const string& id) {
@@ -49,8 +42,3 @@ int Ship::getAmountOfContainers() {
     }
     return amount;
 }
-
-map<string, Container *> &Ship::getContainerIdToContainerMap() {
-    return containerIdToContainer;
-}
-

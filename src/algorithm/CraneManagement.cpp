@@ -7,8 +7,8 @@
 #include <map>
 #include <utility>
 #include "CraneManagement.h"
-#include "CraneOperation.h"
-#include "../common/IO.h"
+#include "../../common/utils/IO.h"
+#include "AbstractAlgorithm.h"
 
 
 CraneManagement::CraneManagement(string errorsFilePath) : errorsFilePath(std::move(errorsFilePath)) { }
@@ -22,7 +22,7 @@ int CraneManagement::load(Ship* ship, string& containerId, int floor, int row, i
             fout << "Error: can't load to floor " << floor << " in position " << "("<<row << " " << column << "),";
         }
         fout.close();
-        return FAILURE;
+        return 0;
     }
     return position.load(containerId, true);
 }
@@ -37,7 +37,7 @@ int CraneManagement::unload(Ship* ship, string &containerId, int floor,int row, 
             fout << "Error: can't unload the container " << containerId << " from floor " << floor << " in position "
                  << "(" << row << " " << column << ") because the container isn't on top,";
         }
-        return FAILURE;
+        return 0;
     }
     return shipPlan.getContainerPosition(row, column).unload(containerId, true);
 }
@@ -46,7 +46,7 @@ int CraneManagement::move(Ship* ship, string &containerId, int oldFloor, int old
     if (unload){
         return CraneManagement::load(ship,containerId,newFloor,newRow,newColumn);
     }
-    return FAILURE;
+    return 0;
 }
 
 /* ignores extra param in line
@@ -56,7 +56,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
     vector<string> row;
     std::ifstream instructionsFile(input_path);
     char command;
-    map<CraneOperation,vector<string>> changedContainers;
+    map<Action ,vector<string>> changedContainers;
     int count = 0;
 
     if (instructionsFile.is_open()) {
@@ -70,47 +70,47 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
             }
 
             switch (command) {
-                case (char) CraneOperation::LOAD :
+                case (char) Action::LOAD :
                     if (row.size() < 5) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     }else{
                         string containerId = row[1];
                         if (load(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))){
-                            changedContainers[CraneOperation::LOAD].push_back(containerId);
+                            changedContainers[Action::LOAD].push_back(containerId);
                             count++;
                             string destination = ship->containerIdToDestination(containerId);
                             ship->portToContainers[destination].insert(containerId);
                         }
                     }
                     break;
-                case (char) CraneOperation::UNLOAD :
+                case (char) Action::UNLOAD :
                     if (row.size() < 5) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     } else{
                         string containerId = row[1];
                         if (unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))){
-                            changedContainers[CraneOperation::UNLOAD].push_back(containerId);
+                            changedContainers[Action::UNLOAD].push_back(containerId);
                             count++;
                             string destination = ship->containerIdToDestination(containerId);
                             ship->portToContainers[destination].erase(containerId);
                         }
                     }
                     break;
-                case (char) CraneOperation::REJECT :
+                case (char) Action::REJECT :
                     if (row.size() < 2) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     } else {
-                        changedContainers[CraneOperation::REJECT].push_back(row[1]);
+                        changedContainers[Action::REJECT].push_back(row[1]);
                     }
                     break;
-                case (char) CraneOperation::MOVE :
+                case (char) Action::MOVE :
                     if (row.size() < 8) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     } else {
                         if (move(ship, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[4]), stoi(row[5]),
                              stoi(row[6]))){
                             count++;
-                            changedContainers[CraneOperation::MOVE].push_back(row[1]);
+                            changedContainers[Action::MOVE].push_back(row[1]);
                         }
                     }
                     break;

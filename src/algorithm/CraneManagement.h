@@ -6,13 +6,13 @@
 #define CPP_STOWAGE_CRANEMANAGEMENT_H
 
 #include <map>
-#include "ShipPlan.h"
-#include "Ship.h"
-#include "CraneOperation.h"
-#include "CraneOperation.h"
+#include "../../common/objects/ShipPlan.h"
+#include "../../common/objects/Ship.h"
+#include "AbstractAlgorithm.h"
 #include <fstream>
 
 using std::map;
+typedef AbstractAlgorithm::Action Action;
 
 class CraneManagement {
 
@@ -34,7 +34,7 @@ public:
 
 
     typedef struct {
-        map<CraneOperation,vector<string>> changedContainers;
+        map<Action,vector<string>> changedContainers;
         int numOfOperations;
     } CraneManagementAnswer;
 

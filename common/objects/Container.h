@@ -10,16 +10,16 @@
 
 using std::string ;
 
-#define SUCCESS 1;
-#define FAILURE 0;
-
 class Container {
+
 private:
+
     int weight;
     string destinationPort;
     string id;
 
 public:
+
     Container();
 
     Container(int weight, const string &destinationPort, const string &id);
