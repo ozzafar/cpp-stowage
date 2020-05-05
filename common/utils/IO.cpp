@@ -80,7 +80,7 @@ static bool checkPortNumberInput(vector<string> portNumber) {
     }
 
     if (portNumber[0].size() != 5) {
-        std::cout << "Bad input: line in route input file ignored because it has no 5 chars " << portNumber[0] << " size is " << portNumber[0].size() << std::endl;
+        std::cout << "Bad input: line in route input file ignored because it has no 5 chars " << portNumber[0] << std::endl;
         return false;
     }
 
@@ -109,8 +109,10 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
                 continue;
             }
             string containerId = row[0];
-            if (!Container::isValidID(containerId) && 0){ //TODO remove && 0
-                std::cout << "Bad input: invalid container id" << std::endl;
+
+
+            if (!Container::isValidID(containerId)){
+                std::cout << "Bad input: invalid container id " << containerId << std::endl;
                 continue;
             }
             int weight = stoi(row[1]);
@@ -186,6 +188,10 @@ int IO::readShipRoute(const string &path, Route& route) {
                 continue;
             }
             std::transform(row[0].begin(), row[0].end(), row[0].begin(), ::toupper);
+            if(iscntrl(row[0].at(row[0].size()-1)))
+            {
+                row[0] = row[0].substr(0, row[0].size()-1);
+            }
             ports.push_back(row[0]);
         }
         planFile.close();
