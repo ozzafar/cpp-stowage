@@ -35,17 +35,20 @@ static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &lin
     int x, y, actualNumOfFloors;
     vector<string> row = IO::breakLineToWords(line, ',');
     if (row.size() != 3){
+        errors.addError(Error::PLAN_BAD_LINE_FORMAT_WARNING);
         std::cout << "Warning: bad input" << std::endl;
     } else {
         x = stoi(row[0]);
         y = stoi(row[1]);
         actualNumOfFloors = stoi(row[2]);
         if (actualNumOfFloors > numOfFloors) {
+            errors.addError(Error::NUMBER_OF_FLOORS_WARNING);
             std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: "
                       << actualNumOfFloors << " is illegal (max number is " << numOfFloors << ")"
                       << std::endl;
         }
         else if (actualNumOfFloors == numOfFloors) {
+            errors.addError(Error::NUMBER_OF_FLOORS_WARNING);
             std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: "
                       << actualNumOfFloors << " is the maximum number (" << numOfFloors << ")"
                       << std::endl;
@@ -112,6 +115,7 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
 
 
             if (!Container::isValidID(containerId)){
+                errors.addError(Error::ILLEGAL_ID_CHECK_WARNING);
                 std::cout << "Bad input: invalid container id " << containerId << std::endl;
                 continue;
             }
@@ -124,15 +128,18 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
             }
 
             if (!isAlphabetString(destinationPort)){
+                errors.addError(Error::ID_CANNOT_BE_READ_WARINING);
                 std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id contains non alphabet chars" << std::endl;
                 continue;
             }
             if (destinationPort.size() != 5) {
+                errors.addError(Error::ID_CANNOT_BE_READ_WARINING);
                 std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id isn't in the correct size" << std::endl;
                 continue;
             }
 
             if (ship.knowContainerId(containerId)){
+                errors.addError(Error::DUPLICATE_CONTAINER_ID_WARINING);
                 std::cout << "Warning: container " << containerId << " appears twice" << std::endl;
             }
             else{
@@ -163,9 +170,12 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
         shipPlan = ShipPlan(plan);
 
         while (getline(planFile, line)) {
-            createPositionFromRowInput(numOfFloors, X, Y, line, shipPlan);
+            errors.addErrors(createPositionFromRowInput(numOfFloors, X, Y, line, shipPlan));
         }
         planFile.close();
+    }
+    else{
+        errors.addError(Error::PLAN_FILE_CANNOT_BE_READ_ERROR);
     }
     return errors.getErrorsCode();
 }
@@ -195,8 +205,11 @@ int IO::readShipRoute(const string &path, Route& route) {
             ports.push_back(row[0]);
         }
         planFile.close();
+        route = Route(ports);
     }
-    route = Route(ports);
+    else{
+        errors.addError(Error::ROUTE_FILE_CANNOT_BE_READ_ERROR);
+    }
     return errors.getErrorsCode();
 }
 

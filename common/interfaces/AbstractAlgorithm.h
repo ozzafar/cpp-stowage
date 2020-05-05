@@ -5,11 +5,11 @@
 #ifndef CPP_STOWAGE_ABSTRACTALGORITHM_H
 #define CPP_STOWAGE_ABSTRACTALGORITHM_H
 
-#include "../../common/objects/ShipPlan.h"
+#include "../objects/ShipPlan.h"
 #include "../../src/algorithm/WeightBalanceCalculator.h"
-#include "../../common/objects/Container.h"
-#include "../../common/objects/Route.h"
-#include "../../common/objects/Ship.h"
+#include "../objects/Container.h"
+#include "../objects/Route.h"
+#include "../objects/Ship.h"
 #include <string>
 #include <map>
 

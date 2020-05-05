@@ -18,7 +18,7 @@ enum Error{
     // Ship Plan Code
     NUMBER_OF_FLOORS_WARNING                   = 1 << 0,
     ILLEGAL_POSITION_WARNING                   = 1 << 1,
-    BAD_LINE_FORMAT_WARNING                    = 1 << 2,
+    PLAN_BAD_LINE_FORMAT_WARNING                    = 1 << 2,
     PLAN_FILE_CANNOT_BE_READ_ERROR             = 1 << 3,
 
     // Reserved Code
@@ -55,6 +55,7 @@ public:
     int getErrorsCode();
     bool hasError(Error error);
     bool hasFatalError();
+    void addError(Error newError);
     void addErrors(Errors newErrors);
     void addErrors(int newErrors);
     int amountOfError(Error error);

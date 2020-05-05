@@ -5,7 +5,7 @@
 #ifndef CPP_STOWAGE_BASICALGORITHM_H
 #define CPP_STOWAGE_BASICALGORITHM_H
 
-#include "AbstractAlgorithm.h"
+#include "../../common/interfaces/AbstractAlgorithm.h"
 
 class BasicAlgorithm : public AbstractAlgorithm {
 

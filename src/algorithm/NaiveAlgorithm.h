@@ -9,7 +9,7 @@
 #include "WeightBalanceCalculator.h"
 #include "../../common/objects/Container.h"
 #include "../../common/objects/Route.h"
-#include "AbstractAlgorithm.h"
+#include "../../common/interfaces/AbstractAlgorithm.h"
 #include <string>
 #include <map>
 #include "../../common/objects/ContainersPosition.h"

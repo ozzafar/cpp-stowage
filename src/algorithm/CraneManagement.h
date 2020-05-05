@@ -8,7 +8,7 @@
 #include <map>
 #include "../../common/objects/ShipPlan.h"
 #include "../../common/objects/Ship.h"
-#include "AbstractAlgorithm.h"
+#include "../../common/interfaces/AbstractAlgorithm.h"
 #include <fstream>
 
 using std::map;

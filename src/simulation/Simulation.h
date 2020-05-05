@@ -7,7 +7,7 @@
 
 #include <filesystem>
 #include <fstream>
-#include "../../common/objects/AbstractAlgorithm.h"
+#include "../../common/interfaces/AbstractAlgorithm.h"
 #include "../../src/algorithm/NaiveAlgorithm.h"
 
 class Simulation {

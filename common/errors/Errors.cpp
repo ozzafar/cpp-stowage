@@ -12,7 +12,7 @@ string Errors::errorToString(Error error) {
             return "ship plan: a position has an equal number of floors, or more, than the number of floorsprovided in the first line (ignored)";
         case Error::ILLEGAL_POSITION_WARNING:
             return "ship plan: a given position exceeds the X/Y ship limits (ignored)";
-        case Error::BAD_LINE_FORMAT_WARNING:
+        case Error::PLAN_BAD_LINE_FORMAT_WARNING:
             return "ship plan: bad line format after first line (ignored)";
         case Error::PLAN_FILE_CANNOT_BE_READ_ERROR:
             return "ship plan: fatal error - bad first line or file cannot be read altogether (cannot run with this ship plan)";
@@ -82,5 +82,9 @@ void Errors::addErrors(Errors newErrors) {
 }
 
 void Errors::addErrors(int newErrors) {
-    errors|=(int)newErrors;
+    errors|=newErrors;
+}
+
+void Errors::addError(Error newError) {
+    errors|=(int)newError;
 }
