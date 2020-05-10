@@ -5,9 +5,7 @@
 #include "Registrar.h"
 #include "Errors.h"
 
-#ifdef RUNNING_ON_NOVA
-#include <dlfcn.h>
-#endif
+
 
 Registrar Registrar::instance;
 

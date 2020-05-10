@@ -7,10 +7,13 @@
 
 #include <vector>
 #include <iostream>
-#include <dlfcn.h>
 #include <functional>
 #include <memory>
 #include "../../interfaces/AbstractAlgorithm.h"
+
+#ifdef RUNNING_ON_NOVA
+#include <dlfcn.h>
+#endif
 using std::vector;
 
 

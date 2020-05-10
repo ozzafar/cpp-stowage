@@ -11,7 +11,7 @@
 using std::string;
 using std::vector;
 
-#define RUNNING_ON_NOVA
+//#define RUNNING_ON_NOVA
 
 enum Error{
 

@@ -8,11 +8,11 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
-#include "../../common/interfaces/AbstractAlgorithm.h"
-#include "../../common/utils/IO.h"
-#include "../../common/errors/Errors.h"
-#include "../../src/algorithm/NaiveAlgorithm.h"
-#include "../../src/algorithm/CraneManagement.h"
+#include "../interfaces/AbstractAlgorithm.h"
+#include "../common/utils/IO.h"
+#include "../common/utils/Errors.h"
+#include "../algorithm/NaiveAlgorithm.h"
+#include "../common/objects/CraneManagement.h"
 #include "AlgorithmResults.h"
 
 class Simulation {
