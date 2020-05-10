@@ -5,20 +5,22 @@
 #ifndef CPP_STOWAGE_ERRORS_H
 #define CPP_STOWAGE_ERRORS_H
 
-#define SUCCESS 0
 #include <string>
 #include <vector>
 
 using std::string;
 using std::vector;
 
+#define RUNNING_ON_NOVA
 
 enum Error{
+
+    SUCCESS                                    = 0,
 
     // Ship Plan Code
     NUMBER_OF_FLOORS_WARNING                   = 1 << 0,
     ILLEGAL_POSITION_WARNING                   = 1 << 1,
-    PLAN_BAD_LINE_FORMAT_WARNING                    = 1 << 2,
+    PLAN_BAD_LINE_FORMAT_WARNING               = 1 << 2,
     PLAN_FILE_CANNOT_BE_READ_ERROR             = 1 << 3,
 
     // Reserved Code
@@ -45,11 +47,13 @@ enum Error{
 };
 
 
+
+
 class Errors {
 
 private:
     int errors = SUCCESS;
-    int errorsCounter[32];
+    int errorsCounter[sizeof(int)];
 
 public:
     int getErrorsCode();
@@ -62,6 +66,10 @@ public:
 
     static string errorToString(Error error);
     static int getCodeOfError(Error error);
+
+    static string errorFromAlgorithmToString(Error error);
+
+    void addError(int newError);
 };
 
 #endif //CPP_STOWAGE_ERRORS_H

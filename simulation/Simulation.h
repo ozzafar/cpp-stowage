@@ -7,8 +7,12 @@
 
 #include <filesystem>
 #include <fstream>
-#include "../../common/interfaces/AbstractAlgorithm.h"
-#include "../../src/algorithm/NaiveAlgorithm.h"
+#include <string>
+#include <list>
+#include "../interfaces/AbstractAlgorithm.h"
+
+using std::list;
+using std::string;
 
 class Simulation {
 

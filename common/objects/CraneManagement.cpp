@@ -7,8 +7,8 @@
 #include <map>
 #include <utility>
 #include "CraneManagement.h"
-#include "../../common/utils/IO.h"
-#include "../../common/interfaces/AbstractAlgorithm.h"
+#include "../utils/IO.h"
+#include "../../interfaces/AbstractAlgorithm.h"
 
 
 CraneManagement::CraneManagement(string errorsFilePath) : errorsFilePath(std::move(errorsFilePath)) { }

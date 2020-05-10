@@ -5,23 +5,26 @@
 #include <cmath>
 #include "Errors.h"
 
+static const string FROM_ALGORITHM = "Algorithm's report: ";
+
+
 string Errors::errorToString(Error error) {
     switch (error) {
         // Ship Plan
         case Error::NUMBER_OF_FLOORS_WARNING:
-            return "ship plan: a position has an equal number of floors, or more, than the number of floorsprovided in the first line (ignored)";
+            return "ship plan: a position has an equal number of floors, or more, than the number of floors provided in the first line (ignored)";
         case Error::ILLEGAL_POSITION_WARNING:
             return "ship plan: a given position exceeds the X/Y ship limits (ignored)";
         case Error::PLAN_BAD_LINE_FORMAT_WARNING:
             return "ship plan: bad line format after first line (ignored)";
         case Error::PLAN_FILE_CANNOT_BE_READ_ERROR:
             return "ship plan: fatal error - bad first line or file cannot be read altogether (cannot run with this ship plan)";
-            // Reserved Code
+        // Reserved Code
         case Error::RESERVED1:
             return "reserved";
         case Error::RESERVED2:
             return "reserved";
-            // Route Code
+        // Route Code
         case Error::PORT_APPEAR_TWICE_WARNING:
             return "travel route: a port appears twice or more consecutively (ignored)";
         case Error::BAD_PORT_SYMBOL_WARNING:
@@ -30,7 +33,7 @@ string Errors::errorToString(Error error) {
             return "travel route: fatal error - empty file or file cannot be read altogether (cannot run this travel)";
         case Error::ROUTE_FILE_SINGLE_VALID_PORT_ERROR:
             return "travel route: fatal error - file with only a single valid port (cannot run this travel)";
-            // Container Code
+        // Container Code
         case Error::DUPLICATE_CONTAINER_ID_WARINING:
             return "containers at port: duplicate ID on port (ID rejected)";
         case Error::CONTAINER_ID_ALREADY_IN_SHIP_WARINING:
@@ -54,10 +57,14 @@ string Errors::errorToString(Error error) {
     }
 }
 
-int Errors::getCodeOfError(Error error) {
-    return log2((int)error);
+
+string Errors::errorFromAlgorithmToString(Error error) {
+    return FROM_ALGORITHM + errorToString(error);
 }
 
+int Errors::getCodeOfError(Error error) {
+    return log2((int) error);
+}
 
 int Errors::getErrorsCode() {
     return errors;
@@ -68,13 +75,13 @@ bool Errors::hasError(Error error) {
 }
 
 int Errors::amountOfError(Error error) {
-    return errorsCounter[(int)error];
+    return errorsCounter[(int) error];
 }
 
 bool Errors::hasFatalError() {
-    int fatalErrorCode = (int) PLAN_FILE_CANNOT_BE_READ_ERROR | (int) ROUTE_FILE_CANNOT_BE_READ_ERROR | (int) ROUTE_FILE_SINGLE_VALID_PORT_ERROR;
-    return errors && fatalErrorCode;
-    ;
+    int fatalErrorCode = (int) PLAN_FILE_CANNOT_BE_READ_ERROR | (int) ROUTE_FILE_CANNOT_BE_READ_ERROR |
+                         (int) ROUTE_FILE_SINGLE_VALID_PORT_ERROR;
+    return errors && fatalErrorCode;;
 }
 
 void Errors::addErrors(Errors newErrors) {
@@ -82,9 +89,21 @@ void Errors::addErrors(Errors newErrors) {
 }
 
 void Errors::addErrors(int newErrors) {
-    errors|=newErrors;
+    int error = 1; // 2 pow 0
+    while (newErrors) {
+        if (newErrors & 1) { // check if first but is 1 ==> error exists
+            addError(error);
+        }
+        error *= 2;
+        newErrors /= 2;
+    }
+}
+
+void Errors::addError(int newError) {
+    errors |= newError;
+    errorsCounter[newError]++;
 }
 
 void Errors::addError(Error newError) {
-    errors|=(int)newError;
+    addError((int) newError);
 }

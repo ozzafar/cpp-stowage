@@ -3,7 +3,8 @@
 //
 
 #include "NaiveAlgorithm.h"
-#include "../../common/errors/Errors.h"
+#include "../common/utils/Errors.h"
+#include "../interfaces/AlgorithmRegistration.h"
 
 
 using std::stringstream;

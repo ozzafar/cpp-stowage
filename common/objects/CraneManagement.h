@@ -6,9 +6,9 @@
 #define CPP_STOWAGE_CRANEMANAGEMENT_H
 
 #include <map>
-#include "../../common/objects/ShipPlan.h"
-#include "../../common/objects/Ship.h"
-#include "../../common/interfaces/AbstractAlgorithm.h"
+#include "ShipPlan.h"
+#include "Ship.h"
+#include "../../interfaces/AbstractAlgorithm.h"
 #include <fstream>
 
 using std::map;

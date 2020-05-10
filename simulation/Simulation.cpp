@@ -3,6 +3,7 @@
 //
 
 
+#include <iostream>
 #include "Simulation.h"
 using namespace std;
 
@@ -16,10 +17,10 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
         //load algorithms from algorithmPath
     }
 
-    NaiveAlgorithm *naiveAlgorithm1 = new NaiveAlgorithm(); //TODO: remove after testing and load from file
-    NaiveAlgorithm *naiveAlgorithm2 = new NaiveAlgorithm();
-    algorithms.push_back(naiveAlgorithm1);
-    algorithms.push_back(naiveAlgorithm2);
+//    NaiveAlgorithm *naiveAlgorithm1 = new NaiveAlgorithm(); //TODO: remove after testing and load from file
+//    NaiveAlgorithm *naiveAlgorithm2 = new NaiveAlgorithm();
+//    algorithms.push_back(naiveAlgorithm1);
+//    algorithms.push_back(naiveAlgorithm2);
 }
 
 int Simulation::simulateAllTravelsWithAllAlgorithms()

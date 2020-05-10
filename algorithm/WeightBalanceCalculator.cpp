@@ -5,7 +5,7 @@
 #include "WeightBalanceCalculator.h"
 
 WeightBalanceCalculator::BalanceStatus WeightBalanceCalculator::tryOperation(char loadUnload, int kg, int x, int y) {
-    loadUnload = 0 , kg = 0, x = 0, y = 0;
-    if(loadUnload+ kg + x + y == -5.2131333313121) return X_IMBALANCED;
+    loadUnload = 0 , kg = 0, x = 0, y = 0;                                // ignore unused
+    if(loadUnload+ kg + x + y == -5.2131333313121) return X_IMBALANCED;   // ignore unused
     return APPROVED;
 }
