@@ -5,14 +5,15 @@
 #ifndef CPP_STOWAGE_NAIVEALGORITHM_H
 #define CPP_STOWAGE_NAIVEALGORITHM_H
 
-#include "../../common/objects/ShipPlan.h"
+
+#include "../common/objects/ShipPlan.h"
 #include "WeightBalanceCalculator.h"
-#include "../../common/objects/Container.h"
-#include "../../common/objects/Route.h"
-#include "../../common/interfaces/AbstractAlgorithm.h"
+#include "../common/objects/Container.h"
+#include "../common/objects/Route.h"
+#include "../interfaces/AbstractAlgorithm.h"
 #include <string>
 #include <map>
-#include "../../common/objects/ContainersPosition.h"
+#include "../common/objects/ContainersPosition.h"
 #include "BasicAlgorithm.h"
 #include <algorithm>
 

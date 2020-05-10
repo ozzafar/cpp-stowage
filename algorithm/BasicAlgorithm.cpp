@@ -3,13 +3,13 @@
 //
 
 #include "BasicAlgorithm.h"
+#include <algorithm>
+#include "../common/objects/ContainersPosition.h"
+#include "../common/utils/IO.h"
+#include "../common/utils/Errors.h"
+#include "NaiveAlgorithm.h"
 #include <fstream>
 #include <iostream>
-#include "../../common/objects/ContainersPosition.h"
-#include "../../common/utils/IO.h"
-#include "NaiveAlgorithm.h"
-#include "../../common/errors/Errors.h"
-#include <algorithm>
 
 using std::stringstream;
 using std::string;
@@ -44,13 +44,9 @@ int BasicAlgorithm::readContainerAwaitingAtPortFile(const string &path,vector<Co
     return IO::readContainerAwaitingAtPortFile(path,ship,waitingContainers);
 }
 
-
-
-
 Ship BasicAlgorithm::getShip() {
     return ship;
 }
-
 
 Route BasicAlgorithm::getShipRoute() {
     return route;

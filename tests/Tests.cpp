@@ -17,9 +17,9 @@
 #include "../common/objects/Ship.cpp"
 #include "../src/simulation/Simulation.cpp"
 #include "../src/algorithm/WeightBalanceCalculator.cpp"
-#include "../src/algorithm/CraneManagement.cpp"
+#include "../common/objects/CraneManagement.cpp"
 #include "../common/utils/IO.cpp"
-#include "../common/errors/Errors.cpp"
+#include "../common/utils/Errors.cpp"
 
 string prefix = "/Users/ozzafar/CLionProjects/cpp-stowage/tests/";
 

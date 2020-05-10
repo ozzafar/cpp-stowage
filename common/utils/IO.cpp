@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include "IO.h"
-#include "../errors/Errors.h"
+#include "Errors.h"
 #include <algorithm>
 
 //region HELP FUNCTIONS

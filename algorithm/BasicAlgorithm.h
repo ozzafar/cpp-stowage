@@ -5,7 +5,13 @@
 #ifndef CPP_STOWAGE_BASICALGORITHM_H
 #define CPP_STOWAGE_BASICALGORITHM_H
 
-#include "../../common/interfaces/AbstractAlgorithm.h"
+#include "../interfaces/AbstractAlgorithm.h"
+#include "../common/objects/Ship.h"
+#include "../common/objects/Route.h"
+#include "WeightBalanceCalculator.h"
+#include <string>
+
+using std::string;
 
 class BasicAlgorithm : public AbstractAlgorithm {
 
