@@ -22,7 +22,6 @@ class CraneManagement {
 
 public:
 
-    CraneManagement(string errorsFilePath) ;
 
     // return value is SUCCESS / FAILURE:
     int load(Ship* ship, string &containerId, int floor, int row, int column);

@@ -11,7 +11,6 @@
 #include "../../common/interfaces/AbstractAlgorithm.h"
 
 
-CraneManagement::CraneManagement(string errorsFilePath) : errorsFilePath(std::move(errorsFilePath)) { }
 
 int CraneManagement::load(Ship* ship, string& containerId, int floor, int row, int column) {
     ShipPlan& shipPlan = ship->getShipPlan();

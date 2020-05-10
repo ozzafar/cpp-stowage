@@ -42,3 +42,4 @@ int Ship::getAmountOfContainers() {
     }
     return amount;
 }
+
