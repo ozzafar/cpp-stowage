@@ -1,6 +1,6 @@
 COMP = g++-8.3.0
 
-OBJS = main.o Simulation.o $\
+OBJS = main.o Simulation.o AlgorithmResults.o $\
 $\
 ../common/objects/Container.o ../common/objects/ContainersPosition.o ../common/objects/CraneManagement.o ../common/objects/Route.o $\
 ../common/objects/Ship.o ../common/objects/ShipPlan.o  ../common/objects/Travel.o $\

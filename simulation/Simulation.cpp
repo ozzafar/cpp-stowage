@@ -27,19 +27,15 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
     }
 
     // TODO -------- do it in loop ---------
-    Registrar::getInstance().loadSO("<path of x>"); // relavant only to nova
-    unique_ptr<AbstractAlgorithm> x = Registrar::getInstance().factoryVec[0]();
-    string x_name = Registrar::getInstance().names[0];
+    Registrar::getInstance().loadSO("<path of x>");
     // TODO ------------- end ---------------
 
-
-    NaiveAlgorithm *naiveAlgorithm1 = new NaiveAlgorithm(); //TODO: remove after testing and load from file
-    algorithms.push_back(naiveAlgorithm1);
-
-
-    for(AbstractAlgorithm* algorithm : algorithms)
+    Registrar &registrar = Registrar::getInstance();
+    
+    for(size_t i = 0 ; i < registrar.factoryVec.size() ; i++ )
     {
-        algorithmResults["algorithm_name"] = AlgorithmResults("algorithm_name");
+        unique_ptr<AbstractAlgorithm> algorithm = registrar.factoryVec[i]();
+        algorithmResults[registrar.names[i]] = AlgorithmResults("algorithm_name");
         if(algorithm!= nullptr) //TODO: the if is just for "unused parameter error, reomve it
         {
             cout << "just for testing" << endl;
