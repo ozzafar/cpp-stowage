@@ -4,6 +4,10 @@
 
 
 #include "Simulation.h"
+#include "../common/utils/Registrar.h"
+#include <functional>
+#include <memory>
+
 using namespace std;
 
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
@@ -21,6 +25,13 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
         this->outputPath = outputPath;
         isOutputPathSupplied = true;
     }
+
+    // TODO -------- do it in loop ---------
+    Registrar::getInstance().loadSO("<path of x>"); // relavant only to nova
+    unique_ptr<AbstractAlgorithm> x = Registrar::getInstance().factoryVec[0]();
+    string x_name = Registrar::getInstance().names[0];
+    // TODO ------------- end ---------------
+
 
     NaiveAlgorithm *naiveAlgorithm1 = new NaiveAlgorithm(); //TODO: remove after testing and load from file
     algorithms.push_back(naiveAlgorithm1);

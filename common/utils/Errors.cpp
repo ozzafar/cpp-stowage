@@ -5,7 +5,7 @@
 #include <cmath>
 #include "Errors.h"
 
-static const string FROM_ALGORITHM = "Algorithm's report: ";
+static const string ALGORITHM_TRUE_NEGATIVE_ERROR = "The algorithm didn't report on the error: ";
 
 
 string Errors::errorToString(Error error) {
@@ -59,7 +59,7 @@ string Errors::errorToString(Error error) {
 
 
 string Errors::errorFromAlgorithmToString(Error error) {
-    return FROM_ALGORITHM + errorToString(error);
+    return ALGORITHM_TRUE_NEGATIVE_ERROR + errorToString(error);
 }
 
 int Errors::getCodeOfError(Error error) {
