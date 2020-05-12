@@ -35,7 +35,7 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
     for(size_t i = 0 ; i < registrar.factoryVec.size() ; i++ )
     {
         unique_ptr<AbstractAlgorithm> algorithm = registrar.factoryVec[i]();
-        algorithmResults[registrar.names[i]] = AlgorithmResults("algorithm_name");
+        algorithmResults[registrar.names[i]] = AlgorithmResults(registrar.names[i]);
         if(algorithm!= nullptr) //TODO: the if is just for "unused parameter error, reomve it
         {
             cout << "just for testing" << endl;
