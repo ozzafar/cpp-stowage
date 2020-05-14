@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include "ErrorsIterator.h"
 
 using std::string;
 using std::vector;
@@ -43,11 +44,13 @@ enum Error{
     CONTAINER_FILE_CANNOT_BE_READ_WARNING      = 1 << 16,
     LAST_PORT_HAS_CONTAINERS_WARNING           = 1 << 17,
     PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING = 1 << 18,
+    LOADED_PORT_DESTINATION_IS_CURRENT_PORT    = 1 << 19,
+
+    // Container Position Code
+    FULL_CONTAINER_POSITION                    = 1 << 20,
+    UNLOAD_NOT_TOP_CONTAINER                   = 1 <<21
 
 };
-
-
-
 
 class Errors {
 
@@ -58,15 +61,18 @@ private:
 public:
     int getErrorsCode();
     bool hasError(Error error);
+    bool hasError();
     bool hasFatalError();
     void addError(Error newError);
     void addErrors(Errors newErrors);
     void addErrors(int newErrors);
     int amountOfError(Error error);
+    int emptyErrors();
+    ErrorsIterator getIterator();
 
+    static Error convertToError(int errorCode);
     static string errorToString(Error error);
     static int getCodeOfError(Error error);
-
     static string errorFromAlgorithmToString(Error error);
 
     void addError(int newError);
