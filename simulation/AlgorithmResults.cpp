@@ -18,3 +18,20 @@ void AlgorithmResults::addTravelResult(const string &travelName, int result) {
 }
 
 AlgorithmResults::AlgorithmResults() {}
+
+int AlgorithmResults::getOperationsCounterOnAllTravels() const {
+    return operationsCounterOnAllTravels;
+}
+
+const string &AlgorithmResults::getAlgorithmName() const {
+    return algorithmName;
+}
+
+int AlgorithmResults::getOperationCounterOnOneTravel(const string& name)
+{
+    return operationsCounterOnTravel[name];
+}
+
+int AlgorithmResults::getNumberOfFailedTravels() const {
+    return numberOfFailedTravels;
+}

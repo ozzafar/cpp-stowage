@@ -51,6 +51,8 @@ public:
         return instance;
     }
 
+    void addName(const std::string &name);
+
 };
 
 #endif //CPP_STOWAGE_REGISTRAR_H

@@ -30,6 +30,8 @@ public:
 
     static vector<string> breakLineToWords(string &line, char delimeter);
 
+    static int writeToFile(const string &writingPath, const string &content);
+
 };
 
 #endif //CPP_STOWAGE_IO_H
