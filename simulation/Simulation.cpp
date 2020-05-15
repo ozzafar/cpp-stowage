@@ -123,8 +123,6 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
         simulateOneTravelWithOneAlgorithm(travelPath, std::move(algorithm), registrar.names[i]);
     }
 
-
-
     cout << "Finished simulate " << travelPath << endl;
 
 }
@@ -177,10 +175,11 @@ void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, uni
         }
         else
         {
-            algorithm->getInstructionsForCargo(travelPath + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".cargo_data.txt", pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + "algorithm_name" + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt"); //TODO: remove .txt in linux and correctly get algorithm name
+            algorithm->getInstructionsForCargo(travelPath + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".cargo_data.txt", pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
         }
 
-        craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + "algorithm_name" + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
+        string a = pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt";
+        craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
         totalOperations += craneManagementAnswer.numOfOperations;
         checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route, pathOfOutputFilesForAlgorithmAndTravel.string());
         indexOfVisitAtPort[ports[i]]++;
