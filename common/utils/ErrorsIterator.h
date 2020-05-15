@@ -6,7 +6,7 @@
 #define CPP_STOWAGE_ERRORSITERATOR_H
 
 
-#include "Errors.h"
+#include "Error.h"
 
 class ErrorsIterator {
     int errors;
@@ -14,8 +14,6 @@ class ErrorsIterator {
 
 public:
     ErrorsIterator(int errors);
-
-private:
     bool hasNext();
     Error getNext();
 };

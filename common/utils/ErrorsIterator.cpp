@@ -4,6 +4,10 @@
 
 #include "ErrorsIterator.h"
 
+Error convertToError(int errorCode) {
+    return (Error)(1<<errorCode);
+}
+
 bool ErrorsIterator::hasNext() {
     int copyErrors = errors;
     while (copyErrors){
@@ -16,10 +20,13 @@ bool ErrorsIterator::hasNext() {
 }
 
 Error ErrorsIterator::getNext() {
-    Error err = SUCCESS;
+    Error err = Error::SUCCESS;
     while (errors){
         if (errors & 1){
-            err = Errors::convertToError(1<<(index-1));
+            err = convertToError(index);
+            index++;
+            errors/=2;
+            return err;
         }
         index++;
         errors/=2;
