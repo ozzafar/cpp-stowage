@@ -183,7 +183,7 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
 int IO::readShipRoute(const string &path, Route& route) {
     Errors errors;
     vector<string> ports;
-    int rowIndex = 0;
+    int prevPortIndex = 0;
     string line;
     vector<string> row;
 
@@ -201,11 +201,11 @@ int IO::readShipRoute(const string &path, Route& route) {
             {
                 row[0] = row[0].substr(0, row[0].size()-1);
             }
-            if (rowIndex > 0 && ports[rowIndex].compare(ports[rowIndex-1])) {
+            if (prevPortIndex > 0 && !row[0].compare(ports[prevPortIndex])) {
                 errors.addError(Error::PORT_APPEAR_TWICE_WARNING);
             } else{
                 ports.push_back(row[0]);
-                rowIndex++;
+                prevPortIndex++;
             }
         }
         planFile.close();
