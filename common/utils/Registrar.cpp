@@ -20,10 +20,13 @@ int Registrar::loadSO(const std::string &path) {
 
     // handles.push_back(std::move(handle));
     std::cout << "loadSO succeedded" << std::endl;
+
 #endif
 
     names.push_back(extractFilenameFromPath(path, true));
     std::cout << "algo name: " << names[0] <<std::endl;
+
+    (void) path;
     return Error::SUCCESS;
 
 }
@@ -45,4 +48,8 @@ std::string Registrar::extractFilenameFromPath(const std::string &path, bool rem
     }
 
     return pathCopy;
+}
+
+void Registrar::addName(const std::string &name) {
+    names.push_back(name);
 }

@@ -224,4 +224,18 @@ vector<string> IO::breakLineToWords(string &line, char delimeter) {
     return row;
 }
 
+int IO::writeToFile(const string &writingPath, const string &content) {
+    std::ofstream fout;
+    fout.open(writingPath, std::fstream::app);
+    if (fout.is_open())
+    {
+        fout << content;
+        fout.close();
+        return 0;
+    }
+
+    std::cout << "Unable to open file";
+    return 1;
+}
+
 // endregion

@@ -7,11 +7,23 @@
 #include "../common/utils/Registrar.h"
 #include <functional>
 #include <memory>
+#include "../algorithm/WeightBalanceCalculator.h"
+#include "../algorithm/_206039984_a.h"
+
 
 using namespace std;
 
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
 {
+#ifndef RUNNING_ON_NOVA
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_a>();});
+    Registrar::getInstance().addName("_206039984_a");
+    for(unsigned long long i = 0 ; i < Registrar::getInstance().factoryVec.size(); i++)
+    {
+        algorithmsResults[Registrar::getInstance().names[i]] = AlgorithmResults(Registrar::getInstance().names[i]);
+    }
+#endif
+
     if(algorithmPath == "")
     {
         //load algorithms from cwd
@@ -26,21 +38,11 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
         isOutputPathSupplied = true;
     }
 
-    // TODO -------- do it in loop ---------
-    Registrar::getInstance().loadSO("<path of x>");
+    // TODO -------- do it in loop ---------After going to nova
+    //Registrar::getInstance().loadSO("<path of x>");
     // TODO ------------- end ---------------
 
-    Registrar &registrar = Registrar::getInstance();
-    
-    for(size_t i = 0 ; i < registrar.factoryVec.size() ; i++ )
-    {
-        unique_ptr<AbstractAlgorithm> algorithm = registrar.factoryVec[i]();
-        algorithmResults[registrar.names[i]] = AlgorithmResults(registrar.names[i]);
-        if(algorithm!= nullptr) //TODO: the if is just for "unused parameter error, reomve it
-        {
-            cout << "just for testing" << endl;
-        }
-    }
+
 }
 
 int Simulation::simulateAllTravelsWithAllAlgorithms()
@@ -57,10 +59,39 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
         return 1;
     }
 
+    vector <string> travelNames;
+
     for(auto& travel: std::filesystem::directory_iterator(travelsPath))
     {
         string pathOfCurrentTravel = travel.path().string();
+        travelNames.push_back(travel.path().stem().string());
         simulateOneTravelWithAllAlgorithms(pathOfCurrentTravel);
+    }
+
+    if(!isOutputPathSupplied)
+    {
+        outputPath = travelsPath;
+    }
+    string resultOutputPath = outputPath + "/simulation.results.csv"; //TODO: remove csv;
+
+    IO::writeToFile(resultOutputPath, "RESULTS,");
+    for(string travelName : travelNames)
+    {
+        IO::writeToFile(resultOutputPath, travelName + ",");
+    }
+    IO::writeToFile(resultOutputPath, "SUM,Num Errors\n");
+   //TODO: sort algorithmResults
+    for(std::pair<string, AlgorithmResults> algorithmResults : algorithmsResults)
+    {
+        IO::writeToFile(resultOutputPath, algorithmResults.second.getAlgorithmName() + ",");
+
+        for(string travelName : travelNames)
+        {
+            int operationCounteOnCurrentTravel = algorithmResults.second.getOperationCounterOnOneTravel(travelName);
+            IO::writeToFile(resultOutputPath, std::to_string(operationCounteOnCurrentTravel) + ",");
+        }
+        IO::writeToFile(resultOutputPath, to_string(algorithmResults.second.getOperationsCounterOnAllTravels()) + ",");
+        IO::writeToFile(resultOutputPath, to_string(algorithmResults.second.getNumberOfFailedTravels()) + "\n");
     }
 
     return 0;
@@ -84,21 +115,26 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
 
     std::ofstream file { travelPath + "/empty_containers_awaiting_at_port_file.txt" };
 
-    for(AbstractAlgorithm* algorithm : algorithms)
+    Registrar &registrar = Registrar::getInstance();
+
+    for(size_t i = 0 ; i < registrar.factoryVec.size() ; i++ )
     {
-        simulateOneTravelWithOneAlgorithm(travelPath, algorithm);
+        unique_ptr<AbstractAlgorithm> algorithm = registrar.factoryVec[i]();
+        simulateOneTravelWithOneAlgorithm(travelPath, std::move(algorithm), registrar.names[i]);
     }
+
 
 
     cout << "Finished simulate " << travelPath << endl;
 
 }
 
-void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, AbstractAlgorithm *algorithm) {
+void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName) {
 
     std::cout <<"===========================================================" << std::endl;
-    std::cout <<"started simulate " << "algorithm_name" << " on " << travelPath << std::endl; //TODO: get algorithm name correctly
+    std::cout <<"started simulate " << algorithmName << " on " << travelPath << std::endl;
     std::cout <<"===========================================================" << std::endl;
+
 
     int totalOperations = 0;
     Route route;
@@ -113,7 +149,7 @@ void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, Abs
 
     const std::filesystem::path pathOfTravel = travelPath;
     const string travelName = pathOfTravel.stem().string();
-    const std::filesystem::path pathOfOutputFilesForAlgorithmAndTravel = outputPath + "/output_of_" + "algorithm_name" + "_" + travelName; //TODO: replace algorithm name
+    const std::filesystem::path pathOfOutputFilesForAlgorithmAndTravel = outputPath + "/output_of_" + algorithmName + "_" + travelName; //TODO: replace algorithm name
 
     std::filesystem::create_directory(pathOfOutputFilesForAlgorithmAndTravel);
 
@@ -146,40 +182,54 @@ void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, Abs
 
         craneManagementAnswer = craneManagement.readAndExecuteInstructions(&ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + "algorithm_name" + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
         totalOperations += craneManagementAnswer.numOfOperations;
-        checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route);
+        checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route, pathOfOutputFilesForAlgorithmAndTravel.string());
         indexOfVisitAtPort[ports[i]]++;
         std::cout << "----------------" <<"Ship left port " << ports[i] << "----------------" << std::endl;
         route.incrementCurrentPort();
 
     }
-    algorithmResults["algorithm_name"].addTravelResult(travelPath, totalOperations);
+    algorithmsResults[algorithmName].addTravelResult(travelName, totalOperations);
 
     std::cout <<"===========================================================" << std::endl;
-    std::cout <<"finished simulate " << "algorithm_name" << " on " << travelPath << std::endl; //TODO: get algorithm name correctly
+    std::cout <<"finished simulate " << algorithmName << " on " << travelPath << std::endl;
     std::cout <<"===========================================================" << std::endl;
 
 }
 
-void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneManagement::CraneManagementAnswer& answer,Route& route) {
+void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneManagement::CraneManagementAnswer& answer,Route& route, const string &pathOfOutputFilesForAlgorithmAndTravel) {
 
-        if (ship.portToContainers[port].size() > 0){
-            // "Not all of the containers of this port were unloaded,";
+        if (ship.portToContainers[port].size() > 0)
+        {
+            string error = "Not all of the containers of this port were unloaded";
+            cout << error;
+            IO::writeToFile(pathOfOutputFilesForAlgorithmAndTravel, error + ",");
         }
 
-        if (answer.changedContainers.count(Action::REJECT) > 0) {
-            for (auto& rejected : answer.changedContainers[Action::REJECT]) {
-                for (auto &loaded : answer.changedContainers[Action::LOAD]) {
+        if (answer.changedContainers.count(Action::REJECT) > 0)
+        {
+            for (auto& rejected : answer.changedContainers[Action::REJECT])
+            {
+                for (auto &loaded : answer.changedContainers[Action::LOAD])
+                {
                     if (route.nextStopForPort(ship.containerIdToDestination(rejected)) <
-                        route.nextStopForPort(ship.containerIdToDestination(loaded))) {
-                        //"Rejected container " << rejected << " with higher priority,";
+                        route.nextStopForPort(ship.containerIdToDestination(loaded)))
+                    {
+                        string error = "Rejected container " + rejected + " with higher priority";
+                        cout << error;
+                        IO::writeToFile(pathOfOutputFilesForAlgorithmAndTravel, error + ",");
                     }
                 }
             }
         }
-        if (route.inLastStop()) {
+
+        if (route.inLastStop())
+        {
             int amountOfContainers = ship.getAmountOfContainers() > 0;
-            if (amountOfContainers>0){
-                // "Ship arrived to last port in route but there are still " << amountOfContainers << " containers on the ship,";
+            if (amountOfContainers>0)
+            {
+                string error = "Ship arrived to last port in route but there are still " + std::to_string(amountOfContainers) + " containers on the ship";
+                cout << error;
+                IO::writeToFile(pathOfOutputFilesForAlgorithmAndTravel, error + ",");
             }
         }
 
