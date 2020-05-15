@@ -55,6 +55,8 @@ string Errors::errorToString(Error error) {
             return "total containers amount exceeds ship capacity (rejecting far containers)";
         case Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT:
             return "can't load container with destination port as the current port";
+        case Error::CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS:
+            return "can't load container with destination port which isn't in the route's next stops";
         // Container Position Code
         case Error::FULL_CONTAINER_POSITION:
             return "can't load container to a full position";

@@ -22,10 +22,7 @@ int NaiveAlgorithmHorizontal::getLoadInstructions(const string &input_path, cons
                             WeightBalanceCalculator::APPROVED) {
                             string des = containers[index].getDestinationPort().substr(0, 5); //TODO fix
                             if (!route.portInNextStops(des)) {
-                                //errors.addError();
-                                std::cout << "Warning: can't load container " << containers[index].getId()
-                                          << " because it's destination port " << containers[index].getDestinationPort()
-                                          << " isn't in the next stops of the route" << std::endl;
+                                errors.addError(Error::CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS);
                                 writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
                             } else {
                                 writeOperation(output_path, Action::LOAD, containers[index].getId(),
@@ -37,8 +34,11 @@ int NaiveAlgorithmHorizontal::getLoadInstructions(const string &input_path, cons
                         errors.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
                     }
                     index++;
+                    if (index==amount){
+                        return errors.getErrorsCode();
+                    }
                 } else {
-                    return errors.getErrorsCode();
+                    continue;
                 }
             }
         }

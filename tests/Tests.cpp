@@ -9,8 +9,8 @@
 #include "gtest/gtest.h"
 #include "../common/objects/Container.cpp"
 #include "../algorithm/NaiveAlgorithm.cpp"
-#include "../algorithm/NaiveAlgorithmVertical.cpp"
 #include "../algorithm/NaiveAlgorithmHorizontal.cpp"
+#include "../algorithm/NaiveAlgorithmVertical.cpp"
 #include "../algorithm/BasicAlgorithm.cpp"
 #include "../common/objects/Route.cpp"
 #include "../common/objects/ContainersPosition.cpp"
@@ -141,7 +141,7 @@ TEST(CraneManagement, readAndExecuteInstructions) {
     algorithm.readShipPlan(prefix+"plan.csv");
     Ship ship = algorithm.getShip();
     CraneManagement craneManagement;
-    craneManagement.readAndExecuteInstructions(&ship, prefix + "NaiveAlgorithm-test1.csv");
+    craneManagement.readAndExecuteInstructions(ship, prefix + "NaiveAlgorithm-test1.csv");
 }
 // endregion
 

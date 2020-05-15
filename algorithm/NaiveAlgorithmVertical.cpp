@@ -22,8 +22,7 @@ int NaiveAlgorithmVertical::getLoadInstructions(const string &input_path, const 
                         if (calculator.tryOperation((char) Action::LOAD, containers.at(index).getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
                             string des = containers[index].getDestinationPort().substr(0,5);
                             if (!route.portInNextStops(des)){
-                                //errors.addError();
-                                std::cout << "Warning: can't load container " << containers[index].getId() << " because it's destination port " << containers[index].getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
+                                errors.addError(Error::CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS);
                                 writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
                             }
                             else {
