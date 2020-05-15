@@ -180,7 +180,7 @@ void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, uni
             algorithm->getInstructionsForCargo(travelPath + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".cargo_data.txt", pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + "algorithm_name" + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt"); //TODO: remove .txt in linux and correctly get algorithm name
         }
 
-        craneManagementAnswer = craneManagement.readAndExecuteInstructions(&ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + "algorithm_name" + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
+        craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + "algorithm_name" + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
         totalOperations += craneManagementAnswer.numOfOperations;
         checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route, pathOfOutputFilesForAlgorithmAndTravel.string());
         indexOfVisitAtPort[ports[i]]++;
