@@ -10,6 +10,7 @@
 #include "../../interfaces/AbstractAlgorithm.h"
 #include "../utils/Errors.h"
 
+#define SUCCESS (int)Error::SUCCESS
 
 int CraneManagement::load(Ship& ship, string& containerId, int floor, int row, int column) {
     Errors errors;
@@ -70,7 +71,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     }else{
                         string containerId = row[1];
-                        if (load(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))){
+                        if (load(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))==SUCCESS){
                             changedContainers[Action::LOAD].push_back(containerId);
                             count++;
                             string destination = ship.containerIdToDestination(containerId);
@@ -83,7 +84,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     } else{
                         string containerId = row[1];
-                        if (unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))){
+                        if (unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))==SUCCESS){
                             changedContainers[Action::UNLOAD].push_back(containerId);
                             count++;
                             string destination = ship.containerIdToDestination(containerId);
@@ -103,7 +104,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                     } else {
                         if (move(ship, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[4]), stoi(row[5]),
-                             stoi(row[6]))){
+                             stoi(row[6]))==SUCCESS){
                             count++;
                             changedContainers[Action::MOVE].push_back(row[1]);
                         }
