@@ -82,9 +82,6 @@ bool Errors::hasError(Error error) {
     return errors && (int) error;
 }
 
-int Errors::amountOfError(Error error) {
-    return errorsCounter[(int) error];
-}
 
 bool Errors::hasFatalError() {
     int fatalErrorCode = (int) Error::PLAN_FILE_CANNOT_BE_READ_ERROR | (int) Error::ROUTE_FILE_CANNOT_BE_READ_ERROR |
@@ -109,7 +106,6 @@ void Errors::addErrors(int newErrors) {
 
 void Errors::addError(int newError) {
     errors |= newError;
-    errorsCounter[newError]++;
 }
 
 void Errors::addError(Error newError) {

@@ -7,12 +7,10 @@
 
 #include <string>
 #include <vector>
-#include <map>
 #include "Error.h"
 #include "ErrorsIterator.h"
 
 using std::string;
-using std::map;
 
 //#define RUNNING_ON_NOVA
 
@@ -20,7 +18,6 @@ class Errors {
 
 private:
     int errors = (int)(Error::SUCCESS);
-    map<int,int> errorsCounter;
 
 public:
 
@@ -37,8 +34,6 @@ public:
     void addErrors(Errors newErrors);
 
     void addErrors(int newErrors);
-
-    int amountOfError(Error error);
 
     int emptyErrors();
 
