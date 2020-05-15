@@ -8,7 +8,7 @@
 ShipPlan::ShipPlan() {
 }
 
-ShipPlan::ShipPlan(const vector<vector<ContainersPosition>> &plan) : plan(plan) {}
+ShipPlan::ShipPlan(const vector<vector<ContainersPosition>> &plan, int floors) : plan(plan) , floors(floors) {}
 
 void ShipPlan::setStartFloorInPosition(int x, int y, int startFloor) {
     plan[x][y].setStartFloor(startFloor);
@@ -33,6 +33,10 @@ int ShipPlan::getPlanLength() {
 
 int ShipPlan::getPlanWidth() {
     return plan.at(0).size();
+}
+
+int ShipPlan::getFloors() const {
+    return floors;
 }
 
 

@@ -11,6 +11,8 @@ using std::stringstream;
 using std::string;
 using std::list;
 
+// region HELP FUNCTIONS
+
 void NaiveAlgorithm::sortContainers(vector<Container>& containers){
     std::sort(std::begin(containers), std::end(containers), [this](  auto& a,   auto& b) -> bool
     {
@@ -24,53 +26,28 @@ void NaiveAlgorithm::sortContainers(vector<Container>& containers){
     });
 }
 
-int NaiveAlgorithm::getLoadInstructions(const string &input_path, const string &output_path) {
+int NaiveAlgorithm::findLowestPlaceOfPortInPosition(const string &port, ContainersPosition& position) {
+    int i = 0;
+    for( auto& containerId : position) {
+        if (ship.containerIdToDestination(containerId) == port){
+            return i;
+        }
+        i++;
+    }
+    return -1;
+}
+// endregion
+
+// region INSTRUCTIONS
+
+// input_path is Containers-awaiting-at-port file
+int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const string &output_path)  {
     Errors errors;
-    vector<Container> containers;
-    errors.addErrors(readContainerAwaitingAtPortFile(input_path,containers));
-    NaiveAlgorithm::sortContainers(containers);
-    ShipPlan& shipPlan = ship.getShipPlan();
-    int amount = containers.size(), index = 0, X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth();
-    for (int i = 0; i < X ; ++i) {
-        for (int j = 0; j < Y; ++j) {
-            ContainersPosition& containersPosition = shipPlan.getContainerPosition(i, j);
-            while (containersPosition.howManyAvailiable()) {
-                if (index < amount) {
-                    if(containers[index].getDestinationPort() != route.getCurrentPortName())
-                    {
-                        if (calculator.tryOperation((char) Action::LOAD, containers.at(index).getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
-                            string des = containers[index].getDestinationPort().substr(0,5);
-                            if (!route.portInNextStops(des)){
-                                //errors.addError();
-                                std::cout << "Warning: can't load container " << containers[index].getId() << " because it's destination port " << containers[index].getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
-                                writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
-                            }
-                            else {
-                                writeOperation(output_path, Action::LOAD, containers[index].getId(), containersPosition.getTopFloorNumber()+1, i, j);
-                                containersPosition.load(containers[index].getId(), false);
-                            }
-                        }
-                    }
-                    else {
-                        std::cout << "Warning: conatainer with same destination port as current port was waiting for load ignored" << std::endl;
-                    }
-                    index++;
-                }
-                else {
-                    return errors.getErrorsCode();
-                }
-            }
-        }
+    errors.addErrors(getUnloadInstructions(output_path));
+    if (!route.inLastStop() && !input_path.empty()){
+        errors.addErrors(getLoadInstructions(input_path, output_path));
     }
-    // most far containers will be rejected if there is no enough space
-    for (; index < amount ; index++){
-        if (route.portInNextStops(containers[index].getDestinationPort())) {
-            errors.addError(Error::PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING);
-            writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
-        } else {
-            std::cout << "Warning: can't load container " << containers[index].getId() << " because it's destination port " << containers[index].getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
-        }
-    }
+    route.incrementCurrentPort();
     return errors.getErrorsCode();
 }
 
@@ -109,27 +86,7 @@ int NaiveAlgorithm::getUnloadInstructions(const string &output_path) {
     return errors.getErrorsCode();
 }
 
-int NaiveAlgorithm::findLowestPlaceOfPortInPosition(const string &port, ContainersPosition& position) {
-    int i = 0;
-    for( auto& containerId : position) {
-        if (ship.containerIdToDestination(containerId) == port){
-            return i;
-        }
-        i++;
-    }
-    return -1;
-}
-
-// input_path is Containers-awaiting-at-port file
-int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const string &output_path)  {
-    Errors errors;
-    errors.addErrors(getUnloadInstructions(output_path));
-    if (!route.inLastStop() && !input_path.empty()){
-        errors.addErrors(getLoadInstructions(input_path, output_path));
-    }
-    route.incrementCurrentPort();
-    return errors.getErrorsCode(); // TODO fix this
-}
+// endregion
 
 
 NaiveAlgorithm::NaiveAlgorithm() {

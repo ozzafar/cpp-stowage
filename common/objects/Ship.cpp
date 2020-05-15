@@ -12,7 +12,6 @@ void Ship::updateContainerMapping(Container container) {
     this->containerIdToContainer[container.getId()] = container;
 }
 
-
 ShipPlan& Ship::getShipPlan() {
     return shipPlan;
 }

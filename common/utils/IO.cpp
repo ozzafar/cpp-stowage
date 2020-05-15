@@ -167,7 +167,7 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
         X = stoi(row[1]);
         Y = stoi(row[2]);
         vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition(numOfFloors)));
-        shipPlan = ShipPlan(plan);
+        shipPlan = ShipPlan(plan,numOfFloors);
 
         while (getline(planFile, line)) {
             errors.addErrors(createPositionFromRowInput(numOfFloors, X, Y, line, shipPlan));
@@ -191,7 +191,6 @@ int IO::readShipRoute(const string &path, Route& route) {
 
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
-            rowIndex++;
             row = breakLineToWords(line, ' ');
 
             if (!checkPortNumberInput(row)) {
@@ -202,7 +201,12 @@ int IO::readShipRoute(const string &path, Route& route) {
             {
                 row[0] = row[0].substr(0, row[0].size()-1);
             }
-            ports.push_back(row[0]);
+            if (rowIndex > 0 && ports[rowIndex].compare(ports[rowIndex-1])) {
+                errors.addError(Error::PORT_APPEAR_TWICE_WARNING);
+            } else{
+                ports.push_back(row[0]);
+                rowIndex++;
+            }
         }
         planFile.close();
         route = Route(ports);

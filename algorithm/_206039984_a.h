@@ -5,9 +5,9 @@
 #ifndef CPP_STOWAGE__206039984_A_H
 #define CPP_STOWAGE__206039984_A_H
 
-#include "NaiveAlgorithm.h"
+#include "NaiveAlgorithmVertical.h"
 
-class _206039984_a : public NaiveAlgorithm {
+class _206039984_a : public NaiveAlgorithmVertical {
 
 };
 

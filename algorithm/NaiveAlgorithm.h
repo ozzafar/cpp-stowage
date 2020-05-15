@@ -44,15 +44,16 @@ public:
         return portToIndexesInRoute[a.getDestinationPort()][0] < portToIndexesInRoute[b.getDestinationPort()][0]; // private
     }
 
+protected:
     void sortContainers(vector<Container>& containers);
 
     /* find the lowest position in port which
      * contains a container of specific destination*/
-    int findLowestPlaceOfPortInPosition(const string &port, ContainersPosition &position); // private
+    int findLowestPlaceOfPortInPosition(const string &port, ContainersPosition &position);
 
-    int getLoadInstructions(const string &input_path, const string &output_path); // private
+    virtual int getLoadInstructions(const string &input_path, const string &output_path) = 0;
 
-    int getUnloadInstructions(const string &output_path); // private
+    int getUnloadInstructions(const string &output_path);
 };
 
 

@@ -36,8 +36,6 @@ public:
 
     ShipPlan& getShipPlan();
 
-    void setShipPlan(ShipPlan planP);
-
     // check if the ship has encountered this container Id
     bool knowContainerId(const string &id);
 

@@ -18,7 +18,7 @@ int Registrar::loadSO(const std::string &path) {
         return 1;
     }
 
-    // handles.push_back(std::move(handle));
+    handles.push_back(std::move(handle));
     std::cout << "loadSO succeedded" << std::endl;
 
 #endif
@@ -27,7 +27,7 @@ int Registrar::loadSO(const std::string &path) {
     std::cout << "algo name: " << names[0] <<std::endl;
 
     (void) path;
-    return Error::SUCCESS;
+    return (int)(Error::SUCCESS);
 
 }
 
@@ -48,6 +48,14 @@ std::string Registrar::extractFilenameFromPath(const std::string &path, bool rem
     }
 
     return pathCopy;
+}
+
+Registrar::~Registrar() {
+    factoryVec.clear();
+#ifdef RUNNING_ON_NOVA
+    handles.clear();
+#endif
+
 }
 
 void Registrar::addName(const std::string &name) {

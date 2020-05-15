@@ -26,6 +26,7 @@ public:  // need to be private
     vector<std::string> names;
     std::string extractFilenameFromPath(const std::string &path, bool removeExtension);
 
+    virtual ~Registrar();
 
 //    TODO causing segmentation fault
        struct DlCloser{

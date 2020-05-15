@@ -16,12 +16,7 @@ typedef AbstractAlgorithm::Action Action;
 
 class CraneManagement {
 
-    std::ofstream fout;
-
-    string errorsFilePath;
-
 public:
-
 
     // return value is SUCCESS / FAILURE:
     int load(Ship* ship, string &containerId, int floor, int row, int column);

@@ -29,7 +29,6 @@ public:
     void writeOperation(const std::string &filename, AbstractAlgorithm::Action op, const string &containerId, int floor, int x, int y);  // writes single operation to output file
     Ship getShip();
     Route getShipRoute();
-    static AbstractAlgorithm *createAlgorithmByName(string basicString);
 
     // override functions
     int readShipPlan(const std::string& full_path_and_file_name) override;

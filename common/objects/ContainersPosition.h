@@ -22,9 +22,7 @@ private:
 
 public:
 
-    ContainersPosition(int startFloor, int numOfFlours);
-
-    explicit ContainersPosition(int numOfFlours);
+    ContainersPosition(int numOfFloors);
 
     int load(const string& containerId, bool print);
 
@@ -35,10 +33,10 @@ public:
 
     void setStartFloor(int startFloorP);
 
-    [[nodiscard]] int getStartFloor() const;
+    int getStartFloor() const;
 
     // how many places are occupied by containers
-    [[nodiscard]] int getNumOfActiveFloors() const;
+    int getNumOfActiveFloors() const;
 
     // return number of the top floor which has a container
     int getTopFloorNumber();

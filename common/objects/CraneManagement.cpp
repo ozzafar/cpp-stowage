@@ -2,50 +2,46 @@
 //
 // Created by Oz Zafar on 11/04/2020.
 
-#include <fstream>
 #include <sstream>
 #include <map>
 #include <utility>
 #include "CraneManagement.h"
 #include "../utils/IO.h"
 #include "../../interfaces/AbstractAlgorithm.h"
-
+#include "../utils/Errors.h"
 
 
 int CraneManagement::load(Ship* ship, string& containerId, int floor, int row, int column) {
+    Errors errors;
     ShipPlan& shipPlan = ship->getShipPlan();
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor-1){
-        fout.open(errorsFilePath,std::fstream::app);
-        if (fout.is_open()) {
-            fout << "Error: can't load to floor " << floor << " in position " << "("<<row << " " << column << "),";
-        }
-        fout.close();
-        return 0;
+        errors.addError(Error::FULL_CONTAINER_POSITION);
+        return errors.getErrorsCode();
     }
-    return position.load(containerId, true);
+    position.load(containerId, true);
+    return errors.getErrorsCode();
 }
 
 
 int CraneManagement::unload(Ship* ship, string &containerId, int floor,int row, int column) {
+    Errors errors;
     ShipPlan& shipPlan = ship->getShipPlan();
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor){
-        fout.open(errorsFilePath,std::fstream::app);
-        if (fout.is_open()) {
-            fout << "Error: can't unload the container " << containerId << " from floor " << floor << " in position "
-                 << "(" << row << " " << column << ") because the container isn't on top,";
-        }
-        return 0;
+        errors.addError(Error::UNLOAD_NOT_TOP_CONTAINER);
+        return errors.getErrorsCode();
     }
-    return shipPlan.getContainerPosition(row, column).unload(containerId, true);
+    shipPlan.getContainerPosition(row, column).unload(containerId, true);
+    return errors.getErrorsCode();
 }
 int CraneManagement::move(Ship* ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
-    int unload = CraneManagement::unload(ship,containerId,oldFloor,oldRow,oldColumn);
-    if (unload){
-        return CraneManagement::load(ship,containerId,newFloor,newRow,newColumn);
+    Errors errors;
+    errors.addErrors(CraneManagement::unload(ship,containerId,oldFloor,oldRow,oldColumn));
+    if (!errors.hasError()){
+        errors.addErrors(CraneManagement::load(ship,containerId,newFloor,newRow,newColumn));
     }
-    return 0;
+    return errors.getErrorsCode();
 }
 
 /* ignores extra param in line

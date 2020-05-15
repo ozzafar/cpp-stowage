@@ -52,14 +52,6 @@ Route BasicAlgorithm::getShipRoute() {
     return route;
 }
 
-AbstractAlgorithm *BasicAlgorithm::createAlgorithmByName(string algorithmName) {
-    if(algorithmName == "Naive")
-    {
-        return new NaiveAlgorithm();
-    }
-    return nullptr;
-}
-
 // endregion
 
 // region OVERRIDE FUNCTIONS
@@ -81,7 +73,7 @@ int BasicAlgorithm::readShipRoute(const string &path) {
 
 int BasicAlgorithm::setWeightBalanceCalculator(WeightBalanceCalculator &weightBalanceCalculator) {
     calculator = weightBalanceCalculator;
-    return SUCCESS;
+    return (int)(Error::SUCCESS);
 }
 
 // endregion
