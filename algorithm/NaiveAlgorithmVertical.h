@@ -9,7 +9,8 @@
 #include "NaiveAlgorithm.h"
 
 class NaiveAlgorithmVertical : public NaiveAlgorithm {
-    int getLoadInstructions(const string &input_path, const string &output_path) override;
+     int getLoadInstructions(const string &input_path, const string &output_path) override;
+
 };
 
 

@@ -183,7 +183,7 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
 int IO::readShipRoute(const string &path, Route& route) {
     Errors errors;
     vector<string> ports;
-    int prevPortIndex = 0;
+    int prevPortIndex = -1;
     string line;
     vector<string> row;
 
