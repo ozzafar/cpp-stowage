@@ -171,7 +171,7 @@ void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, uni
         if(std::filesystem::exists(pathOfContainersAwaitingAtPortFile) == 0)
         {
             std::cout << "No containers awaiting at port input file for " << ports[i] << " for visiting number " << indexOfVisitAtPort[ports[i]] + 1 << std::endl;
-            algorithm->getInstructionsForCargo(travelPath + "empty_containers_awaiting_at_port_file.txt", pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + "algorithm_name" + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
+            algorithm->getInstructionsForCargo(travelPath + "/" + "empty_containers_awaiting_at_port_file.txt", pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
         }
         else
         {
