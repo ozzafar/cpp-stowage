@@ -24,7 +24,7 @@ public:
         shipPlan = (*ship).shipPlan, containerIdToContainer = (*ship).containerIdToContainer;
     }
 
-    std::map<string, std::set<string>> portToContainers; //TODO Algorithm doesn't maintains this member
+    std::map<string, std::set<string>> portToContainers;
 
     Ship();
 

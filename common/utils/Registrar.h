@@ -28,7 +28,6 @@ public:  // need to be private
 
     virtual ~Registrar();
 
-//    TODO causing segmentation fault
        struct DlCloser{
         void operator()(void* dlHandle) const noexcept {
             std::cout << "Closing handle" << std::endl;
