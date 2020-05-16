@@ -137,7 +137,9 @@ void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, uni
     int totalOperations = 0;
     Route route;
     vector<string> ports;
+    vector<Container> containers;
     Ship ship;
+
     CraneManagement craneManagement;
     CraneManagement::CraneManagementAnswer craneManagementAnswer;
     WeightBalanceCalculator weightBalanceCalculator;
@@ -175,13 +177,14 @@ void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, uni
         }
         else
         {
-            algorithm->getInstructionsForCargo(travelPath + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".cargo_data.txt", pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
+            IO::readContainerAwaitingAtPortFile(pathOfContainersAwaitingAtPortFile.string(),ship,containers );
+            algorithm->getInstructionsForCargo(pathOfContainersAwaitingAtPortFile, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
         }
 
         string a = pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt";
         craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
         totalOperations += craneManagementAnswer.numOfOperations;
-        checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route, pathOfOutputFilesForAlgorithmAndTravel.string());
+        checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route, pathOfOutputFilesForAlgorithmAndTravel.string(),containers);
         indexOfVisitAtPort[ports[i]]++;
         std::cout << "----------------" <<"Ship left port " << ports[i] << "----------------" << std::endl;
         route.incrementCurrentPort();
@@ -195,41 +198,67 @@ void Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, uni
 
 }
 
-void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneManagement::CraneManagementAnswer& answer,Route& route, const string &pathOfOutputFilesForAlgorithmAndTravel) {
+void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneManagement::CraneManagementAnswer& answer,Route& route, const string &pathOfOutputFilesForAlgorithmAndTravel,vector<Container>& containers) {
 
+        // --------------- check all containers supposed to be unloaded were unloaded ---------------
         if (ship.portToContainers[port].size() > 0)
         {
-            string error = "Not all of the containers of this port were unloaded";
+            string error = "Not all of the containers with of this port destination were unloaded";
             cout << error;
             IO::writeToFile(pathOfOutputFilesForAlgorithmAndTravel, error + ",");
         }
 
-        if (answer.changedContainers.count(Action::REJECT) > 0)
-        {
-            for (auto& rejected : answer.changedContainers[Action::REJECT])
-            {
-                for (auto &loaded : answer.changedContainers[Action::LOAD])
-                {
-                    if (route.nextStopForPort(ship.containerIdToDestination(rejected)) <
-                        route.nextStopForPort(ship.containerIdToDestination(loaded)))
-                    {
-                        string error = "Rejected container " + rejected + " with higher priority";
-                        cout << error;
-                        IO::writeToFile(pathOfOutputFilesForAlgorithmAndTravel, error + ",");
-                    }
+    // --------------- check all containers supposed to be loaded were loaded or rejected ---------------
+    bool inRejected, inLoaded;
+        for (auto& container : containers){
+            for (string& id : answer.changedContainers[Action::REJECT]){
+                if (!id.compare(container.getId())){
+                    inRejected = true;
+                    break;
                 }
             }
-        }
-
-        if (route.inLastStop())
-        {
-            int amountOfContainers = ship.getAmountOfContainers() > 0;
-            if (amountOfContainers>0)
-            {
-                string error = "Ship arrived to last port in route but there are still " + std::to_string(amountOfContainers) + " containers on the ship";
+            for (string& id : answer.changedContainers[Action::LOAD]) {
+                if (!id.compare(container.getId())) {
+                    inLoaded = true;
+                    break;
+                }
+            }
+            if (!inRejected && !inLoaded){
+                string error = "Not all of the containers of this port were loaded (or rejected)";
                 cout << error;
                 IO::writeToFile(pathOfOutputFilesForAlgorithmAndTravel, error + ",");
             }
         }
 
+    // --------------- check all rejected containers were rejected from good reason ---------------
+    if (answer.changedContainers.count(Action::REJECT) > 0)
+        {
+            for (auto& rejected : answer.changedContainers[Action::REJECT])
+            {
+                if (route.portInNextStops(ship.containerIdToDestination(rejected))) {
+                    for (auto &loaded : answer.changedContainers[Action::LOAD]) {
+                        if (route.nextStopForPort(ship.containerIdToDestination(rejected)) <
+                            route.nextStopForPort(ship.containerIdToDestination(loaded))) {
+                            string error = "Rejected container " + rejected + " with higher priority";
+                            cout << error;
+                            IO::writeToFile(pathOfOutputFilesForAlgorithmAndTravel, error + ",");
+                        }
+                    }
+                } else {
+                    // good ignore
+                }
+            }
+        }
+
+    // --------------- check shup is empry in end of travel ---------------
+    if (route.inLastStop()) {
+        int amountOfContainers = ship.getAmountOfContainers() > 0;
+        if (amountOfContainers > 0) {
+            string error =
+                    "Ship arrived to last port in route but there are still " + std::to_string(amountOfContainers) +
+                    " containers on the ship";
+            cout << error;
+            IO::writeToFile(pathOfOutputFilesForAlgorithmAndTravel, error + ",");
+        }
+    }
 }

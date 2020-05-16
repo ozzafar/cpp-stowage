@@ -38,7 +38,7 @@ public:
 
     void checkForErrorsAfterPort(Ship &ship, const string &port,
                             CraneManagement::CraneManagementAnswer &answer,
-                            Route &route, const string &pathOfOutputFilesForAlgorithmAndTravel);
+                            Route &route, const string &pathOfOutputFilesForAlgorithmAndTravel, vector<Container>& containers);
 };
 
 #endif //SIMULATOR_SIMULATION_H
