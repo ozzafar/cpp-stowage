@@ -201,7 +201,7 @@ int IO::readShipRoute(const string &path, Route& route) {
             {
                 row[0] = row[0].substr(0, row[0].size()-1);
             }
-            if (prevPortIndex > 0 && !row[0].compare(ports[prevPortIndex])) {
+            if (prevPortIndex >= 0 && !row[0].compare(ports[prevPortIndex])) {
                 errors.addError(Error::PORT_APPEAR_TWICE_WARNING);
             } else{
                 ports.push_back(row[0]);
@@ -240,6 +240,41 @@ int IO::writeToFile(const string &writingPath, const string &content) {
 
     std::cout << "Unable to open file";
     return 1;
+}
+
+void IO::writeResultsOfsimulation(const string &resultOutputPath, const vector<string> &travelNames,
+                                  map<string, AlgorithmResults> &algorithmsResults) {
+    writeToFile(resultOutputPath, "RESULTS,");
+    for(string travelName : travelNames)
+    {
+        writeToFile(resultOutputPath, travelName + ",");
+    }
+    writeToFile(resultOutputPath, "SUM,Num Errors\n");
+    //TODO: sort algorithmResults
+    for(std::pair<string, AlgorithmResults> algorithmResults : algorithmsResults)
+    {
+        writeToFile(resultOutputPath, algorithmResults.second.getAlgorithmName() + ",");
+
+        for(string travelName : travelNames)
+        {
+            int operationCounteOnCurrentTravel = algorithmResults.second.getOperationCounterOnOneTravel(travelName);
+            writeToFile(resultOutputPath, std::to_string(operationCounteOnCurrentTravel) + ",");
+        }
+        writeToFile(resultOutputPath, to_string(algorithmResults.second.getOperationsCounterOnAllTravels()) + ",");
+        writeToFile(resultOutputPath, to_string(algorithmResults.second.getNumberOfFailedTravels()) + "\n");
+    }
+
+
+}
+
+void IO::writeErrorsOfTravelAndAlgorithm (Errors &errors, const string &outputPathOfErrorsFile) {
+    auto itr = errors.getIterator();
+    while(itr.hasNext())
+    {
+        Error error = itr.getNext();
+        IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(error) + ",");
+    }
+
 }
 
 // endregion

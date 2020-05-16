@@ -9,6 +9,8 @@
 #include "../objects/Container.h"
 #include "../objects/Ship.h"
 #include "../objects/Route.h"
+#include "../../simulation/AlgorithmResults.h"
+#include "Errors.h"
 #include <vector>
 #include <stdio.h>
 #include <ctype.h>
@@ -32,6 +34,9 @@ public:
 
     static int writeToFile(const string &writingPath, const string &content);
 
+    static void writeResultsOfsimulation(const string &resultOutputPath, const vector<string> &travelNames, map<string, AlgorithmResults> &algorithmsResults);
+
+    static void writeErrorsOfTravelAndAlgorithm(Errors &errors, const string &outputPathOfErrorsFile);
 };
 
 #endif //CPP_STOWAGE_IO_H
