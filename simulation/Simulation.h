@@ -17,6 +17,9 @@
 #include "../common/objects/CraneManagement.h"
 #include "AlgorithmResults.h"
 #include "../common/utils/Registrar.h"
+#include <memory>
+#include "../interfaces/WeightBalanceCalculator.h"
+#include "../algorithm/_206039984_a.h"
 
 class Simulation {
 
@@ -41,6 +44,9 @@ public:
                             Route &route, vector<Container>& containers, Errors &errors);
 
     int checkTravelsPath(const string &travelsPathToCheck);
+
+    bool checkIfCloserContainerWasLoaded(Ship &ship,  CraneManagement::CraneManagementAnswer &answer,
+                                                     Route &route, Container &container);
 
 };
 

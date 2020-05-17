@@ -20,7 +20,6 @@ private:
     int errors = (int)(Error::SUCCESS);
 
 public:
-
     Errors();
 
     Errors(int errors);
@@ -34,8 +33,6 @@ public:
     bool hasTravelError();
 
     Errors getTravelErrors();
-
-    bool hasTravelError();
 
     void addError(Error newError);
 

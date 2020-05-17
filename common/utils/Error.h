@@ -44,7 +44,11 @@ enum class Error {
     REJECTED_NOT_FAR_CONTAINERS                    = 1 << 23,
     BAD_CONTAINER_WASNT_REJECTED                   = 1 << 24,
     CONTAINER_WASNT_REVIEWED                       = 1 << 25,
-    SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL               = 1 << 26
+    SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL               = 1 << 26,
+    CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM = 1 << 27,
+    CONTAINERS_ON_PORT_IGNORED_BY_THE_ALGORITHM            = 1 << 28,
+    CONTAINER_INCORRECTLY_REJECTED                         = 1 << 29,
+    SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE            = 1 << 30
 
 };
 

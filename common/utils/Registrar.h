@@ -33,7 +33,10 @@ public:  // need to be private
         void operator()(void* dlHandle) const noexcept {
             std::cout << "Closing handle" << std::endl;
             (void) dlHandle; //unused
-            dlclose(dlHandle);
+#ifdef RUNNING_ON_NOVA
+dlclose(dlHandle);
+#endif
+
         }
     };
 

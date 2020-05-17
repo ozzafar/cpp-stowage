@@ -92,13 +92,13 @@ int Errors::getErrorsCode() {
 
 
 bool Errors::hasError(Error error) {
-    return errors && (int) error;
+    return errors & (int) error;
 }
 
 bool Errors::hasTravelError() {
     int fatalErrorCode = (int) Error::PLAN_FILE_CANNOT_BE_READ_ERROR | (int) Error::ROUTE_FILE_CANNOT_BE_READ_ERROR |
                          (int) Error::ROUTE_FILE_SINGLE_VALID_PORT_ERROR | (int) Error::DUPLICATE_X_Y_WITH_DIFFERENT_DATA;
-    return errors && fatalErrorCode;;
+    return errors & fatalErrorCode;;
 }
 
 void Errors::addErrors(Errors newErrors) {
