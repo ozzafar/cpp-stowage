@@ -219,6 +219,12 @@ void Simulation::checkForErrorsAfterPort(Ship &ship, const string &port, CraneMa
         }
         for (string &id : answer.changedContainers[Action::LOAD]) {
             if (!id.compare(container.getId())) {
+                if (destIsCurrentPort){
+                    errors.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
+                }
+                if (destIsntInNextStops){
+                    errors.addError(Error::CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS);
+                }
                 inLoaded = true;
                 break;
             }
