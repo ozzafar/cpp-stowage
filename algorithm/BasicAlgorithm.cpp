@@ -40,8 +40,8 @@ void BasicAlgorithm::writeOperation(const std::string& filename, AbstractAlgorit
     }
 }
 
-int BasicAlgorithm::readContainerAwaitingAtPortFile(const string &path,vector<Container>& waitingContainers) {
-    return IO::readContainerAwaitingAtPortFile(path,ship,waitingContainers);
+int BasicAlgorithm::readContainerAwaitingAtPortFile(const string &path,vector<Container>& waitingContainers, vector<Container>& badContainers) {
+    return IO::readContainerAwaitingAtPortFile(path,ship,waitingContainers, badContainers);
 }
 
 Ship BasicAlgorithm::getShip() {

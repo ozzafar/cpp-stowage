@@ -19,7 +19,7 @@
 #include "../common/objects/Ship.cpp"
 #include "../simulation/Simulation.cpp"
 #include "../simulation/AlgorithmResults.cpp"
-#include "../algorithm/WeightBalanceCalculator.cpp"
+#include "../interfaces/WeightBalanceCalculator.cpp"
 #include "../common/objects/CraneManagement.cpp"
 #include "../common/utils/IO.cpp"
 #include "../common/utils/ErrorsIterator.cpp"

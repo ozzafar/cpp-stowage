@@ -15,16 +15,16 @@ private:
 
     ShipPlan shipPlan;
 
+public:
+
     std::map<string, Container> containerIdToContainer;
 
-public:
+    std::map<string, std::set<string>> portToContainers;
 
     Ship(const Ship* ship)
     {
         shipPlan = (*ship).shipPlan, containerIdToContainer = (*ship).containerIdToContainer;
     }
-
-    std::map<string, std::set<string>> portToContainers;
 
     Ship();
 

@@ -7,7 +7,7 @@
 #include "../common/utils/Registrar.h"
 #include <functional>
 #include <memory>
-#include "../algorithm/WeightBalanceCalculator.h"
+#include "../interfaces/WeightBalanceCalculator.h"
 #include "../algorithm/_206039984_a.h"
 
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
@@ -124,7 +124,6 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, u
     int totalOperations = 0;
     Route route;
     vector<string> ports;
-    vector<Container> containers;
     Ship ship;
     CraneManagement craneManagement;
     CraneManagement::CraneManagementAnswer craneManagementAnswer;
@@ -185,6 +184,8 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, u
 
     for (size_t i = 0; i < ports.size(); i++)
     {
+        vector<Container> containers;
+        vector<Container> badContainers;
         std::cout << "----------------" <<"Ship Arrived to port " << ports[i] << "----------------" << std::endl;
         const std::filesystem::path pathOfContainersAwaitingAtPortFile = travelPath + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".cargo_data.txt"; //TODO: remove .txt in linux
 
@@ -201,7 +202,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, u
         }
         else
         {
-            errors.addError(IO::readContainerAwaitingAtPortFile(pathOfContainersAwaitingAtPortFile.string(),ship,containers ));
+            errors.addError(IO::readContainerAwaitingAtPortFile(pathOfContainersAwaitingAtPortFile.string(),ship,containers,badContainers));
             if(errors.hasTravelError())
             {
                 IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
@@ -286,7 +287,7 @@ void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMa
             }
         }
 
-    // --------------- check shup is empry in end of travel ---------------
+    // --------------- check if ship is empty in end of travel ---------------
     if (route.inLastStop()) {
         int amountOfContainers = ship.getAmountOfContainers() > 0;
         if (amountOfContainers > 0) {
@@ -295,6 +296,18 @@ void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMa
             errors.addError(Error::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE);
         }
     }
+}
+
+bool Simulation::checkIfCloserContainerWasLoaded(Ship &ship,  CraneManagement::CraneManagementAnswer &answer,
+                                                 Route &route, Container &container)  {
+    bool closerContainerExists = false;
+    for (auto &loaded : answer.changedContainers[Action::LOAD]) {
+        if (route.nextStopForPort(ship.containerIdToDestination(container.getId())) <
+            route.nextStopForPort(ship.containerIdToDestination(loaded))) {
+            closerContainerExists = true;
+        }
+    }
+    return closerContainerExists;
 }
 
 int Simulation::checkTravelsPath(const string &travelsPathToCheck) {

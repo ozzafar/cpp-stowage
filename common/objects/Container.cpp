@@ -19,7 +19,7 @@ string& Container::getDestinationPort()  {
     return destinationPort;
 }
 
-const string &Container::getId() const {
+string &Container::getId() {
     return id;
 }
 

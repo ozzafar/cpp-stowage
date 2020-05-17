@@ -2,13 +2,14 @@ COMP = g++-8.3.0
 
 SHARED_OBJS = _206039984_a.so
 
-OBJS = BasicAlgorithm.o NaiveAlgorithm.o WeightBalanceCalculator.o $\
+OBJS = BasicAlgorithm.o NaiveAlgorithm.o NaiveAlgorithmVertical.o NaiveAlgorithmHorizontal.o  $\
 $\
 ../common/objects/Container.o ../common/objects/ContainersPosition.o ../common/objects/CraneManagement.o ../common/objects/Route.o $\
  ../common/objects/Ship.o  ../common/objects/ShipPlan.o  ../common/objects/Travel.o $\
 $\
-../common/utils/Errors.o ../common/utils/IO.o $\
-
+../common/utils/Errors.o ../common/utils/ErrorsIterator.o  ../common/utils/IO.o $\
+$\
+../interfaces/WeightBalanceCalculator.o $\
 
 
 CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC

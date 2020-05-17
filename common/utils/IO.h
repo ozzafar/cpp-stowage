@@ -22,7 +22,7 @@ class IO {
 public:
 
     // push containers into waitingContainers param
-    static int readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers);
+    static int readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers,vector<Container>& badContainers);
 
     // update plan param with the read plan
     static int readShipPlan(const string &path, ShipPlan& plan);

@@ -5,9 +5,9 @@ $\
 ../common/objects/Container.o ../common/objects/ContainersPosition.o ../common/objects/CraneManagement.o ../common/objects/Route.o $\
 ../common/objects/Ship.o ../common/objects/ShipPlan.o  ../common/objects/Travel.o $\
 $\
-../common/utils/Errors.o ../common/utils/IO.o ../common/utils/Registrar.o $\
+../common/utils/Errors.o ../common/utils/ErrorsIterator.o ../common/utils/IO.o ../common/utils/Registrar.o $\
 $\
-../interfaces/AlgorithmRegistration.o
+../interfaces/AlgorithmRegistration.o ../interfaces/WeightBalanceCalculator.o
 
 
 EXEC = simulator

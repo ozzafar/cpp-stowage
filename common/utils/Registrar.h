@@ -10,6 +10,7 @@
 #include <functional>
 #include <memory>
 #include "../../interfaces/AbstractAlgorithm.h"
+#include "Errors.h"
 
 #ifdef RUNNING_ON_NOVA
 #include <dlfcn.h>
@@ -32,12 +33,13 @@ public:  // need to be private
         void operator()(void* dlHandle) const noexcept {
             std::cout << "Closing handle" << std::endl;
             (void) dlHandle; //unused
-            //dlclose(dlHandle);
+            dlclose(dlHandle);
         }
     };
 
-//    std::vector<std::unique_ptr<void,DlCloser>> handles;
-
+#ifdef RUNNING_ON_NOVA
+    std::vector<std::unique_ptr<void,DlCloser>> handles;
+#endif
 
 public:
     int loadSO(const std::string& path);
