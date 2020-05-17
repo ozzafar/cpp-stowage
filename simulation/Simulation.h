@@ -28,7 +28,7 @@ private:
     map<string, AlgorithmResults> algorithmsResults;
 
     void simulateOneTravelWithAllAlgorithms(const string &travelPath);
-    void simulateOneTravelWithOneAlgorithm(const string &travelPath, unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName);
+    Errors simulateOneTravelWithOneAlgorithm(const string &travelPath, unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName);
 
 public:
 
@@ -38,7 +38,7 @@ public:
 
     void checkForErrorsAfterPort(Ship &ship, const string &port,
                             CraneManagement::CraneManagementAnswer &answer,
-                            Route &route, const string &pathOfOutputFilesForAlgorithmAndTravel, vector<Container>& containers);
+                            Route &route, vector<Container>& containers, Errors &errors);
 
     int checkTravelsPath(const string &travelsPathToCheck);
 

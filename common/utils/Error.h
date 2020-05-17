@@ -40,7 +40,15 @@ enum class Error {
 
     // Container Position Code
     FULL_CONTAINER_POSITION                        = 1 << 21,
-    UNLOAD_NOT_TOP_CONTAINER                       = 1 << 22
+    UNLOAD_NOT_TOP_CONTAINER                       = 1 << 22,
+
+    //Added Errors
+    CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM = 1 << 23,
+    CONTAINERS_ON_PORT_IGNORED_BY_THE_ALGORITHM            = 1 << 24,
+    CONTAINER_INCORRECTLY_REJECTED                         = 1 << 25,
+    SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE            = 1 << 26
+
+
 
 };
 
