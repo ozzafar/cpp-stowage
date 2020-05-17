@@ -29,6 +29,8 @@ public:
 
     bool hasFatalError();
 
+    bool hasTravelError();
+
     void addError(Error newError);
 
     void addErrors(Errors newErrors);

@@ -125,3 +125,7 @@ int Errors::emptyErrors() {
 ErrorsIterator Errors::getIterator() {
     return ErrorsIterator(errors);
 }
+
+bool Errors::hasTravelError() {
+    return false;
+}

@@ -49,7 +49,6 @@ enum class Error {
     SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE            = 1 << 26
 
 
-
 };
 
 
