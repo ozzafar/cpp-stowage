@@ -7,7 +7,7 @@
 
 
 #include "../common/objects/ShipPlan.h"
-#include "WeightBalanceCalculator.h"
+#include "../interfaces/WeightBalanceCalculator.h"
 #include "../common/objects/Container.h"
 #include "../common/objects/Route.h"
 #include "../interfaces/AbstractAlgorithm.h"

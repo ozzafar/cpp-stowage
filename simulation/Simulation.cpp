@@ -7,7 +7,7 @@
 #include "../common/utils/Registrar.h"
 #include <functional>
 #include <memory>
-#include "../algorithm/WeightBalanceCalculator.h"
+#include "../interfaces/WeightBalanceCalculator.h"
 #include "../algorithm/_206039984_a.h"
 
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)

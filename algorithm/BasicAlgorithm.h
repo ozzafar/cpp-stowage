@@ -8,7 +8,7 @@
 #include "../interfaces/AbstractAlgorithm.h"
 #include "../common/objects/Ship.h"
 #include "../common/objects/Route.h"
-#include "WeightBalanceCalculator.h"
+#include "../interfaces/WeightBalanceCalculator.h"
 #include "../common/utils/Error.h"
 #include <string>
 

@@ -6,7 +6,9 @@ using std::list;
 
 
 int main() {
-    Simulation simulation("C://input");
+    std::cout<< "started"<<std::endl;
+    std::string root = "../algorithm/";
+    Simulation simulation("/Users/ozzafar/CLionProjects/cpp-stowage/tests/input");
     simulation.simulateAllTravelsWithAllAlgorithms();
     return 0;
 }
