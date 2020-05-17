@@ -21,13 +21,17 @@ private:
 
 public:
 
+    Errors(int errors);
+
     int getErrorsCode();
 
     bool hasError(Error error);
 
     bool hasError();
 
-    bool hasFatalError();
+    bool hasTravelError();
+
+    Errors getTravelErrors();
 
     void addError(Error newError);
 

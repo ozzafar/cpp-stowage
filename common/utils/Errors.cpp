@@ -17,12 +17,12 @@ string Errors::errorToString(Error error) {
         case Error::ILLEGAL_POSITION_WARNING:
             return "ship plan: a given position exceeds the X/Y ship limits (ignored)";
         case Error::PLAN_BAD_LINE_FORMAT_WARNING:
-            return "ship plan: bad line format after first line (ignored)";
+            return "ship plan: bad line format after first line or duplicate x,y appearance with same data (ignored)";
         case Error::PLAN_FILE_CANNOT_BE_READ_ERROR:
             return "ship plan: fatal error - bad first line or file cannot be read altogether (cannot run with this ship plan)";
-        // Reserved Code
-        case Error::RESERVED1:
-            return "reserved";
+        case Error::DUPLICATE_X_Y_WITH_DIFFERENT_DATA:
+            return "ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)";
+            // Reserved Code
         case Error::RESERVED2:
             return "reserved";
         // Route Code
@@ -68,6 +68,8 @@ string Errors::errorToString(Error error) {
 }
 
 
+Errors::Errors(int errors) : errors(errors) {}
+
 string Errors::errorFromAlgorithmToString(Error error) {
     return ALGORITHM_TRUE_NEGATIVE_ERROR + errorToString(error);
 }
@@ -80,14 +82,14 @@ int Errors::getErrorsCode() {
     return errors;
 }
 
+
 bool Errors::hasError(Error error) {
     return errors && (int) error;
 }
 
-
-bool Errors::hasFatalError() {
+bool Errors::hasTravelError() {
     int fatalErrorCode = (int) Error::PLAN_FILE_CANNOT_BE_READ_ERROR | (int) Error::ROUTE_FILE_CANNOT_BE_READ_ERROR |
-                         (int) Error::ROUTE_FILE_SINGLE_VALID_PORT_ERROR;
+                         (int) Error::ROUTE_FILE_SINGLE_VALID_PORT_ERROR | (int) Error::DUPLICATE_X_Y_WITH_DIFFERENT_DATA;
     return errors && fatalErrorCode;;
 }
 
@@ -124,4 +126,10 @@ int Errors::emptyErrors() {
 
 ErrorsIterator Errors::getIterator() {
     return ErrorsIterator(errors);
+}
+
+Errors Errors::getTravelErrors() {
+    int travelErrors = (int) Error::PLAN_FILE_CANNOT_BE_READ_ERROR & (int) Error::ROUTE_FILE_CANNOT_BE_READ_ERROR &
+              (int) Error::ROUTE_FILE_SINGLE_VALID_PORT_ERROR & (int) Error::DUPLICATE_X_Y_WITH_DIFFERENT_DATA;
+    return (Errors) (errors & travelErrors);
 }

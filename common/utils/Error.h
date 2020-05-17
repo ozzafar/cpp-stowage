@@ -14,9 +14,9 @@ enum class Error {
     ILLEGAL_POSITION_WARNING                       = 1 << 1,
     PLAN_BAD_LINE_FORMAT_WARNING                   = 1 << 2,
     PLAN_FILE_CANNOT_BE_READ_ERROR                 = 1 << 3,
+    DUPLICATE_X_Y_WITH_DIFFERENT_DATA              = 1 << 4,
 
     // Reserved Code
-    RESERVED1                                      = 1 << 4,
     RESERVED2                                      = 1 << 9,
 
     // Route Code
@@ -35,10 +35,10 @@ enum class Error {
     CONTAINER_FILE_CANNOT_BE_READ_WARNING          = 1 << 16,
     LAST_PORT_HAS_CONTAINERS_WARNING               = 1 << 17,
     PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING     = 1 << 18,
+
+    // Extra Codes For Simulator
     LOADED_PORT_DESTINATION_IS_CURRENT_PORT        = 1 << 19,
     CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS       = 1 << 20,
-
-    // Container Position Code
     FULL_CONTAINER_POSITION                        = 1 << 21,
     UNLOAD_NOT_TOP_CONTAINER                       = 1 << 22
 
