@@ -89,6 +89,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                             count++;
                             string destination = ship.containerIdToDestination(containerId);
                             ship.portToContainers[destination].erase(containerId);
+                            ship.containerIdToContainer.erase(containerId);
                         }
                     }
                     break;

@@ -38,10 +38,11 @@ public:
 
     void checkForErrorsAfterPort(Ship &ship, const string &port,
                             CraneManagement::CraneManagementAnswer &answer,
-                            Route &route, const string &pathOfOutputFilesForAlgorithmAndTravel, vector<Container>& containers);
+                            Route &route, const string &pathOfOutputFilesForAlgorithmAndTravel, vector<Container>& containers, vector<Container>& badContainers);
 
     int checkTravelsPath(const string &travelsPathToCheck);
 
+    bool checkIfCloserContainerWasLoaded(Ship &ship, CraneManagement::CraneManagementAnswer &answer, Route &route, Container &container);
 };
 
 #endif //SIMULATOR_SIMULATION_H

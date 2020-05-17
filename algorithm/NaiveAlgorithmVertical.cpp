@@ -8,9 +8,15 @@
 int NaiveAlgorithmVertical::getLoadInstructions(const string &input_path, const string &output_path) {
     Errors errors;
     vector<Container> containers;
-    errors.addErrors(readContainerAwaitingAtPortFile(input_path,containers));
+    vector<Container> badContainers;
+    errors.addErrors(readContainerAwaitingAtPortFile(input_path,containers,badContainers));
     NaiveAlgorithm::sortContainers(containers);
     ShipPlan& shipPlan = ship.getShipPlan();
+
+    for (auto& container : badContainers){
+        writeOperation(output_path, Action::REJECT, container.getId(), -1, -1, -1);
+    }
+
     int amount = containers.size(), index = 0, X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth();
     for (int i = 0; i < X ; ++i) {
         for (int j = 0; j < Y; ++j) {
@@ -22,7 +28,6 @@ int NaiveAlgorithmVertical::getLoadInstructions(const string &input_path, const 
                         if (calculator.tryOperation((char) Action::LOAD, containers.at(index).getWeight(), i, j) == WeightBalanceCalculator::APPROVED) {
                             string des = containers[index].getDestinationPort().substr(0,5);
                             if (!route.portInNextStops(des)){
-                                errors.addError(Error::CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS);
                                 writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
                             }
                             else {
@@ -30,9 +35,8 @@ int NaiveAlgorithmVertical::getLoadInstructions(const string &input_path, const 
                                 containersPosition.load(containers[index].getId(), false);
                             }
                         }
-                    }
-                    else {
-                        errors.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
+                    } else {
+                        writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
                     }
                     index++;
                 }

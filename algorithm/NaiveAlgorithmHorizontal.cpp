@@ -8,9 +8,15 @@
 int NaiveAlgorithmHorizontal::getLoadInstructions(const string &input_path, const string &output_path) {
     Errors errors;
     vector<Container> containers;
-    errors.addErrors(readContainerAwaitingAtPortFile(input_path, containers));
+    vector<Container> badContainers;
+    errors.addErrors(readContainerAwaitingAtPortFile(input_path, containers,badContainers));
     NaiveAlgorithm::sortContainers(containers);
     ShipPlan& shipPlan = ship.getShipPlan();
+
+    for (auto& container : badContainers){
+        writeOperation(output_path, Action::REJECT, container.getId(), -1, -1, -1);
+    }
+
     int floor = 0, numOfFloors = shipPlan.getFloors(), amount = containers.size(), index = 0, X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth();
     while (index < amount && floor < numOfFloors) {
         for (int i = 0; i < X; ++i) {
@@ -22,7 +28,6 @@ int NaiveAlgorithmHorizontal::getLoadInstructions(const string &input_path, cons
                             WeightBalanceCalculator::APPROVED) {
                             string des = containers[index].getDestinationPort().substr(0, 5); //TODO fix
                             if (!route.portInNextStops(des)) {
-                                errors.addError(Error::CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS);
                                 writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
                             } else {
                                 writeOperation(output_path, Action::LOAD, containers[index].getId(),
@@ -31,7 +36,7 @@ int NaiveAlgorithmHorizontal::getLoadInstructions(const string &input_path, cons
                             }
                         }
                     } else {
-                        errors.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
+                        writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
                     }
                     index++;
                     if (index==amount){

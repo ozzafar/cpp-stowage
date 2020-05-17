@@ -28,7 +28,7 @@ public:
 
     string& getDestinationPort();
 
-    const string &getId() const;
+    string &getId();
 
     // toString of container
     friend std::ostream& operator<<(std::ostream& out, const Container& c);

@@ -133,3 +133,5 @@ Errors Errors::getTravelErrors() {
               (int) Error::ROUTE_FILE_SINGLE_VALID_PORT_ERROR & (int) Error::DUPLICATE_X_Y_WITH_DIFFERENT_DATA;
     return (Errors) (errors & travelErrors);
 }
+
+Errors::Errors() {}

@@ -9,6 +9,7 @@
 #include "../common/objects/Ship.h"
 #include "../common/objects/Route.h"
 #include "WeightBalanceCalculator.h"
+#include "../common/utils/Error.h"
 #include <string>
 
 using std::string;
@@ -25,7 +26,7 @@ protected:
 public:
 
     // class functions
-    int readContainerAwaitingAtPortFile(const string &path,vector<Container>& waitingContainers);
+    int readContainerAwaitingAtPortFile(const string &path,vector<Container>& waitingContainers, vector<Container>& badContainers);
     void writeOperation(const std::string &filename, AbstractAlgorithm::Action op, const string &containerId, int floor, int x, int y);  // writes single operation to output file
     Ship getShip();
     Route getShipRoute();

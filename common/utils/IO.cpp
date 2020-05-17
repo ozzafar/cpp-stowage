@@ -98,7 +98,7 @@ static bool checkPortNumberInput(vector<string> portNumber) {
 
 // region MAIN FUNCTIONS
 
-int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers) {
+int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers, vector<Container>& badContainers) {
     Errors errors;
     string line;
     std::ifstream planFile(input_path);
@@ -106,46 +106,66 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
 
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
+            bool badContainer = false;
             row = breakLineToWords(line,',');
             if(row.empty())
             {
                 continue;
             }
+
+
             string containerId = row[0];
-
-
             if (!Container::isValidID(containerId)){
                 errors.addError(Error::ILLEGAL_ID_CHECK_WARNING);
                 std::cout << "Bad input: invalid container id " << containerId << std::endl;
-                continue;
+                badContainer = true;
+            }
+            if (ship.knowContainerId(containerId)){
+                errors.addError(Error::DUPLICATE_CONTAINER_ID_WARINING);
+                std::cout << "Warning: container " << containerId << " appears twice" << std::endl;
+                badContainer = true;
+            }
+
+            if (row.size()<2){
+                errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
+                badContainer = true;
             }
             int weight = stoi(row[1]);
-            string destinationPort = row[2];
+            if (weight<0)
+            {
+                errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
+                badContainer = true;
+            }
 
+
+
+            if (row.size()<3){
+                errors.addError(Error::MISSING_OR_BAD_DEST_WARINING);
+                badContainer = true;
+            }
+
+            string destinationPort = row[2];
             if(iscntrl(destinationPort.at(destinationPort.size()-1)))
             {
                 destinationPort = destinationPort.substr(0, destinationPort.size()-1);
             }
-
             if (!isAlphabetString(destinationPort)){
-                errors.addError(Error::ID_CANNOT_BE_READ_WARINING);
+                errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
                 std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id contains non alphabet chars" << std::endl;
-                continue;
+                badContainer = true;
             }
             if (destinationPort.size() != 5) {
-                errors.addError(Error::ID_CANNOT_BE_READ_WARINING);
+                errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
                 std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id isn't in the correct size" << std::endl;
-                continue;
+                badContainer = true;
             }
 
-            if (ship.knowContainerId(containerId)){
-                errors.addError(Error::DUPLICATE_CONTAINER_ID_WARINING);
-                std::cout << "Warning: container " << containerId << " appears twice" << std::endl;
-            }
-            else{
-                Container newContainer(weight,destinationPort,containerId);
-                waitingContainers.push_back(newContainer);
+            Container newContainer(weight,destinationPort,containerId);
+            if (badContainer){
+                badContainers.push_back(newContainer);
+            } else {
                 ship.updateContainerMapping(newContainer);
+                waitingContainers.push_back(newContainer);
             }
         }
         planFile.close();

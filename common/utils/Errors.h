@@ -21,6 +21,8 @@ private:
 
 public:
 
+    Errors();
+
     Errors(int errors);
 
     int getErrorsCode();
