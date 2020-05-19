@@ -32,13 +32,14 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
 
     for(auto& so: std::filesystem::directory_iterator(algorithmPath))
     {
+
         string path = so.path().string();
-        std::cout << path << std::endl;
         if(path.substr(path.find_last_of(".") + 1) == "so")
         {
-            Registrar::getInstance().addName(so.path().stem().string());
+            std::cout << path << std::endl;
+            //Registrar::getInstance().addName(so.path().stem().string());
             Registrar::getInstance().loadSO(path);
-            std::cout << Registrar::getInstance().factoryVec.size() << std::endl;
+            std::cout << "factory size: "  << Registrar::getInstance().factoryVec.size() << std::endl;
         }
     }
 

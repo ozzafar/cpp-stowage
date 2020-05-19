@@ -5,9 +5,7 @@
 #include "_206039984_c.h"
 #include "../interfaces/AlgorithmRegistration.h"
 
-#ifdef RUNNING_ON_NOVA
-    REGISTER_ALGORITHM (_206039984_c)
-#endif
+REGISTER_ALGORITHM (_206039984_c)
 
 int _206039984_c::getLoadInstructions(const string &input_path, const string &output_path) {
     (void)input_path;
