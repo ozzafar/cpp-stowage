@@ -7,31 +7,30 @@
 
 #include <fstream>
 #include <map>
-using namespace std;
 
 
 
 class AlgorithmResults
 {
 private:
-    string algorithmName;
+    std::string algorithmName;
     int operationsCounterOnAllTravels = 0;
     int numberOfFailedTravels = 0;
-    map<string, int> operationsCounterOnTravel;
+    std::map<std::string, int> operationsCounterOnTravel;
 public:
     int getNumberOfFailedTravels() const;
 
 public:
-    const string &getAlgorithmName() const;
+    const std::string &getAlgorithmName() const;
 
     AlgorithmResults();
 
-    AlgorithmResults(const string &algorithmName);
+    AlgorithmResults(const std::string &algorithmName);
 
-    void addTravelResult(const string &travelName, int result);
+    void addTravelResult(const std::string &travelName, int result);
 
-    static bool comparePairs(const std::pair<string, AlgorithmResults> &algorithmresult1,
-                                        const std::pair<string, AlgorithmResults> &algorithmresult2){
+    static bool comparePairs(const std::pair<std::string, AlgorithmResults> &algorithmresult1,
+                                        const std::pair<std::string, AlgorithmResults> &algorithmresult2){
         if(algorithmresult1.second.operationsCounterOnAllTravels != algorithmresult2.second.operationsCounterOnAllTravels)
         {
             return algorithmresult1.second.operationsCounterOnAllTravels < algorithmresult2.second.operationsCounterOnAllTravels;
@@ -41,7 +40,7 @@ public:
 
     int getOperationsCounterOnAllTravels() const;
 
-    int getOperationCounterOnOneTravel(const string& name);
+    int getOperationCounterOnOneTravel(const std::string& name);
 
 };
 

@@ -280,8 +280,8 @@ void IO::writeResultsOfsimulation(const string &resultOutputPath, const vector<s
             int operationCounteOnCurrentTravel = algorithmResults.second.getOperationCounterOnOneTravel(travelName);
             writeToFile(resultOutputPath, std::to_string(operationCounteOnCurrentTravel) + ",");
         }
-        writeToFile(resultOutputPath, to_string(algorithmResults.second.getOperationsCounterOnAllTravels()) + ",");
-        writeToFile(resultOutputPath, to_string(algorithmResults.second.getNumberOfFailedTravels()) + "\n");
+        writeToFile(resultOutputPath, std::to_string(algorithmResults.second.getOperationsCounterOnAllTravels()) + ",");
+        writeToFile(resultOutputPath, std::to_string(algorithmResults.second.getNumberOfFailedTravels()) + "\n");
     }
 
 

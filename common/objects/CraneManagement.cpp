@@ -47,7 +47,7 @@ int CraneManagement::move(Ship& ship, string &containerId, int oldFloor, int old
 
 /* ignores extra param in line
  * print error message is line has less params then expected */
-CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructions(Ship& ship, const string &input_path) {
+CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructions(Ship& ship, const string &input_path, Errors &errors) {
     string line;
     vector<string> row;
     std::ifstream instructionsFile(input_path);
@@ -62,6 +62,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                 command = row[0][0];
             } else{
                 std::cout << "Error: invalid command to crane management" << std::endl;
+                errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                 continue;
             }
 
@@ -69,6 +70,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                 case (char) Action::LOAD :
                     if (row.size() < 5) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
+                        errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                     }else{
                         string containerId = row[1];
                         if (load(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))==SUCCESS){
@@ -82,6 +84,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                 case (char) Action::UNLOAD :
                     if (row.size() < 5) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
+                        errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                     } else{
                         string containerId = row[1];
                         if (unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))==SUCCESS){
@@ -96,6 +99,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                 case (char) Action::REJECT :
                     if (row.size() < 2) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
+                        errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                     } else {
                         changedContainers[Action::REJECT].push_back(row[1]);
                     }
@@ -103,6 +107,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                 case (char) Action::MOVE :
                     if (row.size() < 8) {
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
+                        errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                     } else {
                         if (move(ship, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[4]), stoi(row[5]),
                              stoi(row[6]))==SUCCESS){

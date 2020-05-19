@@ -7,5 +7,6 @@
 
 
 AlgorithmRegistration::AlgorithmRegistration(std::function<std::unique_ptr<AbstractAlgorithm>()> algorithm) {
+    std::cout <<"entered algorithm registration" << std::endl;
     Registrar::getInstance().registerAlgorithm(algorithm);
 }

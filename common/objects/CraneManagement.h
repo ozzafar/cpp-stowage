@@ -9,6 +9,7 @@
 #include "ShipPlan.h"
 #include "Ship.h"
 #include "../../interfaces/AbstractAlgorithm.h"
+#include "../utils/Errors.h"
 #include <fstream>
 
 using std::map;
@@ -32,7 +33,7 @@ public:
         int numOfOperations;
     } CraneManagementAnswer;
 
-    CraneManagementAnswer readAndExecuteInstructions(Ship& ship, const string &input_path);
+    CraneManagementAnswer readAndExecuteInstructions(Ship& ship, const string &input_path, Errors &errors);
 };
 
 #endif //CPP_STOWAGE_CRANEMANAGEMENT_H

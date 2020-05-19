@@ -3,14 +3,11 @@
 //
 
 #include "Registrar.h"
-#include "Errors.h"
-
-
 
 Registrar Registrar::instance;
 
 int Registrar::loadSO(const std::string &path) {
-    std::cout << "entered loadSO" << std::endl;
+    std::cout << "entered loadSO " << path << std::endl;
 #ifdef RUNNING_ON_NOVA
     std::unique_ptr<void, DlCloser> handle(dlopen(path.c_str(), RTLD_LAZY));
     if (!handle) {

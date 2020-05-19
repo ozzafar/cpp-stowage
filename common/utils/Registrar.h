@@ -33,7 +33,10 @@ public:  // need to be private
         void operator()(void* dlHandle) const noexcept {
             std::cout << "Closing handle" << std::endl;
             (void) dlHandle; //unused
-            dlclose(dlHandle);
+#ifdef RUNNING_ON_NOVA
+dlclose(dlHandle);
+#endif
+
         }
     };
 
@@ -45,6 +48,7 @@ public:
     int loadSO(const std::string& path);
 
     void registerAlgorithm(std::function<std::unique_ptr<AbstractAlgorithm>()> algorithm) {
+
         factoryVec.push_back(algorithm);
         std::cout << "Algorithm was registered!";
     }

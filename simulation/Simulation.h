@@ -13,22 +13,24 @@
 #include "../interfaces/AbstractAlgorithm.h"
 #include "../common/utils/IO.h"
 #include "../common/utils/Errors.h"
-//#include "../algorithm/NaiveAlgorithm.h"
 #include "../common/objects/CraneManagement.h"
 #include "AlgorithmResults.h"
 #include "../common/utils/Registrar.h"
+#include <memory>
+#include "../interfaces/WeightBalanceCalculator.h"
 
 class Simulation {
 
 private:
     string travelsPath;
+    vector <string> travelNames;
     string algorithmPath;
     string outputPath;
     bool isOutputPathSupplied = false;
     map<string, AlgorithmResults> algorithmsResults;
 
     void simulateOneTravelWithAllAlgorithms(const string &travelPath);
-    void simulateOneTravelWithOneAlgorithm(const string &travelPath, unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName);
+    Errors simulateOneTravelWithOneAlgorithm(const string &travelPath, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName);
 
 public:
 
@@ -38,7 +40,7 @@ public:
 
     void checkForErrorsAfterPort(Ship &ship, const string &port,
                             CraneManagement::CraneManagementAnswer &answer,
-                            Route &route, const string &pathOfOutputFilesForAlgorithmAndTravel, vector<Container>& containers, vector<Container>& badContainers);
+                            Route &route, vector<Container>& containers, Errors &errors);
 
     int checkTravelsPath(const string &travelsPathToCheck);
 

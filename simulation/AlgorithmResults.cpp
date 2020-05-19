@@ -4,9 +4,9 @@
 
 #include "AlgorithmResults.h"
 
-AlgorithmResults::AlgorithmResults(const string &algorithmName) : algorithmName(algorithmName) {}
+AlgorithmResults::AlgorithmResults(const std::string &algorithmName) : algorithmName(algorithmName) {}
 
-void AlgorithmResults::addTravelResult(const string &travelName, int result) {
+void AlgorithmResults::addTravelResult(const std::string &travelName, int result) {
     operationsCounterOnTravel[travelName] = result;
     if(result != -1)
     {
@@ -23,11 +23,11 @@ int AlgorithmResults::getOperationsCounterOnAllTravels() const {
     return operationsCounterOnAllTravels;
 }
 
-const string &AlgorithmResults::getAlgorithmName() const {
+const std::string &AlgorithmResults::getAlgorithmName() const {
     return algorithmName;
 }
 
-int AlgorithmResults::getOperationCounterOnOneTravel(const string& name)
+int AlgorithmResults::getOperationCounterOnOneTravel(const std::string& name)
 {
     return operationsCounterOnTravel[name];
 }
