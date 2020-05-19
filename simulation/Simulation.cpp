@@ -76,11 +76,6 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
         simulateOneTravelWithAllAlgorithms(pathOfCurrentTravel);
     }
 
-    if(!isOutputPathSupplied)
-    {
-        outputPath = travelsPath;
-    }
-
     //TODO: sort algorithmResults
     string resultOutputPath = outputPath + "/simulation.results.csv";
     IO::writeResultsOfsimulation(resultOutputPath, travelNames, algorithmsResults);
@@ -99,12 +94,6 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
         std::cout << "Travel error: " << travelPath << " is not a directory" << std::endl;
         travelNames.pop_back();
         return;
-    }
-
-
-    if(isOutputPathSupplied == false)
-    {
-        this->outputPath = travelPath;
     }
 
     std::ofstream file { travelPath + "/empty_containers_awaiting_at_port_file.txt" };
