@@ -36,7 +36,7 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
     }
 
     // TODO -------- do it in loop ---------After going to nova
-    //Registrar::getInstance().loadSO("<path of x>");
+    Registrar::getInstance().loadSO("../algorithm/_206039984_a.so");
     // TODO ------------- end ---------------
 
 
@@ -206,7 +206,7 @@ void Simulation::checkForErrorsAfterPort(Ship &ship, const string &port, CraneMa
         bool inRejected = false, inLoaded = false;
         bool destIsCurrentPort = ship.containerIdToDestination(container.getId()) == route.getCurrentPortName();
         bool destIsntInNextStops = !route.portInNextStops(ship.containerIdToDestination(container.getId()));
-        bool destIsFar = !checkIfCloserContainerWasLoaded(ship, answer, route, container);
+        bool destIsFar = checkIfAllLoadedContainersAreCloser(ship, answer, route, container);
 
         for (string &id : answer.changedContainers[Action::REJECT]) {
             if (!id.compare(container.getId())) {
@@ -243,16 +243,17 @@ void Simulation::checkForErrorsAfterPort(Ship &ship, const string &port, CraneMa
     }
 }
 
-bool Simulation::checkIfCloserContainerWasLoaded(Ship &ship,  CraneManagement::CraneManagementAnswer &answer,
-                                                 Route &route, Container &container)  {
-    bool closerContainerExists = false;
+bool Simulation::checkIfAllLoadedContainersAreCloser(Ship &ship, CraneManagement::CraneManagementAnswer &answer,
+                                                     Route &route, Container &container)  {
+    bool allCloser = true;
     for (auto &loaded : answer.changedContainers[Action::LOAD]) {
-        if (route.nextStopForPort(ship.containerIdToDestination(container.getId())) <
+        if (route.nextStopForPort(ship.containerIdToDestination(container.getId())) <=
             route.nextStopForPort(ship.containerIdToDestination(loaded))) {
-            closerContainerExists = true;
+            allCloser = false;
+            break;
         }
     }
-    return closerContainerExists;
+    return allCloser;
 }
 
 int Simulation::checkTravelsPath(const string &travelsPathToCheck) {

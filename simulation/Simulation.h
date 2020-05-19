@@ -42,7 +42,7 @@ public:
 
     int checkTravelsPath(const string &travelsPathToCheck);
 
-    bool checkIfCloserContainerWasLoaded(Ship &ship, CraneManagement::CraneManagementAnswer &answer, Route &route, Container &container);
+    bool checkIfAllLoadedContainersAreCloser(Ship &ship, CraneManagement::CraneManagementAnswer &answer, Route &route, Container &container);
 };
 
 #endif //SIMULATOR_SIMULATION_H
