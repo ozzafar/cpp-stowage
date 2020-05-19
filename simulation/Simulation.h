@@ -38,9 +38,9 @@ public:
     Simulation(const string &travelsPath, const string &algorithmPath = "", const string &outputPath = "");
     int simulateAllTravelsWithAllAlgorithms();
 
-    void checkForErrorsAfterPort(Ship &ship, const string &port,
+    int checkForErrorsAfterPort(Ship &ship, const string &port,
                             CraneManagement::CraneManagementAnswer &answer,
-                            Route &route, vector<Container>& containers, Errors &errors);
+                            Route &route, vector<Container>& containers, vector<Container>& badContainers);
 
     int checkTravelsPath(const string &travelsPathToCheck);
 

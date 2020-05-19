@@ -230,7 +230,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             return errors;
         }
         totalOperations += craneManagementAnswer.numOfOperations;
-        checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route,containers, errors);
+        checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route,containers, badContainers);
         indexOfVisitAtPort[ports[i]]++;
         std::cout << "----------------" <<"Ship left port " << ports[i] << "----------------" << std::endl;
         route.incrementCurrentPort();
@@ -248,15 +248,17 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
 
 }
 
-void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneManagement::CraneManagementAnswer& answer,Route& route, vector<Container>& containers,vector<Container> &badContainers, Errors &errors) {
+int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneManagement::CraneManagementAnswer& answer,Route& route, vector<Container>& containers,vector<Container> &badContainers) {
+
+    Errors errors;
 
     // --------------- check all containers supposed to be unloaded were unloaded ---------------
     if (ship.portToContainers[port].size() > 0) {
-        string error = "Not all of the containers with of this port destination were unloaded";
-        std::cout << error << std::endl;
-        IO::writeToFile(pathOfOutputFilesForAlgorithmAndTravel, error + ",");
+        errors.addError(Error::CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM);
+        std::cout << "Not all of the containers with of this port destination were unloaded" << std::endl;
     }
 
+    // --------------- check all bad containers were rejected ---------------
     vector<string> rejected = answer.changedContainers[Action::REJECT];
     int size = rejected.size();
     for (auto &container : badContainers) {
@@ -313,13 +315,15 @@ void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMa
             errors.addError(Error::SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL);
         }
     }
+
+    return errors.getErrorsCode();
 }
 
 bool Simulation::checkIfAllLoadedContainersAreCloser(Ship &ship, CraneManagement::CraneManagementAnswer &answer,
                                                      Route &route, Container &container)  {
     bool allCloser = true;
     for (auto &loaded : answer.changedContainers[Action::LOAD]) {
-        if (route.nextStopForPort(ship.containerIdToDestination(container.getId())) <=
+        if (route.nextStopForPort(ship.containerIdToDestination(container.getId())) <
             route.nextStopForPort(ship.containerIdToDestination(loaded))) {
             allCloser = false;
             break;
@@ -331,13 +335,13 @@ bool Simulation::checkIfAllLoadedContainersAreCloser(Ship &ship, CraneManagement
 int Simulation::checkTravelsPath(const string &travelsPathToCheck) {
     if (travelsPathToCheck == "")
     {
-        std::cout << "Fatal error: missing travel_path argument!" << endl;
+        std::cout << "Fatal error: missing travel_path argument!" << std::endl;
         return 1;
     }
 
     if(std::filesystem::exists(travelsPathToCheck) == 0)
     {
-        std::cout << "Fatal error: travel_path argument isn't valid!" << endl;
+        std::cout << "Fatal error: travel_path argument isn't valid!" << std::endl;
         return 1;
     }
     return 0;
