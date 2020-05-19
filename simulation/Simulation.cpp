@@ -9,39 +9,43 @@
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
 {
 #ifndef RUNNING_ON_NOVA
-    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_a>();});
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<AbstractAlgorithm>();});
     Registrar::getInstance().addName("_206039984_a");
-    for(unsigned long long i = 0 ; i < Registrar::getInstance().factoryVec.size(); i++)
-    {
-        algorithmsResults[Registrar::getInstance().names[i]] = AlgorithmResults(Registrar::getInstance().names[i]);
-    }
 #endif
-
-    if(algorithmPath == "")
-    {
-        //load algorithms from cwd
-    } else
-    {
-        //load algorithms from algorithmPath
-    }
+    //TODO: clean previous output/error/result files(?)
 
     if(outputPath!="")
     {
-        this->outputPath = outputPath;
+        this->outputPath = outputPath + "/output";
         isOutputPathSupplied = true;
     }
     else
     {
-        this->outputPath = std::filesystem::current_path().string();
+        this->outputPath = std::filesystem::current_path().string() + "/output";
     }
 
-    std::filesystem::create_directory(outputPath);
+    if(algorithmPath == "")
+    {
+        this->algorithmPath = std::filesystem::current_path().string();
+    }
 
-    // TODO -------- do it in loop ---------After going to nova
-    //Registrar::getInstance().loadSO("<path of x>");
-    // TODO ------------- end ---------------
 
+    for(auto& so: std::filesystem::directory_iterator(algorithmPath))
+    {
+        string path = so.path().string();
+        std::cout << path << std::endl;
+        if(path.substr(path.find_last_of(".") + 1) == "so")
+        {
+            Registrar::getInstance().addName(so.path().stem().string());
+            Registrar::getInstance().loadSO(path);
+            std::cout << Registrar::getInstance().factoryVec.size() << std::endl;
+        }
+    }
 
+    for(unsigned long long i = 0 ; i < Registrar::getInstance().factoryVec.size(); i++)
+    {
+        algorithmsResults[Registrar::getInstance().names[i]] = AlgorithmResults(Registrar::getInstance().names[i]);
+    }
 }
 
 int Simulation::simulateAllTravelsWithAllAlgorithms()
@@ -51,7 +55,19 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
         return 1;
     }
 
-    vector <string> travelNames;
+    bool directoryCreated = std::filesystem::create_directory(outputPath);
+
+    if(!directoryCreated)
+    {
+        std::cout << "Error: cannot create ouput path. Please Enter Correct path." << std::endl;
+        return 1;
+    }
+
+    if(Registrar::getInstance().factoryVec.size() == 0)
+    {
+        std::cout << "Error: failed to load algorithms" << std::endl;
+        return 1;
+    }
 
     for(auto& travel: std::filesystem::directory_iterator(travelsPath))
     {
@@ -66,7 +82,7 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
     }
 
     //TODO: sort algorithmResults
-    string resultOutputPath = outputPath + "/simulation.results.csv"; //TODO: remove csv;
+    string resultOutputPath = outputPath + "/simulation.results.csv";
     IO::writeResultsOfsimulation(resultOutputPath, travelNames, algorithmsResults);
 
     return 0;
@@ -74,15 +90,17 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
 
 void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
 
-    cout << "Started simulate " << travelPath << endl;
+    std::cout << "Started simulate " << travelPath << std::endl;
     Errors errors;
 
     const std::filesystem::path path = travelPath;
     if(is_directory(path) == 0) //travelPath isn't a directory
     {
-        cout << "Travel error: " << travelPath << " is not a directory" << endl;
+        std::cout << "Travel error: " << travelPath << " is not a directory" << std::endl;
+        travelNames.pop_back();
         return;
     }
+
 
     if(isOutputPathSupplied == false)
     {
@@ -91,26 +109,27 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
 
     std::ofstream file { travelPath + "/empty_containers_awaiting_at_port_file.txt" };
 
+
     Registrar &registrar = Registrar::getInstance();
     for(size_t i = 0 ; i < registrar.factoryVec.size() ; i++ )
     {
-        string a = path.stem().string();
         if(errors.hasTravelError() == 0)
         {
-            unique_ptr<AbstractAlgorithm> algorithm = registrar.factoryVec[i]();
+            std::unique_ptr<AbstractAlgorithm> algorithm = registrar.factoryVec[i]();
             errors = simulateOneTravelWithOneAlgorithm(travelPath, std::move(algorithm), registrar.names[i]);
         }
         else
         {
+            std::cout << "travel error" << std::endl;
             //TODO: write to error file that travel error occurred
             algorithmsResults[registrar.names[i]].addTravelResult(path.stem().string(), -1);
         }
     }
 
-    cout << "Finished simulate " << travelPath << endl;
+    std::cout << "Finished simulate " << travelPath << std::endl;
 }
 
-Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName) {
+Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName) {
 
     std::cout <<"===========================================================" << std::endl;
     std::cout <<"started simulate " << algorithmName << " on " << travelPath << std::endl;
@@ -128,7 +147,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, u
     std::map<string,int> totalNumbersOfVisitingPort;
     const std::filesystem::path pathOfTravel = travelPath;
     const string travelName = pathOfTravel.stem().string();
-    const std::filesystem::path pathOfOutputFilesForAlgorithmAndTravel = outputPath + "/output_of_" + algorithmName + "_" + travelName; //TODO: replace algorithm name
+    const std::filesystem::path pathOfOutputFilesForAlgorithmAndTravel = outputPath + "/output_of_" + algorithmName + "_" + travelName;
     string outputPathOfErrorsFile = pathOfOutputFilesForAlgorithmAndTravel.string() + "/errors_of_" + algorithmName + "_" + travelName + ".csv";
     std::filesystem::create_directory(pathOfOutputFilesForAlgorithmAndTravel);
 
@@ -141,7 +160,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, u
         return errors;
     }
 
-    cout << "Reading route" << endl;
+    std::cout << "Reading route" << std::endl;
     errors.addError(IO::readShipRoute(travelPath + "/route.txt", route));
     if(errors.hasTravelError())
     {
@@ -162,7 +181,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, u
         return errors;
     }
 
-    cout << "Reading ship plan" << endl;
+    std::cout << "Reading ship plan" << std::endl;
     errors.addError(IO::readShipPlan(travelPath + "/ship_plan.txt", ship.getShipPlan()));
     if(errors.hasTravelError())
     {
@@ -183,7 +202,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, u
         vector<Container> containers;
         vector<Container> badContainers;
         std::cout << "----------------" <<"Ship Arrived to port " << ports[i] << "----------------" << std::endl;
-        const std::filesystem::path pathOfContainersAwaitingAtPortFile = travelPath + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".cargo_data.txt"; //TODO: remove .txt in linux
+        const std::filesystem::path pathOfContainersAwaitingAtPortFile = travelPath + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".cargo_data.txt";
 
         if(std::filesystem::exists(pathOfContainersAwaitingAtPortFile) == 0)
         {
@@ -214,7 +233,13 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, u
             }
         }
 
-        craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt"); //TODO: send reference to parameter "errors" to the crane for updating errors?
+        craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt", errors);
+        if(errors.hasError(Error::ALGORITHM_INVALID_COMMAND))
+        {
+            IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
+            algorithmsResults[algorithmName].addTravelResult(travelName, -1);
+            return errors;
+        }
         totalOperations += craneManagementAnswer.numOfOperations;
         checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route,containers, errors);
         indexOfVisitAtPort[ports[i]]++;
@@ -240,7 +265,7 @@ void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMa
         if (ship.portToContainers[port].size() > 0)
         {
             errors.addError(Error::CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM);
-            cout << "Not all of the containers with of this port destination were unloaded" << std::endl;
+            std::cout << "Not all of the containers with of this port destination were unloaded" << std::endl;
         }
 
     // --------------- check all containers supposed to be loaded were loaded or rejected ---------------
@@ -260,7 +285,7 @@ void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMa
             }
             if (!inRejected && !inLoaded){
                 errors.addError(Error::CONTAINERS_ON_PORT_IGNORED_BY_THE_ALGORITHM);
-                cout << "Not all of the containers of this port were loaded (or rejected)" << std::endl;
+                std::cout << "Not all of the containers of this port were loaded (or rejected)" << std::endl;
             }
         }
 
@@ -273,7 +298,7 @@ void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMa
                     for (auto &loaded : answer.changedContainers[Action::LOAD]) {
                         if (route.nextStopForPort(ship.containerIdToDestination(rejected)) <
                             route.nextStopForPort(ship.containerIdToDestination(loaded))) {
-                            cout << "Rejected container " + rejected + " with higher priority" << std::endl;
+                            std::cout << "Rejected container " + rejected + " with higher priority" << std::endl;
                             errors.addError(Error::CONTAINER_INCORRECTLY_REJECTED);
                         }
                     }
@@ -287,7 +312,7 @@ void Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMa
     if (route.inLastStop()) {
         int amountOfContainers = ship.getAmountOfContainers() > 0;
         if (amountOfContainers > 0) {
-            cout << "Ship arrived to last port in route but there are still " + std::to_string(amountOfContainers) +
+            std::cout << "Ship arrived to last port in route but there are still " + std::to_string(amountOfContainers) +
                          " containers on the ship";
             errors.addError(Error::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE);
         }
@@ -310,7 +335,7 @@ int Simulation::checkTravelsPath(const string &travelsPathToCheck) {
     if (travelsPathToCheck == "")
     {
         string error = "Fatal error: missing travel_path argument!";
-        cout << error << endl;
+        std::cout << error << std::endl;
         IO::writeToFile(this->outputPath + "/simulation.errors.csv", error);
         return 1;
     }
@@ -318,16 +343,12 @@ int Simulation::checkTravelsPath(const string &travelsPathToCheck) {
     if(std::filesystem::exists(travelsPathToCheck) == 0)
     {
         string error = "Fatal error: travel_path argument isn't valid!";
-        cout << error << endl;
+        std::cout << error << std::endl;
         string a = std::filesystem::current_path().string();
         IO::writeToFile(this->outputPath + "/simulation.errors.csv", error);
         return 1;
     }
 
-    if(this->isOutputPathSupplied == 0)
-    {
-        this->outputPath = travelsPath;
-    }
     return 0;
 }
 

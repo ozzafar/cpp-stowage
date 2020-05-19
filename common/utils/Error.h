@@ -48,7 +48,8 @@ enum class Error {
     CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM = 1 << 27,
     CONTAINERS_ON_PORT_IGNORED_BY_THE_ALGORITHM            = 1 << 28,
     CONTAINER_INCORRECTLY_REJECTED                         = 1 << 29,
-    SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE            = 1 << 30
+    SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE            = 1 << 30,
+    ALGORITHM_INVALID_COMMAND                              = 1  << 31
 
 };
 

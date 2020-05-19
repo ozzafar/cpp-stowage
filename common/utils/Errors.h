@@ -12,7 +12,7 @@
 
 using std::string;
 
-//#define RUNNING_ON_NOVA
+#define RUNNING_ON_NOVA
 
 class Errors {
 

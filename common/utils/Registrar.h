@@ -48,6 +48,7 @@ public:
     int loadSO(const std::string& path);
 
     void registerAlgorithm(std::function<std::unique_ptr<AbstractAlgorithm>()> algorithm) {
+
         factoryVec.push_back(algorithm);
         std::cout << "Algorithm was registered!";
     }
