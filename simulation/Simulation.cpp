@@ -77,7 +77,6 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
         simulateOneTravelWithAllAlgorithms(pathOfCurrentTravel);
     }
 
-    //TODO: sort algorithmResults
     string resultOutputPath = outputPath + "/simulation.results.csv";
     IO::writeResultsOfsimulation(resultOutputPath, travelNames, algorithmsResults);
 
@@ -166,6 +165,8 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     errors.addError(algorithm->readShipRoute(travelPath + "/route.txt"));
     if(errors.hasTravelError())
     {
+        //TODO: change this block. simulator read route without problems but algorithm says that there is
+        // a problem. meaning algorithm fault. result should be -1 and proper error should be updated for return
         IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         return errors;
@@ -182,6 +183,8 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     errors.addError(algorithm->readShipPlan(travelPath + "/ship_plan.txt"));
     if(errors.hasTravelError())
     {
+        //TODO: change this block. simulator read ship plan without problems but algorithm says that there is
+        // a problem. meaning algorithm fault. result should be -1 and proper error should be updated for return
         IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         return errors;

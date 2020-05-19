@@ -42,6 +42,7 @@ public:
 
     int getOperationCounterOnOneTravel(const std::string& name);
 
+
 };
 
 #endif //CPP_STOWAGE_ALGORITHMRESULTS_H

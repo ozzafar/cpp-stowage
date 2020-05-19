@@ -31,6 +31,10 @@ static bool isAlphabetString(const string &str) {
 }
 
 static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, ShipPlan& shipPlan) {
+    //TODO: check for error: ship plan: a given position exceeds the X/Y ship limits (ignored)
+    //TODO: check for error: ship plan: bad line format after first line or duplicate x,y appearance with same data (ignored)
+    //TODO: check for error: ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)
+    //TODO: check for error: ship plan: travel error - bad first line
     Errors errors;
     int x, y, actualNumOfFloors;
     vector<string> row = IO::breakLineToWords(line, ',');
@@ -99,6 +103,11 @@ static bool checkPortNumberInput(vector<string> portNumber) {
 // region MAIN FUNCTIONS
 
 int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers, vector<Container>& badContainers) {
+    //TODO: check for error: containers at port: ID already on ship (ID rejected)
+    //TODO: check for error: containers at port: bad line format, ID cannot be read (ignored)
+    //TODO: check for error: containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)
+    //TODO: check for error: containers at port: last port has waiting containers (ignored)
+    //TODO: check for error: total containers amount exceeds ship capacity (rejecting far containers)
     Errors errors;
     string line;
     std::ifstream planFile(input_path);
@@ -112,7 +121,6 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
             {
                 continue;
             }
-
 
             string containerId = row[0];
             if (!Container::isValidID(containerId)){
@@ -136,8 +144,6 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
                 errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
                 badContainer = true;
             }
-
-
 
             if (row.size()<3){
                 errors.addError(Error::MISSING_OR_BAD_DEST_WARINING);
@@ -201,6 +207,8 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
 }
 
 int IO::readShipRoute(const string &path, Route& route) {
+    //TODO: check for error: travel route: bad port symbol format (ignored)
+    //TODO: check for error: travel route: travel error - file with only a single valid port (cannot run this travel)
     Errors errors;
     vector<string> ports;
     int prevPortIndex = -1;
@@ -263,25 +271,42 @@ int IO::writeToFile(const string &writingPath, const string &content) {
 }
 
 void IO::writeResultsOfsimulation(const string &resultOutputPath, const vector<string> &travelNames,
-                                  map<string, AlgorithmResults> &algorithmsResults) {
+                                  map<string, AlgorithmResults> &algorithmsResults){
+    auto cmp = [](AlgorithmResults const & algorithmResult1, AlgorithmResults const & algorithmResult2)
+    {
+        if(algorithmResult1.getNumberOfFailedTravels() != algorithmResult2.getNumberOfFailedTravels())
+        {
+            return algorithmResult1.getNumberOfFailedTravels() > algorithmResult2.getNumberOfFailedTravels();
+        }
+        return algorithmResult1.getOperationsCounterOnAllTravels() > algorithmResult2.getOperationsCounterOnAllTravels();
+    };
+
+    std::vector<AlgorithmResults> algorithmResultsVector;
+    for(map<std::string, AlgorithmResults>::iterator it = algorithmsResults.begin(); it != algorithmsResults.end(); ++it )
+    {
+        algorithmResultsVector.push_back( it->second );
+    }
+
+    std::sort(algorithmResultsVector.begin(), algorithmResultsVector.end(), cmp);
+
     writeToFile(resultOutputPath, "RESULTS,");
     for(string travelName : travelNames)
     {
         writeToFile(resultOutputPath, travelName + ",");
     }
     writeToFile(resultOutputPath, "SUM,Num Errors\n");
-    //TODO: sort algorithmResults
-    for(std::pair<string, AlgorithmResults> algorithmResults : algorithmsResults)
+
+    for(AlgorithmResults algorithmResults : algorithmResultsVector)
     {
-        writeToFile(resultOutputPath, algorithmResults.second.getAlgorithmName() + ",");
+        writeToFile(resultOutputPath, algorithmResults.getAlgorithmName() + ",");
 
         for(string travelName : travelNames)
         {
-            int operationCounteOnCurrentTravel = algorithmResults.second.getOperationCounterOnOneTravel(travelName);
+            int operationCounteOnCurrentTravel = algorithmResults.getOperationCounterOnOneTravel(travelName);
             writeToFile(resultOutputPath, std::to_string(operationCounteOnCurrentTravel) + ",");
         }
-        writeToFile(resultOutputPath, std::to_string(algorithmResults.second.getOperationsCounterOnAllTravels()) + ",");
-        writeToFile(resultOutputPath, std::to_string(algorithmResults.second.getNumberOfFailedTravels()) + "\n");
+        writeToFile(resultOutputPath, std::to_string(algorithmResults.getOperationsCounterOnAllTravels()) + ",");
+        writeToFile(resultOutputPath, std::to_string(algorithmResults.getNumberOfFailedTravels()) + "\n");
     }
 
 

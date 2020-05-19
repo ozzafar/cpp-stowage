@@ -18,6 +18,11 @@
 #include "../common/utils/Registrar.h"
 #include <memory>
 #include "../interfaces/WeightBalanceCalculator.h"
+#include <iostream>
+#include <map>
+#include <set>
+#include <algorithm>
+#include <functional>
 
 class Simulation {
 
@@ -27,7 +32,7 @@ private:
     string algorithmPath;
     string outputPath;
     bool isOutputPathSupplied = false;
-    map<string, AlgorithmResults> algorithmsResults;
+    map<std::string, AlgorithmResults> algorithmsResults;
 
     void simulateOneTravelWithAllAlgorithms(const string &travelPath);
     Errors simulateOneTravelWithOneAlgorithm(const string &travelPath, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName);
