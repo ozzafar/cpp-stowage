@@ -232,7 +232,8 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             return errors;
         }
         totalOperations += craneManagementAnswer.numOfOperations;
-        checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route,containers, badContainers);
+        errors.addError(checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route,containers, badContainers));
+        //TODO: add here check for algorithm errors, and stop the iteration if needed
         indexOfVisitAtPort[ports[i]]++;
         std::cout << "----------------" <<"Ship left port " << ports[i] << "----------------" << std::endl;
         route.incrementCurrentPort();
