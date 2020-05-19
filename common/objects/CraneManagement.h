@@ -31,9 +31,10 @@ public:
     typedef struct {
         map<Action,vector<string>> changedContainers;
         int numOfOperations;
+        int errors;
     } CraneManagementAnswer;
 
-    CraneManagementAnswer readAndExecuteInstructions(Ship& ship, const string &input_path, Errors &errors);
+    CraneManagementAnswer readAndExecuteInstructions(Ship& ship, const string &input_path);
 };
 
 #endif //CPP_STOWAGE_CRANEMANAGEMENT_H

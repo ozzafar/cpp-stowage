@@ -47,7 +47,9 @@ int CraneManagement::move(Ship& ship, string &containerId, int oldFloor, int old
 
 /* ignores extra param in line
  * print error message is line has less params then expected */
-CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructions(Ship& ship, const string &input_path, Errors &errors) {
+CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructions(Ship& ship, const string &input_path)
+{
+    Errors errors;
     string line;
     vector<string> row;
     std::ifstream instructionsFile(input_path);
@@ -121,6 +123,6 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
             }
         }
     }
-    return {changedContainers,count};
+    return {changedContainers,count, errors.getErrorsCode()};
 }
 

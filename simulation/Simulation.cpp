@@ -57,15 +57,15 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
 
     bool directoryCreated = std::filesystem::create_directory(outputPath);
 
-    if(!directoryCreated)
+    if(!directoryCreated && !std::filesystem::exists(outputPath))
     {
-        std::cout << "Error: cannot create ouput path. Please Enter Correct path." << std::endl;
+        std::cout << "Error: cannot create/find output path. Please Enter Correct path." << std::endl;
         return 1;
     }
 
     if(Registrar::getInstance().factoryVec.size() == 0)
     {
-        std::cout << "Error: failed to load algorithms" << std::endl;
+        std::cout << "Error: failed to load algorithms. Try again or enter different path" << std::endl;
         return 1;
     }
 
@@ -222,7 +222,8 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             }
         }
 
-        craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt", errors);
+        craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + algorithmName + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".txt");
+        errors.addError(craneManagementAnswer.errors);
         if(errors.hasError(Error::ALGORITHM_INVALID_COMMAND))
         {
             IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
