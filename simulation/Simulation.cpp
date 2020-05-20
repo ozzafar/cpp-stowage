@@ -5,10 +5,21 @@
 
 #include "Simulation.h"
 #include "CheckAlgorithmError.h"
+#include <vector>
+
+#ifndef RUNNING_ON_NOVA
+#include "../algorithm/_206039984_a.h"
+#include "../algorithm/_206039984_b.h"
+#include "../algorithm/_206039984_c.h"
+#endif
+
 
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
 {
 #ifndef RUNNING_ON_NOVA
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_a>();});
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_b>();});
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_c>();});
     Registrar::getInstance().addName("_206039984_a");
     Registrar::getInstance().addName("_206039984_b");
     Registrar::getInstance().addName("_206039984_c");

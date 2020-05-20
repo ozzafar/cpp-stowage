@@ -10,19 +10,16 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
-#include "../interfaces/AbstractAlgorithm.h"
-#include "../common/utils/IO.h"
-#include "../common/utils/Errors.h"
-#include "../common/objects/CraneManagement.h"
-#include "AlgorithmResults.h"
-#include "../common/utils/Registrar.h"
-#include <memory>
-#include "../interfaces/WeightBalanceCalculator.h"
 #include <iostream>
 #include <map>
 #include <set>
 #include <algorithm>
-#include <functional>
+#include "../common/utils/IO.h"
+#include "../common/objects/CraneManagement.h"
+#include "../common/utils/Registrar.h"
+#include "../interfaces/AbstractAlgorithm.h"
+#include "../interfaces/WeightBalanceCalculator.h"
+#include "AlgorithmResults.h"
 
 class Simulation {
 
