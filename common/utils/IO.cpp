@@ -123,7 +123,7 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
             }
 
             string containerId = row[0];
-            if (!Container::isValidID(containerId)){
+            if (!Container::isValidId(containerId)){
                 errors.addError(Error::ILLEGAL_ID_CHECK_WARNING);
                 std::cout << "Bad input: invalid container id " << containerId << std::endl;
                 badContainer = true;

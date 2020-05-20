@@ -4,13 +4,14 @@
 
 
 #include "Simulation.h"
-
+#include "CheckAlgorithmError.h"
 
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
 {
 #ifndef RUNNING_ON_NOVA
-    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<AbstractAlgorithm>();});
     Registrar::getInstance().addName("_206039984_a");
+    Registrar::getInstance().addName("_206039984_b");
+    Registrar::getInstance().addName("_206039984_c");
 #endif
     //TODO: clean previous output/error/result files(?)
 
@@ -30,18 +31,20 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
     }
 
 
+    int size = 0;
     for(auto& so: std::filesystem::directory_iterator(algorithmPath))
     {
-
         string path = so.path().string();
         if(path.substr(path.find_last_of(".") + 1) == "so")
         {
-            std::cout << path << std::endl;
-            //Registrar::getInstance().addName(so.path().stem().string());
             Registrar::getInstance().loadSO(path);
-            std::cout << "factory size: "  << Registrar::getInstance().factoryVec.size() << std::endl;
+            if (Registrar::getInstance().factoryVec.size() - size != 1){
+               // CheckAlgorithmError::FAILED_TO_LOAD_ALGORITHM // TODO handle this error
+            }
+            size = Registrar::getInstance().factoryVec.size();
         }
     }
+    std::cout << "final factory size: "  << Registrar::getInstance().factoryVec.size() << std::endl;
 
     for(unsigned long long i = 0 ; i < Registrar::getInstance().factoryVec.size(); i++)
     {
@@ -260,7 +263,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
 
     // --------------- check all containers supposed to be unloaded were unloaded ---------------
     if (ship.portToContainers[port].size() > 0) {
-        errors.addError(Error::CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM);
+        // CheckAlgorithmError::CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM; TODO report it to errors file and return -1
         std::cout << "Not all of the containers with of this port destination were unloaded" << std::endl;
     }
 
@@ -277,7 +280,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
             }
         }
         if (!found){
-            errors.addError(Error::BAD_CONTAINER_WASNT_REJECTED);
+            //CheckAlgorithmError::BAD_CONTAINER_WASNT_REJECTED; TODO report it to errors file and return -1
         }
     }
 
@@ -289,28 +292,34 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
         bool destIsFar = checkIfAllLoadedContainersAreCloser(ship, answer, route, container);
 
         for (string &id : answer.changedContainers[Action::REJECT]) {
+            // container isn't bad because all bad were removed
             if (!id.compare(container.getId())) {
-                if (!destIsCurrentPort && !destIsntInNextStops && !destIsFar){
-                    errors.addError(Error::REJECTED_NOT_FAR_CONTAINERS);
+                if (!destIsCurrentPort && !destIsntInNextStops) {
+                    // there is no reason to reject related the container itself,
+                    // it must be because of lack of place - container must be farther then the loaded containers
+                    if (!destIsFar) {
+                        // CheckAlgorithmError::REJECTED_NOT_FAR_CONTAINERS TODO report it to errors file and return -1
+                        inRejected = true;
+                        break;
+                    }
                 }
-                inRejected = true;
-                break;
             }
         }
+
         for (string &id : answer.changedContainers[Action::LOAD]) {
             if (!id.compare(container.getId())) {
                 if (destIsCurrentPort){
-                    errors.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
+                    // CheckAlgorithmError::LOADED_PORT_DESTINATION_IS_CURRENT_PORT TODO report it to errors file and return -1
                 }
                 if (destIsntInNextStops){
-                    errors.addError(Error::CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS);
+                    // CheckAlgorithmError::CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS TODO report it to errors file and return -1
                 }
                 inLoaded = true;
                 break;
             }
         }
         if (!inRejected && !inLoaded) {
-            errors.addError(Error::CONTAINER_WASNT_REVIEWED);
+            // CheckAlgorithmError::CONTAINER_WASNT_REVIEWED TODO report it to errors file and return -1
         }
     }
 
@@ -318,7 +327,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
     if (route.inLastStop()) {
         int amountOfContainers = ship.getAmountOfContainers() > 0;
         if (amountOfContainers > 0) {
-            errors.addError(Error::SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL);
+            //CheckAlgorithmError::SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL TODO report it to errors file and return -1
         }
     }
 

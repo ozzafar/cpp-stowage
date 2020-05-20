@@ -5,6 +5,8 @@
 #ifndef CPP_STOWAGE_ABSTRACTALGORITHM_H
 #define CPP_STOWAGE_ABSTRACTALGORITHM_H
 
+#pragma once
+
 #include <string>
 
 class WeightBalanceCalculator;

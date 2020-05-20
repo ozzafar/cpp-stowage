@@ -50,10 +50,10 @@ int NaiveAlgorithmVertical::getLoadInstructions(const string &input_path, const 
     for (; index < amount ; index++){
         if (route.portInNextStops(containers[index].getDestinationPort())) {
             errors.addError(Error::PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING);
-            writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
         } else {
-            std::cout << "Warning: can't load container " << containers[index].getId() << " because it's destination port " << containers[index].getDestinationPort()<< " isn't in the next stops of the route" << std::endl;
+            errors.addError(Error::MISSING_OR_BAD_DEST_WARINING);
         }
+        writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
     }
     return errors.getErrorsCode();
 }

@@ -32,7 +32,7 @@ string prefix = "/Users/ozzafar/CLionProjects/cpp-stowage/tests/";
 
 TEST(Container, IdValidity){
     Container container(0,"dest","CSQU3054383");
-    EXPECT_TRUE(Container::isValidID(container.getId()));
+    EXPECT_TRUE(Container::isValidId(container.getId()));
 }
 
 //endregion

@@ -1,4 +1,4 @@
-COMP = g++-8.3.0
+COMP = g++-9.3.0
 
 SHARED_OBJS = _206039984_a.so _206039984_b.so _206039984_c.so
 
@@ -12,7 +12,7 @@ $\
 ../interfaces/WeightBalanceCalculator.o $\
 
 
-CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC
+CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -fvisibility=hidden
 CPP_LINK_FLAG = -shared
 
 all: $(SHARED_OBJS)
