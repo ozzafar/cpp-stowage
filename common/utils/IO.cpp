@@ -309,9 +309,9 @@ void IO::writeResultsOfsimulation(const string &resultOutputPath, const vector<s
     {
         if(algorithmResult1.getNumberOfFailedTravels() != algorithmResult2.getNumberOfFailedTravels())
         {
-            return algorithmResult1.getNumberOfFailedTravels() > algorithmResult2.getNumberOfFailedTravels();
+            return algorithmResult1.getNumberOfFailedTravels() < algorithmResult2.getNumberOfFailedTravels();
         }
-        return algorithmResult1.getOperationsCounterOnAllTravels() > algorithmResult2.getOperationsCounterOnAllTravels();
+        return algorithmResult1.getOperationsCounterOnAllTravels() < algorithmResult2.getOperationsCounterOnAllTravels();
     };
 
     std::vector<AlgorithmResults> algorithmResultsVector;
