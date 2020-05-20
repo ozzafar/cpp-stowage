@@ -33,7 +33,7 @@ static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &lin
     Errors errors;
     int x, y, actualNumOfFloors;
     vector<string> row = IO::breakLineToWords(line, ',');
-    if(row.size() < 3 || !IO::isNumber(row[0]) || !IO::isNumber(row[1]) || !IO::isNumber(row[2]))
+    if(row.size() < 3 || !IO::isNumber(row[0]) || !IO::isNumber(row[1]))
     {
         errors.addError(Error::PLAN_BAD_LINE_FORMAT_WARNING);
         std::cout << "Warning: bad input" << std::endl;

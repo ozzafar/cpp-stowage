@@ -3,8 +3,7 @@
 //
 
 #include "NaiveAlgorithm.h"
-#include "../common/utils/Errors.h"
-#include "../interfaces/AlgorithmRegistration.h"
+
 
 
 using std::stringstream;
@@ -42,6 +41,8 @@ int NaiveAlgorithm::findLowestPlaceOfPortInPosition(const string &port, Containe
 
 // input_path is Containers-awaiting-at-port file
 int NaiveAlgorithm::getInstructionsForCargo(const string &input_path, const string &output_path)  {
+    std::ofstream outfile ("output_path");
+    outfile.close();
     Errors errors;
     errors.addErrors(getUnloadInstructions(output_path));
     if (!route.inLastStop() && !input_path.empty()){

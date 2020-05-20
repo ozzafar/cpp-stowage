@@ -16,6 +16,9 @@
 #include "../common/objects/ContainersPosition.h"
 #include "BasicAlgorithm.h"
 #include <algorithm>
+#include <fstream>
+#include "../common/utils/Errors.h"
+#include "../interfaces/AlgorithmRegistration.h"
 
 using std::map;
 using std::string;
