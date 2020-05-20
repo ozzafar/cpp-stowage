@@ -125,7 +125,7 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
         while (getline(planFile, line)) {
             bool badContainer = false;
             row = breakLineToWords(line,',');
-            if(row.empty())
+            if(row.empty() || row[0].at(0) == '#')
             {
                 continue;
             }
@@ -215,6 +215,12 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
     if (planFile.is_open()) {
         getline(planFile, line);
         row = breakLineToWords(line, ',');
+
+        while(row.empty() || row[0].at(0) == '#')
+        {
+            getline(planFile, line);
+            row = breakLineToWords(line, ',');
+        }
 
         if(row.size() < 3 || !isNumber(row[0]) || !isNumber(row[1])) //TODO: don't know why can't check row[2] the same...maybe ctrl char at end
         {

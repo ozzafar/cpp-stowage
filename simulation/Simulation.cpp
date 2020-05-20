@@ -74,6 +74,7 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
 
     if(!directoryCreated && !std::filesystem::exists(outputPath))
     {
+        //TODO: write to error file
         std::cout << "Error: cannot create/find output path. Please Enter Correct path." << std::endl;
         return 1;
     }
