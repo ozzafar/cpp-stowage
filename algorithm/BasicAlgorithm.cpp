@@ -8,6 +8,7 @@
 #include "../common/utils/IO.h"
 #include "../common/utils/Errors.h"
 #include "NaiveAlgorithm.h"
+#include "../simulation/CheckAlgorithmError.h"
 #include <fstream>
 #include <iostream>
 
@@ -45,7 +46,7 @@ int BasicAlgorithm::readContainerAwaitingAtPortFile(const string &path,vector<Co
     errors.addError(IO::readContainerAwaitingAtPortFile(path, ship, waitingContainers, badContainers));
     if (this->route.inLastStop() && (!waitingContainers.empty() || !badContainers.empty()))
     {
-        errors.addError(Error::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE);
+        // CheckAlgorithmError::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE); TODO handle this
     }
     return errors.getErrorsCode();
 }
