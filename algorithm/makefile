@@ -12,7 +12,7 @@ $\
 ../interfaces/WeightBalanceCalculator.o $\
 
 
-CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -fvisibility=hidden
+CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -fvisibility=hidden -fvisibility-inlines-hidden
 CPP_LINK_FLAG = -shared
 
 all: $(SHARED_OBJS)
