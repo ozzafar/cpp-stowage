@@ -6,6 +6,7 @@
 
 #include "_206039984_c.h"
 #include "../interfaces/AlgorithmRegistration.h"
+#include "../common/utils/Errors.h"
 
 REGISTER_ALGORITHM (_206039984_c)
 
