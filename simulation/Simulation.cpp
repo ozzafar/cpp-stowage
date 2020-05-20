@@ -218,7 +218,8 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             errors.addError(IO::readContainerAwaitingAtPortFile(pathOfContainersAwaitingAtPortFile.string(),ship,containers,badContainers));
             if (route.inLastStop() && (!containers.empty() || !badContainers.empty()))
             {
-                errors.addError(Error::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE);
+                // CheckAlgorithmError::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE); TODO handle it
+                return errors;
             }
             if(errors.hasTravelError())
             {

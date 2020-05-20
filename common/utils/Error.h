@@ -36,7 +36,6 @@ enum class Error {
     LAST_PORT_HAS_CONTAINERS_WARNING               = 1 << 17,
     PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING     = 1 << 18,
 
-
     // Crane Management Extra Codes
     ALGORITHM_INVALID_COMMAND                      = 1 << 19,
     FULL_CONTAINER_POSITION                        = 1 << 20,
