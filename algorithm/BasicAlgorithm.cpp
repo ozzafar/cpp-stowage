@@ -41,7 +41,13 @@ void BasicAlgorithm::writeOperation(const std::string& filename, AbstractAlgorit
 }
 
 int BasicAlgorithm::readContainerAwaitingAtPortFile(const string &path,vector<Container>& waitingContainers, vector<Container>& badContainers) {
-    return IO::readContainerAwaitingAtPortFile(path,ship,waitingContainers, badContainers);
+    Errors errors;
+    errors.addError(IO::readContainerAwaitingAtPortFile(path, ship, waitingContainers, badContainers));
+    if (this->route.inLastStop() && (!waitingContainers.empty() || !badContainers.empty()))
+    {
+        errors.addError(Error::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE);
+    }
+    return errors.getErrorsCode();
 }
 
 Ship BasicAlgorithm::getShip() {

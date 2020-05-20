@@ -179,6 +179,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     errors.addError(IO::readShipPlan(travelPath + "/ship_plan.txt", ship.getShipPlan()));
     if(errors.hasTravelError())
     {
+        std::cout << "simulation travel error" << std::endl;
         IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         return errors;
@@ -186,6 +187,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     errors.addError(algorithm->readShipPlan(travelPath + "/ship_plan.txt"));
     if(errors.hasTravelError())
     {
+        std::cout << "algorithm travel error" << std::endl;
         //TODO: change this block. simulator read ship plan without problems but algorithm says that there is
         // a problem. meaning algorithm fault. result should be -1 and proper error should be updated for return
         IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
@@ -214,6 +216,10 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         else
         {
             errors.addError(IO::readContainerAwaitingAtPortFile(pathOfContainersAwaitingAtPortFile.string(),ship,containers,badContainers));
+            if (route.inLastStop() && (!containers.empty() || !badContainers.empty()))
+            {
+                errors.addError(Error::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE);
+            }
             if(errors.hasTravelError())
             {
                 IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);

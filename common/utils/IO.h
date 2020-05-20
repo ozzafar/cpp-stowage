@@ -14,6 +14,10 @@
 #include <vector>
 #include <stdio.h>
 #include <ctype.h>
+#include <map>
+#include <algorithm>
+#include <fstream>
+#include <sstream>
 
 using std::vector;
 
@@ -37,6 +41,8 @@ public:
     static void writeResultsOfsimulation(const string &resultOutputPath, const vector<string> &travelNames, map<string, AlgorithmResults> &algorithmsResults);
 
     static void writeErrorsOfTravelAndAlgorithm(Errors &errors, const string &outputPathOfErrorsFile);
+
+    static bool isNumber(const std::string& s);
 };
 
 #endif //CPP_STOWAGE_IO_H

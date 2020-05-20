@@ -2,11 +2,9 @@
 // Created by Oz Zafar on 18/04/2020.
 //
 
-#include <fstream>
-#include <sstream>
+
 #include "IO.h"
-#include "Errors.h"
-#include <algorithm>
+
 
 //region HELP FUNCTIONS
 
@@ -31,21 +29,33 @@ static bool isAlphabetString(const string &str) {
 }
 
 static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, ShipPlan& shipPlan) {
-    //TODO: check for error: ship plan: a given position exceeds the X/Y ship limits (ignored)
-    //TODO: check for error: ship plan: bad line format after first line or duplicate x,y appearance with same data (ignored)
-    //TODO: check for error: ship plan: travel error - duplicate x,y appearance with different data (cannot run this travel)
-    //TODO: check for error: ship plan: travel error - bad first line
+    std::map <std::pair<int, int>, int> updatedCoordinates;
     Errors errors;
     int x, y, actualNumOfFloors;
     vector<string> row = IO::breakLineToWords(line, ',');
-    if (row.size() != 3){
+    if(row.size() < 3 || !IO::isNumber(row[0]) || !IO::isNumber(row[1]) || !IO::isNumber(row[2]))
+    {
         errors.addError(Error::PLAN_BAD_LINE_FORMAT_WARNING);
         std::cout << "Warning: bad input" << std::endl;
-    } else {
+    }
+    else
+        {
         x = stoi(row[0]);
         y = stoi(row[1]);
         actualNumOfFloors = stoi(row[2]);
-        if (actualNumOfFloors > numOfFloors) {
+        if(updatedCoordinates.find(std::pair(x,y)) != updatedCoordinates.end())
+        {
+            if(updatedCoordinates[std::pair(x,y)] == actualNumOfFloors)
+            {
+                errors.addError(Error::PLAN_BAD_LINE_FORMAT_WARNING);
+            }
+            else
+            {
+                errors.addError(Error::DUPLICATE_X_Y_WITH_DIFFERENT_DATA);
+                return errors.getErrorsCode();
+            }
+        }
+        else if (actualNumOfFloors > numOfFloors) {
             errors.addError(Error::NUMBER_OF_FLOORS_WARNING);
             std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: "
                       << actualNumOfFloors << " is illegal (max number is " << numOfFloors << ")"
@@ -58,6 +68,7 @@ static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &lin
                       << std::endl;
         } else if (x < 0 || x >= X || y < 0 || y >= Y) {
             std::cout << "Warning: the position (" << x << "," << y << ") is illegal" << std::endl;
+            errors.addError(Error::ILLEGAL_POSITION_WARNING);
         } else {
             shipPlan.setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
         }
@@ -103,15 +114,12 @@ static bool checkPortNumberInput(vector<string> portNumber) {
 // region MAIN FUNCTIONS
 
 int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers, vector<Container>& badContainers) {
-    //TODO: check for error: containers at port: ID already on ship (ID rejected)
-    //TODO: check for error: containers at port: bad line format, ID cannot be read (ignored)
-    //TODO: check for error: containers at port: file cannot be read altogether (assuming no cargo to be loaded at this port)
-    //TODO: check for error: containers at port: last port has waiting containers (ignored)
     //TODO: check for error: total containers amount exceeds ship capacity (rejecting far containers)
     Errors errors;
     string line;
     std::ifstream planFile(input_path);
     vector<string> row;
+    std::set <string> updatedContainersId;
 
     if (planFile.is_open()) {
         while (getline(planFile, line)) {
@@ -121,31 +129,42 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
             {
                 continue;
             }
-
             string containerId = row[0];
+            if(std::iscntrl(containerId.at(0)))
+            {
+                errors.addError(Error::ID_CANNOT_BE_READ_WARINING);
+                std::cout << "Bad input: cannot read container ID " << containerId << std::endl;
+                continue;
+            }
             if (!Container::isValidId(containerId)){
                 errors.addError(Error::ILLEGAL_ID_CHECK_WARNING);
                 std::cout << "Bad input: invalid container id " << containerId << std::endl;
                 badContainer = true;
             }
+            if (updatedContainersId.find(containerId) != updatedContainersId.end())
+            {
+                errors.addError(Error:: DUPLICATE_CONTAINER_ID_WARINING);
+                std::cout << "Bad input: port already provide this container id " << containerId << std::endl;
+                badContainer = true;
+            }
             if (ship.knowContainerId(containerId)){
-                errors.addError(Error::DUPLICATE_CONTAINER_ID_WARINING);
+                errors.addError(Error::CONTAINER_ID_ALREADY_IN_SHIP_WARINING);
                 std::cout << "Warning: container " << containerId << " appears twice" << std::endl;
                 badContainer = true;
             }
 
-            if (row.size()<2){
+            if (row.size() < 2){
                 errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
                 badContainer = true;
             }
             int weight = stoi(row[1]);
-            if (weight<0)
+            if (weight < 0)
             {
                 errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
                 badContainer = true;
             }
 
-            if (row.size()<3){
+            if (row.size() < 3){
                 errors.addError(Error::MISSING_OR_BAD_DEST_WARINING);
                 badContainer = true;
             }
@@ -169,12 +188,19 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
             Container newContainer(weight,destinationPort,containerId);
             if (badContainer){
                 badContainers.push_back(newContainer);
-            } else {
+            }
+            else {
+                updatedContainersId.insert(containerId);
                 ship.updateContainerMapping(newContainer);
                 waitingContainers.push_back(newContainer);
             }
         }
         planFile.close();
+    }
+    else
+    {
+        errors.addError(Error::CONTAINER_FILE_CANNOT_BE_READ_WARNING);
+        std::cout << "Container file cannot be read" << std::endl;
     }
     return errors.getErrorsCode();
 }
@@ -189,6 +215,13 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
     if (planFile.is_open()) {
         getline(planFile, line);
         row = breakLineToWords(line, ',');
+
+        if(row.size() < 3 || !isNumber(row[0]) || !isNumber(row[1])) //TODO: don't know why can't check row[2] the same...maybe ctrl char at end
+        {
+            errors.addError(Error::PLAN_FILE_CANNOT_BE_READ_ERROR);
+            return errors.getErrorsCode();
+        }
+
         numOfFloors = stoi(row[0]);
         X = stoi(row[1]);
         Y = stoi(row[2]);
@@ -320,6 +353,12 @@ void IO::writeErrorsOfTravelAndAlgorithm (Errors &errors, const string &outputPa
         IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(error) + ",");
     }
 
+}
+
+bool IO::isNumber(const std::string &s) {
+    std::string::const_iterator it = s.begin();
+    while (it != s.end() && std::isdigit(*it)) ++it;
+    return !s.empty() && it == s.end();
 }
 
 // endregion
