@@ -281,8 +281,8 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
 
     // --------------- check all containers supposed to be unloaded were unloaded ---------------
     if (ship.portToContainers[port].size() > 0) {
-        // CheckAlgorithmError::CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM; TODO report it to errors file and return -1
         std::cout << "Not all of the containers with of this port destination were unloaded" << std::endl;
+        // CheckAlgorithmError::CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM; TODO report it to errors file and return -1
     }
 
     // --------------- check all bad containers were rejected ---------------
@@ -298,6 +298,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
             }
         }
         if (!found){
+            std::cout << "algorithm didn't reject bad container" << std::endl;
             //CheckAlgorithmError::BAD_CONTAINER_WASNT_REJECTED; TODO report it to errors file and return -1
         }
     }
@@ -337,6 +338,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
             }
         }
         if (!inRejected && !inLoaded) {
+            std::cout << "algorithm didn't review some waiting-in-port containers" << std::endl;
             // CheckAlgorithmError::CONTAINER_WASNT_REVIEWED TODO report it to errors file and return -1
         }
     }

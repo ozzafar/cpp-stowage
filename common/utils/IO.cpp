@@ -33,7 +33,7 @@ static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &lin
     Errors errors;
     int x, y, actualNumOfFloors;
     vector<string> row = IO::breakLineToWords(line, ',');
-    if(row.size() < 3 || !IO::isNumber(row[0]) || !IO::isNumber(row[1]) || !IO::isNumber(row[2]))
+    if (row.size() < 3 || !IO::isNumber(row[0]) || !IO::isNumber(row[1]))
     {
         errors.addError(Error::PLAN_BAD_LINE_FORMAT_WARNING);
         std::cout << "Warning: bad input" << std::endl;
@@ -158,7 +158,7 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
                 badContainer = true;
             }
             int weight = stoi(row[1]);
-            if (weight < 0)
+            if (weight <= 0)
             {
                 errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
                 badContainer = true;
@@ -175,12 +175,12 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
                 destinationPort = destinationPort.substr(0, destinationPort.size()-1);
             }
             if (!isAlphabetString(destinationPort)){
-                errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
+                errors.addError(Error::MISSING_OR_BAD_DEST_WARINING);
                 std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id contains non alphabet chars" << std::endl;
                 badContainer = true;
             }
             if (destinationPort.size() != 5) {
-                errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
+                errors.addError(Error::MISSING_OR_BAD_DEST_WARINING);
                 std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id isn't in the correct size" << std::endl;
                 badContainer = true;
             }

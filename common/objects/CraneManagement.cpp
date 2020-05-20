@@ -14,6 +14,7 @@
 
 int CraneManagement::load(Ship& ship, string& containerId, int floor, int row, int column) {
     Errors errors;
+    // TODO check row&column are legal
     ShipPlan& shipPlan = ship.getShipPlan();
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor-1){
@@ -28,6 +29,7 @@ int CraneManagement::load(Ship& ship, string& containerId, int floor, int row, i
 int CraneManagement::unload(Ship& ship, string &containerId, int floor,int row, int column) {
     Errors errors;
     ShipPlan& shipPlan = ship.getShipPlan();
+    // TODO check if ship know this container Id and check row&column are legal
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor){
         errors.addError(Error::UNLOAD_NOT_TOP_CONTAINER);
@@ -38,6 +40,7 @@ int CraneManagement::unload(Ship& ship, string &containerId, int floor,int row, 
 }
 int CraneManagement::move(Ship& ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
     Errors errors;
+    // TODO check if ship know this container Id and check row&column are legal
     errors.addErrors(CraneManagement::unload(ship,containerId,oldFloor,oldRow,oldColumn));
     if (!errors.hasError()){
         errors.addErrors(CraneManagement::load(ship,containerId,newFloor,newRow,newColumn));
@@ -118,8 +121,11 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         }
                     }
                     break;
-                default:
+                default:{
+                    std::cout << "Error: invalid command letter: " << command << std::endl;
+                    errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                     break;
+                }
             }
         }
     }
