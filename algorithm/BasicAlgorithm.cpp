@@ -43,7 +43,7 @@ void BasicAlgorithm::writeOperation(const std::string& filename, AbstractAlgorit
 
 int BasicAlgorithm::readContainerAwaitingAtPortFile(const string &path,vector<Container>& waitingContainers, vector<Container>& badContainers) {
     Errors errors;
-    errors.addError(IO::readContainerAwaitingAtPortFile(path, ship, waitingContainers, badContainers));
+    errors.addErrors(IO::readContainerAwaitingAtPortFile(path, ship, waitingContainers, badContainers));
     if (this->route.inLastStop() && (!waitingContainers.empty() || !badContainers.empty()))
     {
         // CheckAlgorithmError::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE); TODO handle this

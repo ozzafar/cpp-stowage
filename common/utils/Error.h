@@ -37,6 +37,7 @@ enum class Error {
     PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING     = 1 << 18,
 
     // Crane Management Extra Codes
+    // as long as the algorithm itself doesn't reports these - all good
     ALGORITHM_INVALID_COMMAND                      = 1 << 19,
     FULL_CONTAINER_POSITION                        = 1 << 20,
     UNLOAD_NOT_TOP_CONTAINER                       = 1 << 21

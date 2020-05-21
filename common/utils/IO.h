@@ -39,9 +39,9 @@ public:
 
     static int writeToFile(const string &writingPath, const string &content);
 
-    static void writeResultsOfsimulation(const string &resultOutputPath, const vector<string> &travelNames, map<string, AlgorithmResults> &algorithmsResults);
+    static void writeResultsOfSimulation(const string &resultOutputPath, const vector<string> &travelNames, map<string, AlgorithmResults> &algorithmsResults);
 
-    static void writeErrorsOfTravelAndAlgorithm(Errors &errors, const string &outputPathOfErrorsFile);
+    static void writeErrorsOfTravelAndAlgorithm(Errors &simErrors,Errors &algErrors, const string &outputPathOfErrorsFile);
 
     static bool isNumber(const std::string& s);
 

@@ -50,7 +50,5 @@ public:
 
     static string errorFromAlgorithmToString(Error error);
 
-    void addError(int newError);
-
 };
 #endif //CPP_STOWAGE_ERRORS_H

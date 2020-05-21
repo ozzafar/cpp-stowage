@@ -5,7 +5,7 @@
 #include <cmath>
 #include "Errors.h"
 
-static const string ALGORITHM_TRUE_NEGATIVE_ERROR = "The algorithm didn't report on the error: ";
+static const string ALGORITHM_TRUE_NEGATIVE_ERROR = "algorithm reported on the error - ";
 
 
 string Errors::errorToString(Error error) {
@@ -96,22 +96,11 @@ void Errors::addErrors(Errors newErrors) {
 }
 
 void Errors::addErrors(int newErrors) {
-    int error = 1; // 2 pow 0
-    while (newErrors) {
-        if (newErrors & 1) { // check if first but is 1 ==> error exists
-            addError(error);
-        }
-        error *= 2;
-        newErrors /= 2;
-    }
-}
-
-void Errors::addError(int newError) {
-    errors |= newError;
+    errors |= newErrors;
 }
 
 void Errors::addError(Error newError) {
-    addError((int) newError);
+    addErrors((int) newError);
 }
 
 bool Errors::hasError() {

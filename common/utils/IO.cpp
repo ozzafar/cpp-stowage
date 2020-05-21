@@ -315,7 +315,7 @@ int IO::writeToFile(const string &writingPath, const string &content) {
     return 1;
 }
 
-void IO::writeResultsOfsimulation(const string &resultOutputPath, const vector<string> &travelNames,
+void IO::writeResultsOfSimulation(const string &resultOutputPath, const vector<string> &travelNames,
                                   map<string, AlgorithmResults> &algorithmsResults){
     auto cmp = [](AlgorithmResults const & algorithmResult1, AlgorithmResults const & algorithmResult2)
     {
@@ -357,12 +357,19 @@ void IO::writeResultsOfsimulation(const string &resultOutputPath, const vector<s
 
 }
 
-void IO::writeErrorsOfTravelAndAlgorithm (Errors &errors, const string &outputPathOfErrorsFile) {
-    auto itr = errors.getIterator();
-    while(itr.hasNext())
+void IO::writeErrorsOfTravelAndAlgorithm (Errors &simErrors,Errors &algErrors, const string &outputPathOfErrorsFile) {
+    auto simItr = simErrors.getIterator();
+    while(simItr.hasNext())
     {
-        Error error = itr.getNext();
+        Error error = simItr.getNext();
         IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(error) + ",");
+    }
+
+    auto algItr = algErrors.getIterator();
+    while(algItr.hasNext())
+    {
+        Error error = algItr.getNext();
+        IO::writeToFile(outputPathOfErrorsFile, Errors::errorFromAlgorithmToString(error) + ",");
     }
 }
 
