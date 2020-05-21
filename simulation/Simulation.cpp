@@ -16,7 +16,6 @@
 
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
 {
-    //TODO: don't write to result file travels that corrupt
 #ifndef RUNNING_ON_NOVA
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_a>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_b>();});
@@ -26,18 +25,6 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
     Registrar::getInstance().addName("_206039984_c");
 #endif
 
-    if(std::filesystem::exists(outputPath) == 1)
-    {
-        for(auto& dir: std::filesystem::directory_iterator(outputPath))
-        {
-            string fileName = dir.path().string();
-            if (fileName.find("crane_instructions") != string::npos || fileName.find("errors") != string::npos
-            || fileName.find("results") != string::npos)
-            {
-                std::filesystem::remove_all(fileName);
-            }
-        }
-    }
 
     if(outputPath!="")
     {
@@ -46,8 +33,10 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
     }
     else
     {
+        string h = std::filesystem::current_path().string();
         this->outputPath = std::filesystem::current_path().string();
     }
+    IO::clearPreviousOutput(this->outputPath);
 
     if(algorithmPath == "")
     {
@@ -79,16 +68,22 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
 {
     if (checkTravelsPath(travelsPath)!=0)
     {
+        std::cout << "Error: invalid travels path. try again." << std::endl;
         return 1;
     }
 
-    bool directoryCreated = std::filesystem::create_directory(outputPath);
+    string outputPathWithoutLastDirectory = outputPath.substr(0, outputPath.find_last_of("/"));
 
-    if(!directoryCreated && !std::filesystem::exists(outputPath))
+    if(!std::filesystem::exists(outputPathWithoutLastDirectory))
     {
-        //TODO: write to error file
+        IO::writeToFile(std::filesystem::current_path().string() + "/simulation_errors.csv", "INVALID OUTPUT PATH");
         std::cout << "Error: cannot create/find output path. Please Enter Correct path." << std::endl;
         return 1;
+    }
+
+    if(!std::filesystem::exists(outputPath))
+    {
+        std::filesystem::create_directory(outputPath);
     }
 
     std::filesystem::create_directory(outputPath + "/errors");

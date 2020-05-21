@@ -364,7 +364,6 @@ void IO::writeErrorsOfTravelAndAlgorithm (Errors &errors, const string &outputPa
         Error error = itr.getNext();
         IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(error) + ",");
     }
-
 }
 
 bool IO::isNumber(const std::string &s) {
@@ -386,6 +385,22 @@ string IO::firstFileWithExtensionInDirectory(const string& pathOfDirectory, cons
         }
     }
     return pathOfFirstFileWithExtension;
+}
+
+void IO::clearPreviousOutput(const string &outputPath) {
+    if(std::filesystem::exists(outputPath) == 1)
+    {
+        for(auto& dir: std::filesystem::directory_iterator(outputPath))
+        {
+            string fileName = dir.path().string();
+            if (fileName.find("crane_instructions") != string::npos || fileName.find("errors") != string::npos
+                || fileName.find("results") != string::npos)
+            {
+                std::filesystem::remove_all(fileName);
+            }
+        }
+    }
+
 }
 
 

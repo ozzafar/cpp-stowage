@@ -46,6 +46,8 @@ public:
     static bool isNumber(const std::string& s);
 
     static string firstFileWithExtensionInDirectory(const string& pathOfDirectory, const string &extension);
+
+    static void clearPreviousOutput(const string& outputPath);
 };
 
 #endif //CPP_STOWAGE_IO_H
