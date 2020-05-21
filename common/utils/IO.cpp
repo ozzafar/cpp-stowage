@@ -125,7 +125,7 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
         while (getline(planFile, line)) {
             bool badContainer = false;
             row = breakLineToWords(line,',');
-            if(row.empty())
+            if(row.empty() || row[0].at(0) == '#')
             {
                 continue;
             }
@@ -209,12 +209,21 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
     Errors errors;
     int numOfFloors, X, Y;
     string line, word;
-    std::ifstream planFile(path);
-    vector<string> row;
 
-    if (planFile.is_open()) {
-        getline(planFile, line);
+    vector<string> row;
+    string pathOfFirstShipPlan;
+
+    pathOfFirstShipPlan = firstFileWithExtensionInDirectory(path, "ship_plan");
+    std::ifstream shipPlanFile(pathOfFirstShipPlan);
+    if (shipPlanFile.is_open()) {
+        getline(shipPlanFile, line);
         row = breakLineToWords(line, ',');
+
+        while(row.empty() || row[0].at(0) == '#')
+        {
+            getline(shipPlanFile, line);
+            row = breakLineToWords(line, ',');
+        }
 
         if(row.size() < 3 || !isNumber(row[0]) || !isNumber(row[1])) //TODO: don't know why can't check row[2] the same...maybe ctrl char at end
         {
@@ -228,10 +237,10 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
         vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition(numOfFloors)));
         shipPlan = ShipPlan(plan,numOfFloors);
 
-        while (getline(planFile, line)) {
+        while (getline(shipPlanFile, line)) {
             errors.addErrors(createPositionFromRowInput(numOfFloors, X, Y, line, shipPlan));
         }
-        planFile.close();
+        shipPlanFile.close();
     }
     else{
         errors.addError(Error::PLAN_FILE_CANNOT_BE_READ_ERROR);
@@ -247,11 +256,14 @@ int IO::readShipRoute(const string &path, Route& route) {
     int prevPortIndex = -1;
     string line;
     vector<string> row;
+    string pathOfFirstRoute;
 
-    std::ifstream planFile(path);
+    pathOfFirstRoute = firstFileWithExtensionInDirectory(path, "route");
 
-    if (planFile.is_open()) {
-        while (getline(planFile, line)) {
+    std::ifstream routeFile(pathOfFirstRoute);
+
+    if (routeFile.is_open()) {
+        while (getline(routeFile, line)) {
             row = breakLineToWords(line, ' ');
 
             if (!checkPortNumberInput(row)) {
@@ -269,7 +281,7 @@ int IO::readShipRoute(const string &path, Route& route) {
                 prevPortIndex++;
             }
         }
-        planFile.close();
+        routeFile.close();
         route = Route(ports);
     }
     else{
@@ -309,9 +321,9 @@ void IO::writeResultsOfsimulation(const string &resultOutputPath, const vector<s
     {
         if(algorithmResult1.getNumberOfFailedTravels() != algorithmResult2.getNumberOfFailedTravels())
         {
-            return algorithmResult1.getNumberOfFailedTravels() > algorithmResult2.getNumberOfFailedTravels();
+            return algorithmResult1.getNumberOfFailedTravels() < algorithmResult2.getNumberOfFailedTravels();
         }
-        return algorithmResult1.getOperationsCounterOnAllTravels() > algorithmResult2.getOperationsCounterOnAllTravels();
+        return algorithmResult1.getOperationsCounterOnAllTravels() < algorithmResult2.getOperationsCounterOnAllTravels();
     };
 
     std::vector<AlgorithmResults> algorithmResultsVector;
@@ -352,7 +364,6 @@ void IO::writeErrorsOfTravelAndAlgorithm (Errors &errors, const string &outputPa
         Error error = itr.getNext();
         IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(error) + ",");
     }
-
 }
 
 bool IO::isNumber(const std::string &s) {
@@ -360,5 +371,40 @@ bool IO::isNumber(const std::string &s) {
     while (it != s.end() && std::isdigit(*it)) ++it;
     return !s.empty() && it == s.end();
 }
+
+string IO::firstFileWithExtensionInDirectory(const string& pathOfDirectory, const string &extension) {
+    string pathOfFirstFileWithExtension;
+
+    for(auto& file: std::filesystem::directory_iterator(pathOfDirectory))
+    {
+        string pathOfCurrentTravel = file.path().string();
+        if(pathOfCurrentTravel.substr(pathOfCurrentTravel.find_last_of(".") + 1) == extension)
+        {
+            pathOfFirstFileWithExtension = pathOfCurrentTravel;
+            break;
+        }
+    }
+    return pathOfFirstFileWithExtension;
+}
+
+void IO::clearPreviousOutput(const string &outputPath) {
+    if(std::filesystem::exists(outputPath) == 1)
+    {
+        for(auto& dir: std::filesystem::directory_iterator(outputPath))
+        {
+            string fileName = dir.path().string();
+            if (fileName.find("crane_instructions") != string::npos || fileName.find("errors") != string::npos
+                || fileName.find("results") != string::npos)
+            {
+                std::filesystem::remove_all(fileName);
+            }
+        }
+    }
+
+}
+
+
+
+
 
 // endregion

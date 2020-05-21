@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <fstream>
 #include <sstream>
+#include <filesystem>
 
 using std::vector;
 
@@ -43,6 +44,10 @@ public:
     static void writeErrorsOfTravelAndAlgorithm(Errors &errors, const string &outputPathOfErrorsFile);
 
     static bool isNumber(const std::string& s);
+
+    static string firstFileWithExtensionInDirectory(const string& pathOfDirectory, const string &extension);
+
+    static void clearPreviousOutput(const string& outputPath);
 };
 
 #endif //CPP_STOWAGE_IO_H
