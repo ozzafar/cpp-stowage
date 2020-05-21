@@ -16,7 +16,6 @@
 
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
 {
-    //TODO: handle file names
     //TODO: don't write to result file travels that corrupt
 #ifndef RUNNING_ON_NOVA
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_a>();});
@@ -26,7 +25,19 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
     Registrar::getInstance().addName("_206039984_b");
     Registrar::getInstance().addName("_206039984_c");
 #endif
-    //TODO: clean previous output/error/result files(?)
+
+    if(std::filesystem::exists(outputPath) == 1)
+    {
+        for(auto& dir: std::filesystem::directory_iterator(outputPath))
+        {
+            string fileName = dir.path().string();
+            if (fileName.find("crane_instructions") != string::npos || fileName.find("errors") != string::npos
+            || fileName.find("results") != string::npos)
+            {
+                std::filesystem::remove_all(fileName);
+            }
+        }
+    }
 
     if(outputPath!="")
     {
@@ -115,7 +126,7 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
     }
 
     std::ofstream file { travelPath + "/empty_containers_awaiting_at_port_file" };
-
+    string travelName = path.stem().string();
 
     Registrar &registrar = Registrar::getInstance();
     for(size_t i = 0 ; i < registrar.factoryVec.size() ; i++ )
@@ -129,7 +140,10 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
         {
             std::cout << "travel error" << std::endl;
             //TODO: write to error file that travel error occurred
-            algorithmsResults[registrar.names[i]].addTravelResult(path.stem().string(), -1);
+        }
+        if (errors.hasTravelError() == 1)
+        {
+            travelNames.erase(std::remove(travelNames.begin(), travelNames.end(), travelName), travelNames.end());
         }
     }
 
@@ -163,7 +177,6 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     if(errors.hasTravelError())
     {
         IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
-        algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         return errors;
     }
 
@@ -172,7 +185,6 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     if(errors.hasTravelError())
     {
         IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
-        algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         return errors;
     }
     ports = route.getPorts();
@@ -186,7 +198,6 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         //TODO: change this block. simulator read route without problems but algorithm says that there is
         // a problem. meaning algorithm fault. result should be -1 and proper error should be updated for return
         IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
-        algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         return errors;
     }
 
@@ -196,7 +207,6 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     {
         std::cout << "simulation travel error" << std::endl;
         IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
-        algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         return errors;
     }
     errors.addError(algorithm->readShipPlan(travelPath));
@@ -206,7 +216,6 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         //TODO: change this block. simulator read ship plan without problems but algorithm says that there is
         // a problem. meaning algorithm fault. result should be -1 and proper error should be updated for return
         IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
-        algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         return errors;
     }
 
@@ -224,7 +233,6 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             if(errors.hasTravelError())
             {
                 IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
-                algorithmsResults[algorithmName].addTravelResult(travelName, -1);
                 return errors;
             }
         }
@@ -239,14 +247,12 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             if(errors.hasTravelError())
             {
                 IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
-                algorithmsResults[algorithmName].addTravelResult(travelName, -1);
                 return errors;
             }
             errors.addError(algorithm->getInstructionsForCargo(pathOfContainersAwaitingAtPortFile.string(), pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".crane_instructions"));
             if(errors.hasTravelError())
             {
                 IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
-                algorithmsResults[algorithmName].addTravelResult(travelName, -1);
                 return errors;
             }
         }
@@ -257,7 +263,6 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         if(errors.hasError(Error::ALGORITHM_INVALID_COMMAND))
         {
             IO::writeErrorsOfTravelAndAlgorithm(errors, outputPathOfErrorsFile);
-            algorithmsResults[algorithmName].addTravelResult(travelName, -1);
             return errors;
         }
         totalOperations += craneManagementAnswer.numOfOperations;

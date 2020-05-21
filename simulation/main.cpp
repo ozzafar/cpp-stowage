@@ -30,8 +30,6 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    //TODO: add checks: valid path when is must be valid
-
     Simulation simulation(travel_path, algorithm_path, output_path);
     simulation.simulateAllTravelsWithAllAlgorithms();
 
