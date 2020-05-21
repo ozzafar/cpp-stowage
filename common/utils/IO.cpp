@@ -209,16 +209,19 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
     Errors errors;
     int numOfFloors, X, Y;
     string line, word;
-    std::ifstream planFile(path);
-    vector<string> row;
 
-    if (planFile.is_open()) {
-        getline(planFile, line);
+    vector<string> row;
+    string pathOfFirstShipPlan;
+
+    pathOfFirstShipPlan = firstFileWithExtensionInDirectory(path, "ship_plan");
+    std::ifstream shipPlanFile(pathOfFirstShipPlan);
+    if (shipPlanFile.is_open()) {
+        getline(shipPlanFile, line);
         row = breakLineToWords(line, ',');
 
         while(row.empty() || row[0].at(0) == '#')
         {
-            getline(planFile, line);
+            getline(shipPlanFile, line);
             row = breakLineToWords(line, ',');
         }
 
@@ -234,10 +237,10 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
         vector<vector<ContainersPosition>> plan(X, vector<ContainersPosition>(Y, ContainersPosition(numOfFloors)));
         shipPlan = ShipPlan(plan,numOfFloors);
 
-        while (getline(planFile, line)) {
+        while (getline(shipPlanFile, line)) {
             errors.addErrors(createPositionFromRowInput(numOfFloors, X, Y, line, shipPlan));
         }
-        planFile.close();
+        shipPlanFile.close();
     }
     else{
         errors.addError(Error::PLAN_FILE_CANNOT_BE_READ_ERROR);
@@ -253,11 +256,14 @@ int IO::readShipRoute(const string &path, Route& route) {
     int prevPortIndex = -1;
     string line;
     vector<string> row;
+    string pathOfFirstRoute;
 
-    std::ifstream planFile(path);
+    pathOfFirstRoute = firstFileWithExtensionInDirectory(path, "route");
 
-    if (planFile.is_open()) {
-        while (getline(planFile, line)) {
+    std::ifstream routeFile(pathOfFirstRoute);
+
+    if (routeFile.is_open()) {
+        while (getline(routeFile, line)) {
             row = breakLineToWords(line, ' ');
 
             if (!checkPortNumberInput(row)) {
@@ -275,7 +281,7 @@ int IO::readShipRoute(const string &path, Route& route) {
                 prevPortIndex++;
             }
         }
-        planFile.close();
+        routeFile.close();
         route = Route(ports);
     }
     else{
@@ -366,5 +372,22 @@ bool IO::isNumber(const std::string &s) {
     while (it != s.end() && std::isdigit(*it)) ++it;
     return !s.empty() && it == s.end();
 }
+
+string IO::firstFileWithExtensionInDirectory(const string& pathOfDirectory, const string &extension) {
+    string pathOfFirstFileWithExtension;
+
+    for(auto& file: std::filesystem::directory_iterator(pathOfDirectory))
+    {
+        string pathOfCurrentTravel = file.path().string();
+        if(pathOfCurrentTravel.substr(pathOfCurrentTravel.find_last_of(".") + 1) == extension)
+        {
+            pathOfFirstFileWithExtension = pathOfCurrentTravel;
+            break;
+        }
+    }
+    return pathOfFirstFileWithExtension;
+}
+
+
 
 // endregion
