@@ -157,9 +157,9 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath)
 
 Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName) {
 
-    std::cout <<"\t===========================================================" << std::endl;
+    std::cout <<"\t===============================================================" << std::endl;
     std::cout <<"\tstarted simulate " << algorithmName << " on " << travelPath << std::endl;
-    std::cout <<"\t===========================================================" << std::endl;
+    std::cout <<"\t===============================================================" << std::endl;
 
     Errors simErrors,algErrors;
     int totalOperations = 0;
@@ -193,8 +193,9 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         totalNumbersOfVisitingPort[port]++;
     }
 
-
     algErrors.addErrors(algorithm->readShipRoute(routePath));
+
+    //simulation indicated that there is no travel error, so if algoirthm indicates about error, he fails
     if(algErrors.hasTravelError())
     {
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
@@ -206,13 +207,17 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     std::cout << "\t\tReading ship plan" << std::endl;
     string shipPlanPath = IO::firstFileWithExtensionInDirectory(travelPath, "ship_plan");
     simErrors.addErrors(IO::readShipPlan(shipPlanPath, ship.getShipPlan()));
+
     if(simErrors.hasTravelError())
     {
         std::cout << "\t\tsimulation travel error" << std::endl;
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
         return simErrors;
     }
+
     algErrors.addErrors(algorithm->readShipPlan(shipPlanPath));
+
+    //simulation indicated that there is no travel error, so if algoirthm indicates about error, he fails
     if(algErrors.hasTravelError())
     {
         std::cout << "\t\tfalse travel error" << std::endl;
@@ -222,18 +227,22 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         return simErrors;
     }
 
+    //iterate over ports and handle each one
     for (size_t i = 0; i < ports.size(); i++)
     {
         vector<Container> containers;
         vector<Container> badContainers;
-        std::cout << "\t\t----------------" <<"Ship Arrived to port " << ports[i] << "----------------" << std::endl;
+        std::cout << "\t\t--------" <<"Ship Arrived to port " << ports[i] << "--------" << std::endl;
         const std::filesystem::path pathOfContainersAwaitingAtPortFile = travelPath + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".cargo_data";
 
+        //there is no containers awaiting at port file. supply empty file to the algorithm
         if(std::filesystem::exists(pathOfContainersAwaitingAtPortFile) == 0)
         {
             std::cout << "\t\tNo containers awaiting at port input file for " << ports[i] << " for visiting number " << indexOfVisitAtPort[ports[i]] + 1 << std::endl;
             algErrors.addErrors(algorithm->getInstructionsForCargo(travelPath + "/" + "empty_containers_awaiting_at_port_file", pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".crane_instructions"));
         }
+
+        //there is containers awaiting at port file. supply it to the algorithm
         else
         {
             simErrors.addErrors(IO::readContainerAwaitingAtPortFile(pathOfContainersAwaitingAtPortFile.string(),ship,containers,badContainers));
@@ -244,6 +253,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             algErrors.addErrors(algorithm->getInstructionsForCargo(pathOfContainersAwaitingAtPortFile.string(), pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".crane_instructions"));
         }
 
+        //algorithm shouldn't report travel error. If he does, he fails
         if(algErrors.hasTravelError())
         {
             algorithmsResults[algorithmName].addTravelResult(travelName, -1);
@@ -254,8 +264,10 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
 
         craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".crane_instructions");
         simErrors.addErrors(craneManagementAnswer.errors);
+
         if(craneManagementAnswer.errors != (int) Error::SUCCESS)
         {
+            //algorithm write wrong command
             algorithmsResults[algorithmName].addTravelResult(travelName, -1);
             IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
             return simErrors;
@@ -264,15 +276,17 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
 
         int checkForErrorsAfterPortResult = checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route,containers, badContainers);
         simErrors.addErrors(checkForErrorsAfterPortResult);
+
         if(checkForErrorsAfterPortResult != (int) Error::SUCCESS)
         {
+            //algorithm did something wrong at port
             algorithmsResults[algorithmName].addTravelResult(travelName, -1);
             IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
             return simErrors;
         }
 
         indexOfVisitAtPort[ports[i]]++;
-        std::cout << "\t\t----------------" <<"Ship left port " << ports[i] << "----------------" << std::endl;
+        std::cout << "\t\t-----------" <<"Ship left port " << ports[i] << "-----------" << std::endl;
         route.incrementCurrentPort();
 
     }
@@ -280,9 +294,9 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     algorithmsResults[algorithmName].addTravelResult(travelName, totalOperations);
     IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
 
-    std::cout <<"\t===========================================================" << std::endl;
+    std::cout <<"\t================================================================" << std::endl;
     std::cout <<"\tfinished simulate " << algorithmName << " on " << travelPath << std::endl;
-    std::cout <<"\t===========================================================" << std::endl;
+    std::cout <<"\t================================================================" << std::endl;
 
     return simErrors;
 

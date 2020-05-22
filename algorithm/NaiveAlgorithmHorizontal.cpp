@@ -26,7 +26,7 @@ int NaiveAlgorithmHorizontal::getLoadInstructions(const string &input_path, cons
                     if (containers[index].getDestinationPort() != route.getCurrentPortName()) {
                         if (calculator.tryOperation((char) Action::LOAD, containers.at(index).getWeight(), i, j) ==
                             WeightBalanceCalculator::APPROVED) {
-                            string des = containers[index].getDestinationPort().substr(0, 5); //TODO remove substr
+                            string des = containers[index].getDestinationPort().substr(0, 5);
                             if (!route.portInNextStops(des)) {
                                 writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
                             } else {
