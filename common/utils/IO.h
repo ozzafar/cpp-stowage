@@ -54,6 +54,8 @@ public:
     static void rtrim(std::string &s);
 
     static void trim(std::string &s);
-};
+
+    static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, ShipPlan& shipPlan);
+    };
 
 #endif //CPP_STOWAGE_IO_H
