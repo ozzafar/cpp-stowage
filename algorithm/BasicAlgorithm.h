@@ -11,6 +11,11 @@
 #include "../interfaces/WeightBalanceCalculator.h"
 #include "../common/utils/Error.h"
 #include <string>
+#include "../common/objects/ContainersPosition.h"
+#include "../common/utils/IO.h"
+#include "../common/utils/Errors.h"
+#include <fstream>
+#include <iostream>
 
 using std::string;
 

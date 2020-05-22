@@ -35,12 +35,18 @@ enum class Error {
     CONTAINER_FILE_CANNOT_BE_READ_WARNING          = 1 << 16,
     LAST_PORT_HAS_CONTAINERS_WARNING               = 1 << 17,
     PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING     = 1 << 18,
-
-    // Crane Management Extra Codes
-    // as long as the algorithm itself doesn't reports these - all good
-    ALGORITHM_INVALID_COMMAND                      = 1 << 19,
-    FULL_CONTAINER_POSITION                        = 1 << 20,
-    UNLOAD_NOT_TOP_CONTAINER                       = 1 << 21
+    ALGORITHM_NOT_ALLOWED_INSTRUCTION              = 1 << 19,
+    ALGORITHM_INVALID_COMMAND                      = 1 << 20,
+    ALGORITHM_FALSE_TRAVEL_ERROR                   = 1 << 21,
+    ALGORITHM_BAD_CONTAINER_WASNT_REJECT           = 1 << 22,
+    ALGORITHM_INCORRECTLY_REJECTED_CONTAINER       = 1 << 23,
+    ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_LOADED   = 1 << 24,
+    ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_UNLOADED = 1 << 25,
+    SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL               = 1 << 26,
+    FAILED_TO_LOAD_ALGORITHM                       = 1 << 27,
+    FULL_CONTAINER_POSITION                        = 1 << 28,
+    ALGORITHM_INSTRUCTION_OUT_OF_BOUND             = 1 << 29,
+    ALGORITHM_UNKNOWN_CONTAINER_ID                 = 1 << 30
 };
 
 

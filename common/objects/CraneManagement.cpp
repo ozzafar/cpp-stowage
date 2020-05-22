@@ -10,17 +10,25 @@
 #include "../../interfaces/AbstractAlgorithm.h"
 #include "../utils/Errors.h"
 
+
 #define SUCCESS (int)Error::SUCCESS
 
 int CraneManagement::load(Ship& ship, string& containerId, int floor, int row, int column) {
     Errors errors;
-    // TODO check row&column are legal
+    if(row < 0 || column < 0 || row >= ship.getShipPlan().getPlanLength() || column >= ship.getShipPlan().getPlanWidth())
+    {
+        errors.addError(Error::ALGORITHM_INSTRUCTION_OUT_OF_BOUND);
+        return errors.getErrorsCode();
+    }
+
+
     ShipPlan& shipPlan = ship.getShipPlan();
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor-1){
         errors.addError(Error::FULL_CONTAINER_POSITION);
         return errors.getErrorsCode();
     }
+
     position.load(containerId, true);
     return errors.getErrorsCode();
 }
@@ -29,10 +37,21 @@ int CraneManagement::load(Ship& ship, string& containerId, int floor, int row, i
 int CraneManagement::unload(Ship& ship, string &containerId, int floor,int row, int column) {
     Errors errors;
     ShipPlan& shipPlan = ship.getShipPlan();
-    // TODO check if ship know this container Id and check row&column are legal
+    if(row < 0 || column < 0 || row >= ship.getShipPlan().getPlanLength() || column >= ship.getShipPlan().getPlanWidth())
+    {
+        errors.addError(Error::ALGORITHM_INSTRUCTION_OUT_OF_BOUND);
+        return errors.getErrorsCode();
+    }
+
+    if(!ship.knowContainerId(containerId))
+    {
+        errors.addError(Error::ALGORITHM_UNKNOWN_CONTAINER_ID);
+        return errors.getErrorsCode();
+    }
+
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor){
-        errors.addError(Error::UNLOAD_NOT_TOP_CONTAINER);
+        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
         return errors.getErrorsCode();
     }
     shipPlan.getContainerPosition(row, column).unload(containerId, true);
@@ -40,7 +59,18 @@ int CraneManagement::unload(Ship& ship, string &containerId, int floor,int row, 
 }
 int CraneManagement::move(Ship& ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
     Errors errors;
-    // TODO check if ship know this container Id and check row&column are legal
+    if(newRow < 0 || newColumn < 0 || newRow >= ship.getShipPlan().getPlanLength() || newColumn >= ship.getShipPlan().getPlanWidth()
+    || oldRow < 0 || oldColumn < 0 || oldRow >= ship.getShipPlan().getPlanLength() || oldColumn >= ship.getShipPlan().getPlanWidth())
+    {
+        errors.addError(Error::ALGORITHM_INSTRUCTION_OUT_OF_BOUND);
+        return errors.getErrorsCode();
+    }
+
+//    if(!ship.knowContainerId(containerId))
+//    {
+//        errors.addError(Error::ALGORITHM_UNKNOWN_CONTAINER_ID);
+//        return errors.getErrorsCode();
+//    }
     errors.addErrors(CraneManagement::unload(ship,containerId,oldFloor,oldRow,oldColumn));
     if (!errors.hasError()){
         errors.addErrors(CraneManagement::load(ship,containerId,newFloor,newRow,newColumn));
@@ -78,7 +108,8 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                     }else{
                         string containerId = row[1];
-                        if (load(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))==SUCCESS){
+                        errors.addErrors(load(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4])));
+                        if (errors.getErrorsCode() == SUCCESS){
                             changedContainers[Action::LOAD].push_back(containerId);
                             count++;
                             string destination = ship.containerIdToDestination(containerId);
@@ -92,7 +123,8 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                     } else{
                         string containerId = row[1];
-                        if (unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4]))==SUCCESS){
+                        errors.addErrors(unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4])));
+                        if (errors.getErrorsCode() == SUCCESS){
                             changedContainers[Action::UNLOAD].push_back(containerId);
                             count++;
                             string destination = ship.containerIdToDestination(containerId);
@@ -114,8 +146,9 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                         errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                     } else {
-                        if (move(ship, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[4]), stoi(row[5]),
-                             stoi(row[6]))==SUCCESS){
+                        errors.addErrors(move(ship, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[4]), stoi(row[5]),
+                                              stoi(row[6])));
+                        if (errors.getErrorsCode() == SUCCESS){
                             count++;
                             changedContainers[Action::MOVE].push_back(row[1]);
                         }
