@@ -48,6 +48,12 @@ public:
     static string firstFileWithExtensionInDirectory(const string& pathOfDirectory, const string &extension);
 
     static void clearPreviousOutput(const string& outputPath);
+
+    static void ltrim(std::string &s);
+
+    static void rtrim(std::string &s);
+
+    static void trim(std::string &s);
 };
 
 #endif //CPP_STOWAGE_IO_H

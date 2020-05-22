@@ -169,7 +169,8 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     algErrors.addErrors(algorithm->setWeightBalanceCalculator(weightBalanceCalculator));
 
     std::cout << "Reading route" << std::endl;
-    simErrors.addErrors(IO::readShipRoute(travelPath, route));
+    string routePath = IO::firstFileWithExtensionInDirectory(travelPath, "route");
+    simErrors.addErrors(IO::readShipRoute(routePath, route));
     if(simErrors.hasTravelError())
     {
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
@@ -180,7 +181,9 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     {
         totalNumbersOfVisitingPort[port]++;
     }
-    algErrors.addErrors(algorithm->readShipRoute(travelPath));
+
+
+    algErrors.addErrors(algorithm->readShipRoute(routePath));
     if(algErrors.hasTravelError())
     {
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
@@ -190,14 +193,15 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     }
 
     std::cout << "Reading ship plan" << std::endl;
-    simErrors.addErrors(IO::readShipPlan(travelPath, ship.getShipPlan()));
+    string shipPlanPath = IO::firstFileWithExtensionInDirectory(travelPath, "ship_plan");
+    simErrors.addErrors(IO::readShipPlan(shipPlanPath, ship.getShipPlan()));
     if(simErrors.hasTravelError())
     {
         std::cout << "simulation travel error" << std::endl;
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
         return simErrors;
     }
-    algErrors.addErrors(algorithm->readShipPlan(travelPath));
+    algErrors.addErrors(algorithm->readShipPlan(shipPlanPath));
     if(algErrors.hasTravelError())
     {
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);

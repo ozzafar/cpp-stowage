@@ -211,10 +211,8 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
     string line, word;
 
     vector<string> row;
-    string pathOfFirstShipPlan;
 
-    pathOfFirstShipPlan = firstFileWithExtensionInDirectory(path, "ship_plan");
-    std::ifstream shipPlanFile(pathOfFirstShipPlan);
+    std::ifstream shipPlanFile(path);
     if (shipPlanFile.is_open()) {
         getline(shipPlanFile, line);
         row = breakLineToWords(line, ',');
@@ -256,11 +254,8 @@ int IO::readShipRoute(const string &path, Route& route) {
     int prevPortIndex = -1;
     string line;
     vector<string> row;
-    string pathOfFirstRoute;
 
-    pathOfFirstRoute = firstFileWithExtensionInDirectory(path, "route");
-
-    std::ifstream routeFile(pathOfFirstRoute);
+    std::ifstream routeFile(path);
 
     if (routeFile.is_open()) {
         while (getline(routeFile, line)) {
@@ -296,6 +291,7 @@ vector<string> IO::breakLineToWords(string &line, char delimeter) {
     std::stringstream ss(line);
     ws(ss);
     while (getline(ss, word, delimeter)){
+        IO::trim(word);
         row.push_back(word);
     }
     return row;
@@ -408,6 +404,27 @@ void IO::clearPreviousOutput(const string &outputPath) {
         }
     }
 
+}
+
+
+// trim from start (in place)
+void IO::ltrim(std::string &s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](int ch) {
+        return !std::isspace(ch);
+    }));
+}
+
+// trim from end (in place)
+void IO::rtrim(std::string &s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(), [](int ch) {
+        return !std::isspace(ch);
+    }).base(), s.end());
+}
+
+// trim from both ends (in place)
+void IO::trim(std::string &s) {
+    ltrim(s);
+    rtrim(s);
 }
 
 
