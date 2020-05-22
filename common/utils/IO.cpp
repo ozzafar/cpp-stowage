@@ -28,12 +28,12 @@ static bool isAlphabetString(const string &str) {
     return true;
 }
 
-static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, ShipPlan& shipPlan) {
+int IO::createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, ShipPlan& shipPlan) {
     std::map <std::pair<int, int>, int> updatedCoordinates;
     Errors errors;
     int x, y, actualNumOfFloors;
     vector<string> row = IO::breakLineToWords(line, ',');
-    if(row.size() < 3 || !IO::isNumber(row[0]) || !IO::isNumber(row[1]))
+    if(row.size() < 3 || !isNumber(row[0]) || !isNumber(row[1]) || !isNumber(row[2]))
     {
         errors.addError(Error::PLAN_BAD_LINE_FORMAT_WARNING);
         std::cout << "Warning: bad input" << std::endl;
@@ -114,7 +114,6 @@ static bool checkPortNumberInput(vector<string> portNumber) {
 // region MAIN FUNCTIONS
 
 int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers, vector<Container>& badContainers) {
-    //TODO: check for error: total containers amount exceeds ship capacity (rejecting far containers)
     Errors errors;
     string line;
     std::ifstream planFile(input_path);
@@ -225,7 +224,7 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
             row = breakLineToWords(line, ',');
         }
 
-        if(row.size() < 3 || !isNumber(row[0]) || !isNumber(row[1])) //TODO: don't know why can't check row[2] the same...maybe ctrl char at end
+        if(row.size() < 3 || !isNumber(row[0]) || !isNumber(row[1]) || !isNumber(row[2]))
         {
             errors.addError(Error::PLAN_FILE_CANNOT_BE_READ_ERROR);
             return errors.getErrorsCode();

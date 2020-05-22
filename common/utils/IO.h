@@ -48,6 +48,8 @@ public:
     static string firstFileWithExtensionInDirectory(const string& pathOfDirectory, const string &extension);
 
     static void clearPreviousOutput(const string& outputPath);
-};
+
+    static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, ShipPlan& shipPlan);
+    };
 
 #endif //CPP_STOWAGE_IO_H
