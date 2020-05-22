@@ -5,6 +5,7 @@ using std::list;
 
 
 int main(int argc, char **argv) {
+    std::out << "oz" << std::endl;
 
     string travel_path, algorithm_path, output_path;
 
