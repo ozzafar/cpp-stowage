@@ -287,6 +287,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
     if (ship.portToContainers[port].size() > 0) {
         std::cout << "Not all of the containers with of this port destination were unloaded" << std::endl;
         errors.addError(Error::ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_UNLOADED);
+        return errors.getErrorsCode();
     }
 
     // --------------- check all bad containers were rejected ---------------
@@ -302,8 +303,9 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
             }
         }
         if (!found){
-            std::cout << "algorithm didn't reject bad container" << std::endl;
+            std::cout << "Error: algorithm didn't reject bad container" << std::endl;
             errors.addError(Error::ALGORITHM_BAD_CONTAINER_WASNT_REJECT);
+            return errors.getErrorsCode();
         }
     }
 
@@ -322,7 +324,9 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
                     // it must be because of lack of place - container must be farther then the loaded containers
                     if (!destIsFar) {
                         errors.addError(Error::ALGORITHM_INCORRECTLY_REJECTED_CONTAINER);
+                        std::cout << "Error: algorithm rejected not far container" << std::endl;
                         //TODO: specify reason
+                        return errors.getErrorsCode();
                     }
                 }
                 inRejected = true;
@@ -334,18 +338,22 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
             if (!id.compare(container.getId())) {
                 if (destIsCurrentPort){
                     errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
-                    //TODO: specify reason
+                    std::cout << "Error: algorithm loaded container with destination as current port" << std::endl;
+                    return errors.getErrorsCode();
                 }
                 if (destIsntInNextStops){
                     errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
+                    std::cout << "Error: algorithm loaded a container not in destination" << std::endl;
+                    return errors.getErrorsCode();
                 }
                 inLoaded = true;
                 break;
             }
         }
         if (!inRejected && !inLoaded) {
-            std::cout << "algorithm didn't review some waiting-in-port containers" << std::endl;
+            std::cout << "Error: algorithm didn't review some waiting-in-port containers" << std::endl;
             errors.addError(Error::ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_LOADED);
+            return errors.getErrorsCode();
         }
     }
 
@@ -354,6 +362,8 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
         int amountOfContainers = ship.getAmountOfContainers() > 0;
         if (amountOfContainers > 0) {
             errors.addError(Error::SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL);
+            std::cout << "Error: algorithm finished with nonempty ship" << std::endl;
+            return errors.getErrorsCode();
         }
     }
 
