@@ -76,20 +76,28 @@ int IO::createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, 
     return errors.getErrorsCode();
 }
 
-static bool checkPortNumberInput(vector<string> portNumber) {
+static bool shouldSkipLine(vector<string> portNumber)
+{
     if (portNumber.empty() == 1) {
         std::cout << "line in route input file ignored because it is an empty line" << std::endl;
-        return false;
+        return true;
     }
 
     if (portNumber[0].at(0) == '#') {
         std::cout << "line in route input file ignored because it is a comment" << std::endl;
-        return false;
+        return true;
     }
+    return false;
+}
+
+
+static Errors checkPortNumberInput(vector<string> portNumber) {
+    Errors errors;
 
     if (portNumber.size() != 1) {
         std::cout << "Bad input: line in route input file ignored because it didn't contain one word" << std::endl;
-        return false;
+        errors.addError(Error::BAD_PORT_SYMBOL_WARNING);
+        return errors;
     }
 
     if(iscntrl(portNumber[0].at(portNumber[0].size()-1)))
@@ -99,14 +107,16 @@ static bool checkPortNumberInput(vector<string> portNumber) {
 
     if (portNumber[0].size() != 5) {
         std::cout << "Bad input: line in route input file ignored because it has no 5 chars " << portNumber[0] << std::endl;
-        return false;
+        errors.addError(Error::BAD_PORT_SYMBOL_WARNING);
+        return errors;
     }
 
     if (!isAlphabetString(portNumber[0])) {
         std::cout << "Bad input: line in route input file ignored because it contains non alphabet chars" << std::endl;
-        return false;
+        errors.addError(Error::BAD_PORT_SYMBOL_WARNING);
+        return errors;
     }
-    return true;
+    return errors;
 }
 
 // endregion
@@ -246,8 +256,6 @@ int IO::readShipPlan(const string &path, ShipPlan& shipPlan) {
 }
 
 int IO::readShipRoute(const string &path, Route& route) {
-    //TODO: check for error: travel route: bad port symbol format (ignored)
-    //TODO: check for error: travel route: travel error - file with only a single valid port (cannot run this travel)
     Errors errors;
     vector<string> ports;
     int prevPortIndex = -1;
@@ -260,9 +268,18 @@ int IO::readShipRoute(const string &path, Route& route) {
         while (getline(routeFile, line)) {
             row = breakLineToWords(line, ' ');
 
-            if (!checkPortNumberInput(row)) {
+            if(shouldSkipLine(row) == 1)
+            {
                 continue;
             }
+
+            Errors currentErrors = checkPortNumberInput(row);
+            errors.addErrors(currentErrors);
+            if(currentErrors.getErrorsCode() != (int) Error::SUCCESS)
+            {
+                continue;
+            }
+
             std::transform(row[0].begin(), row[0].end(), row[0].begin(), ::toupper);
             if(iscntrl(row[0].at(row[0].size()-1)))
             {
@@ -276,6 +293,16 @@ int IO::readShipRoute(const string &path, Route& route) {
             }
         }
         routeFile.close();
+        if(ports.size() == 0)
+        {
+            errors.addError((Error::ROUTE_FILE_CANNOT_BE_READ_ERROR));
+            return errors.getErrorsCode();
+        }
+        if(ports.size() == 1)
+        {
+            errors.addError(Error::ROUTE_FILE_SINGLE_VALID_PORT_ERROR);
+            return errors.getErrorsCode();
+        }
         route = Route(ports);
     }
     else{
