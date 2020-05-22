@@ -201,6 +201,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
         IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(Error::ALGORITHM_FALSE_TRAVEL_ERROR));
+        std::cout << "\t\t" << algorithmName << " was terminated because of false travel error" << std::endl;
         return simErrors;
     }
 
@@ -220,10 +221,10 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     //simulation indicated that there is no travel error, so if algoirthm indicates about error, he fails
     if(algErrors.hasTravelError())
     {
-        std::cout << "\t\tfalse travel error" << std::endl;
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
         IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(Error::ALGORITHM_FALSE_TRAVEL_ERROR));
+        std::cout << "\t\t" << algorithmName << " was terminated because of false travel error" << std::endl;
         return simErrors;
     }
 
@@ -259,6 +260,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             algorithmsResults[algorithmName].addTravelResult(travelName, -1);
             IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
             IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(Error::ALGORITHM_FALSE_TRAVEL_ERROR));
+            std::cout << "\t\t" << algorithmName << " was terminated because of false travel error" << std::endl;
             return simErrors;
         }
 
@@ -270,6 +272,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             //algorithm write wrong command
             algorithmsResults[algorithmName].addTravelResult(travelName, -1);
             IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
+            std::cout << "\t\t" << algorithmName << " was terminated because of invalid command" << std::endl;
             return simErrors;
         }
         totalOperations += craneManagementAnswer.numOfOperations;
@@ -282,6 +285,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             //algorithm did something wrong at port
             algorithmsResults[algorithmName].addTravelResult(travelName, -1);
             IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
+            std::cout << "\t\t" << algorithmName << " was terminated because of wrong behavior" << std::endl;
             return simErrors;
         }
 

@@ -106,13 +106,13 @@ static Errors checkPortNumberInput(vector<string> portNumber) {
     }
 
     if (portNumber[0].size() != 5) {
-        std::cout << "\t\tBad input: line in route input file ignored because it has no 5 chars " << portNumber[0] << std::endl;
+        std::cout << "\t\tline in route input file ignored because it has no 5 chars" << std::endl;
         errors.addError(Error::BAD_PORT_SYMBOL_WARNING);
         return errors;
     }
 
     if (!isAlphabetString(portNumber[0])) {
-        std::cout << "\t\tBad input: line in route input file ignored because it contains non alphabet chars" << std::endl;
+        std::cout << "\t\tline in route input file ignored because it contains non alphabet chars" << std::endl;
         errors.addError(Error::BAD_PORT_SYMBOL_WARNING);
         return errors;
     }
