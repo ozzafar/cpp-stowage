@@ -14,11 +14,11 @@ int ContainersPosition::load(const string& containerId, bool print) {
         containers.push_back(containerId);
         if(print)
         {
-            std::cout << "Container with id: " + containerId + " was loaded" << std::endl;
+            std::cout << "\t\tContainer with id: " + containerId + " was loaded" << std::endl;
         }
         return (int)Error::SUCCESS;
     }
-    std::cout << "No available place for container with id: " + containerId << std::endl;
+    std::cout << "\t\tNo available place for container with id: " + containerId << std::endl;
     return 1;
 }
 
@@ -28,11 +28,11 @@ int ContainersPosition::unload(const string& containerId, bool print){
         containers.pop_back();
         if(print)
         {
-            std::cout << "Container with id: " + containerId + " was unloaded" << std::endl;
+            std::cout << "\t\tContainer with id: " + containerId + " was unloaded" << std::endl;
         }
         return (int)Error::SUCCESS;
     } else {
-        std::cout << "Container with id: " + containerId + " isn't on top of the position" << std::endl;
+        std::cout << "\t\tContainer with id: " + containerId + " isn't on top of the position" << std::endl;
         return 1;
     }
 }

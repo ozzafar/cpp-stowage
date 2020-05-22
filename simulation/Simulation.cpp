@@ -2,7 +2,6 @@
 // Created by Yarden on 03/05/2020.
 //
 
-
 #include "Simulation.h"
 #include <vector>
 
@@ -32,7 +31,6 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
     }
     else
     {
-        string h = std::filesystem::current_path().string();
         this->outputPath = std::filesystem::current_path().string();
     }
     IO::clearPreviousOutput(this->outputPath);
@@ -43,6 +41,8 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
     }
 
     int size = 0;
+
+    //load so algorithms objects
     for(auto& so: std::filesystem::directory_iterator(algorithmPath))
     {
         string path = so.path().string();
@@ -55,7 +55,7 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
             size = Registrar::getInstance().factoryVec.size();
         }
     }
-    std::cout << "final factory size: "  << Registrar::getInstance().factoryVec.size() << std::endl;
+    std::cout << Registrar::getInstance().factoryVec.size() << " algorithms registered" << std::endl;
 
     for(unsigned long long i = 0 ; i < Registrar::getInstance().factoryVec.size(); i++)
     {
@@ -65,7 +65,7 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
 
 int Simulation::simulateAllTravelsWithAllAlgorithms()
 {
-    if (checkTravelsPath(travelsPath)!=0)
+    if (checkTravelsPath(travelsPath) != 0)
     {
         std::cout << "Error: invalid travels path. try again." << std::endl;
         return 1;
@@ -73,6 +73,7 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
 
     string outputPathWithoutLastDirectory = outputPath.substr(0, outputPath.find_last_of("/"));
 
+    //Check if path to desired outpath is correct
     if(!std::filesystem::exists(outputPathWithoutLastDirectory))
     {
         IO::writeToFile(std::filesystem::current_path().string() + "/simulation_errors.csv", "INVALID OUTPUT PATH");
@@ -80,6 +81,7 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
         return 1;
     }
 
+    //Create the output directory if needed
     if(!std::filesystem::exists(outputPath))
     {
         std::filesystem::create_directory(outputPath);
@@ -87,12 +89,15 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
 
     std::filesystem::create_directory(outputPath + "/errors");
 
+    //if no algorithm was loaded
     if(Registrar::getInstance().factoryVec.size() == 0)
     {
         std::cout << "Error: failed to load algorithms. Try again or enter different path" << std::endl;
+        IO::writeToFile(outputPath + "/general_errors.csv", "failed to load algorithms,");
         return 1;
     }
 
+    //iterate over folders in "travels" directory
     for(auto& travel: std::filesystem::directory_iterator(travelsPath))
     {
         string pathOfCurrentTravel = travel.path().string();
@@ -106,19 +111,22 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
     return 0;
 }
 
-void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
-
+void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath)
+{
     std::cout << "Started simulate " << travelPath << std::endl;
     Errors simErrors;
 
     const std::filesystem::path path = travelPath;
-    if(is_directory(path) == 0) //travelPath isn't a directory
+
+    //travelPath isn't a directory
+    if(is_directory(path) == 0)
     {
-        std::cout << "Travel error: " << travelPath << " is not a directory" << std::endl;
+        std::cout << "\tTravel error: " << travelPath << " is not a directory" << std::endl;
         travelNames.pop_back();
         return;
     }
 
+    //create empty containers awaiting at port file for cases that port visit hasn't such file
     std::ofstream file { travelPath + "/empty_containers_awaiting_at_port_file" };
     string travelName = path.stem().string();
 
@@ -130,10 +138,13 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
             std::unique_ptr<AbstractAlgorithm> algorithm = registrar.factoryVec[i]();
             simErrors.addErrors(simulateOneTravelWithOneAlgorithm(travelPath, std::move(algorithm), registrar.names[i]));
         }
+
+        //don't run algorithms on defective travel
         else
         {
-            std::cout << "travel error" << std::endl;
+            std::cout << "\ttravel error" << std::endl;
         }
+
         if (simErrors.hasTravelError() == 1)
         {
             IO::writeToFile(outputPath + "/general_errors.csv", travelName + " has travel error,");
@@ -146,9 +157,9 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
 
 Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName) {
 
-    std::cout <<"===========================================================" << std::endl;
-    std::cout <<"started simulate " << algorithmName << " on " << travelPath << std::endl;
-    std::cout <<"===========================================================" << std::endl;
+    std::cout <<"\t===========================================================" << std::endl;
+    std::cout <<"\tstarted simulate " << algorithmName << " on " << travelPath << std::endl;
+    std::cout <<"\t===========================================================" << std::endl;
 
     Errors simErrors,algErrors;
     int totalOperations = 0;
@@ -168,7 +179,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
 
     algErrors.addErrors(algorithm->setWeightBalanceCalculator(weightBalanceCalculator));
 
-    std::cout << "Reading route" << std::endl;
+    std::cout << "\t\tReading route" << std::endl;
     string routePath = IO::firstFileWithExtensionInDirectory(travelPath, "route");
     simErrors.addErrors(IO::readShipRoute(routePath, route));
     if(simErrors.hasTravelError())
@@ -192,19 +203,19 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         return simErrors;
     }
 
-    std::cout << "Reading ship plan" << std::endl;
+    std::cout << "\t\tReading ship plan" << std::endl;
     string shipPlanPath = IO::firstFileWithExtensionInDirectory(travelPath, "ship_plan");
     simErrors.addErrors(IO::readShipPlan(shipPlanPath, ship.getShipPlan()));
     if(simErrors.hasTravelError())
     {
-        std::cout << "simulation travel error" << std::endl;
+        std::cout << "\t\tsimulation travel error" << std::endl;
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
         return simErrors;
     }
     algErrors.addErrors(algorithm->readShipPlan(shipPlanPath));
     if(algErrors.hasTravelError())
     {
-        std::cout << "false travel error" << std::endl;
+        std::cout << "\t\tfalse travel error" << std::endl;
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
         IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(Error::ALGORITHM_FALSE_TRAVEL_ERROR));
@@ -215,12 +226,12 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     {
         vector<Container> containers;
         vector<Container> badContainers;
-        std::cout << "----------------" <<"Ship Arrived to port " << ports[i] << "----------------" << std::endl;
+        std::cout << "\t\t----------------" <<"Ship Arrived to port " << ports[i] << "----------------" << std::endl;
         const std::filesystem::path pathOfContainersAwaitingAtPortFile = travelPath + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".cargo_data";
 
         if(std::filesystem::exists(pathOfContainersAwaitingAtPortFile) == 0)
         {
-            std::cout << "No containers awaiting at port input file for " << ports[i] << " for visiting number " << indexOfVisitAtPort[ports[i]] + 1 << std::endl;
+            std::cout << "\t\tNo containers awaiting at port input file for " << ports[i] << " for visiting number " << indexOfVisitAtPort[ports[i]] + 1 << std::endl;
             algErrors.addErrors(algorithm->getInstructionsForCargo(travelPath + "/" + "empty_containers_awaiting_at_port_file", pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".crane_instructions"));
         }
         else
@@ -250,10 +261,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
             return simErrors;
         }
         totalOperations += craneManagementAnswer.numOfOperations;
-        if(travelName == "travel3")
-        {
-            std::cout << "travel 3" << std::endl;
-        }
+
         int checkForErrorsAfterPortResult = checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route,containers, badContainers);
         simErrors.addErrors(checkForErrorsAfterPortResult);
         if(checkForErrorsAfterPortResult != (int) Error::SUCCESS)
@@ -264,7 +272,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         }
 
         indexOfVisitAtPort[ports[i]]++;
-        std::cout << "----------------" <<"Ship left port " << ports[i] << "----------------" << std::endl;
+        std::cout << "\t\t----------------" <<"Ship left port " << ports[i] << "----------------" << std::endl;
         route.incrementCurrentPort();
 
     }
@@ -272,9 +280,9 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     algorithmsResults[algorithmName].addTravelResult(travelName, totalOperations);
     IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
 
-    std::cout <<"===========================================================" << std::endl;
-    std::cout <<"finished simulate " << algorithmName << " on " << travelPath << std::endl;
-    std::cout <<"===========================================================" << std::endl;
+    std::cout <<"\t===========================================================" << std::endl;
+    std::cout <<"\tfinished simulate " << algorithmName << " on " << travelPath << std::endl;
+    std::cout <<"\t===========================================================" << std::endl;
 
     return simErrors;
 
@@ -286,7 +294,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
 
     // --------------- check all containers supposed to be unloaded were unloaded ---------------
     if (ship.portToContainers[port].size() > 0) {
-        std::cout << "Not all of the containers with of this port destination were unloaded" << std::endl;
+        std::cout << "\t\t\tNot all of the containers with of this port destination were unloaded" << std::endl;
         errors.addError(Error::ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_UNLOADED);
         return errors.getErrorsCode();
     }
@@ -304,7 +312,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
             }
         }
         if (!found){
-            std::cout << "Error: algorithm didn't reject bad container" << std::endl;
+            std::cout << "\t\tError: algorithm didn't reject bad container" << std::endl;
             errors.addError(Error::ALGORITHM_BAD_CONTAINER_WASNT_REJECT);
             return errors.getErrorsCode();
         }
@@ -325,7 +333,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
                     // it must be because of lack of place - container must be farther then the loaded containers
                     if (!destIsFar) {
                         errors.addError(Error::ALGORITHM_INCORRECTLY_REJECTED_CONTAINER);
-                        std::cout << "Error: algorithm rejected not far container" << std::endl;
+                        std::cout << "\t\tError: algorithm rejected not far container" << std::endl;
                         //TODO: specify reason
                         return errors.getErrorsCode();
                     }
@@ -339,12 +347,12 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
             if (!id.compare(container.getId())) {
                 if (destIsCurrentPort){
                     errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
-                    std::cout << "Error: algorithm loaded container with destination as current port" << std::endl;
+                    std::cout << "\t\tError: algorithm loaded container with destination as current port" << std::endl;
                     return errors.getErrorsCode();
                 }
                 if (destIsntInNextStops){
                     errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
-                    std::cout << "Error: algorithm loaded a container not in destination" << std::endl;
+                    std::cout << "\t\tError: algorithm loaded a container not in destination" << std::endl;
                     return errors.getErrorsCode();
                 }
                 inLoaded = true;
@@ -352,7 +360,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
             }
         }
         if (!inRejected && !inLoaded) {
-            std::cout << "Error: algorithm didn't review some waiting-in-port containers" << std::endl;
+            std::cout << "\t\tError: algorithm didn't review some waiting-in-port containers" << std::endl;
             errors.addError(Error::ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_LOADED);
             return errors.getErrorsCode();
         }
@@ -363,7 +371,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
         int amountOfContainers = ship.getAmountOfContainers() > 0;
         if (amountOfContainers > 0) {
             errors.addError(Error::SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL);
-            std::cout << "Error: algorithm finished with nonempty ship" << std::endl;
+            std::cout << "\t\tError: algorithm finished with nonempty ship" << std::endl;
             return errors.getErrorsCode();
         }
     }
@@ -387,13 +395,13 @@ bool Simulation::checkIfAllLoadedContainersAreCloser(Ship &ship, CraneManagement
 int Simulation::checkTravelsPath(const string &travelsPathToCheck) {
     if (travelsPathToCheck == "")
     {
-        std::cout << "Fatal error: missing travel_path argument!" << std::endl;
+        std::cout << "\t\tFatal error: missing travel_path argument!" << std::endl;
         return 1;
     }
 
     if(std::filesystem::exists(travelsPathToCheck) == 0)
     {
-        std::cout << "Fatal error: travel_path argument isn't valid!" << std::endl;
+        std::cout << "\t\tFatal error: travel_path argument isn't valid!" << std::endl;
         return 1;
     }
     return 0;

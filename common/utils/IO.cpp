@@ -36,7 +36,7 @@ int IO::createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, 
     if(row.size() < 3 || !isNumber(row[0]) || !isNumber(row[1]) || !isNumber(row[2]))
     {
         errors.addError(Error::PLAN_BAD_LINE_FORMAT_WARNING);
-        std::cout << "Warning: bad input" << std::endl;
+        std::cout << "\t\tWarning: bad input" << std::endl;
     }
     else
         {
@@ -57,17 +57,17 @@ int IO::createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, 
         }
         else if (actualNumOfFloors > numOfFloors) {
             errors.addError(Error::NUMBER_OF_FLOORS_WARNING);
-            std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: "
+            std::cout << "\t\tWarning: in position (" << x << "," << y << ") the actual number of floors: "
                       << actualNumOfFloors << " is illegal (max number is " << numOfFloors << ")"
                       << std::endl;
         }
         else if (actualNumOfFloors == numOfFloors) {
             errors.addError(Error::NUMBER_OF_FLOORS_WARNING);
-            std::cout << "Warning: in position (" << x << "," << y << ") the actual number of floors: "
+            std::cout << "\t\tWarning: in position (" << x << "," << y << ") the actual number of floors: "
                       << actualNumOfFloors << " is the maximum number (" << numOfFloors << ")"
                       << std::endl;
         } else if (x < 0 || x >= X || y < 0 || y >= Y) {
-            std::cout << "Warning: the position (" << x << "," << y << ") is illegal" << std::endl;
+            std::cout << "\t\tWarning: the position (" << x << "," << y << ") is illegal" << std::endl;
             errors.addError(Error::ILLEGAL_POSITION_WARNING);
         } else {
             shipPlan.setStartFloorInPosition(x, y, numOfFloors - actualNumOfFloors);
@@ -79,12 +79,12 @@ int IO::createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, 
 static bool shouldSkipLine(vector<string> portNumber)
 {
     if (portNumber.empty() == 1) {
-        std::cout << "line in route input file ignored because it is an empty line" << std::endl;
+        std::cout << "\t\tline in route input file ignored because it is an empty line" << std::endl;
         return true;
     }
 
     if (portNumber[0].at(0) == '#') {
-        std::cout << "line in route input file ignored because it is a comment" << std::endl;
+        std::cout << "\t\tline in route input file ignored because it is a comment" << std::endl;
         return true;
     }
     return false;
@@ -95,7 +95,7 @@ static Errors checkPortNumberInput(vector<string> portNumber) {
     Errors errors;
 
     if (portNumber.size() != 1) {
-        std::cout << "Bad input: line in route input file ignored because it didn't contain one word" << std::endl;
+        std::cout << "\t\tBad input: line in route input file ignored because it didn't contain one word" << std::endl;
         errors.addError(Error::BAD_PORT_SYMBOL_WARNING);
         return errors;
     }
@@ -106,13 +106,13 @@ static Errors checkPortNumberInput(vector<string> portNumber) {
     }
 
     if (portNumber[0].size() != 5) {
-        std::cout << "Bad input: line in route input file ignored because it has no 5 chars " << portNumber[0] << std::endl;
+        std::cout << "\t\tBad input: line in route input file ignored because it has no 5 chars " << portNumber[0] << std::endl;
         errors.addError(Error::BAD_PORT_SYMBOL_WARNING);
         return errors;
     }
 
     if (!isAlphabetString(portNumber[0])) {
-        std::cout << "Bad input: line in route input file ignored because it contains non alphabet chars" << std::endl;
+        std::cout << "\t\tBad input: line in route input file ignored because it contains non alphabet chars" << std::endl;
         errors.addError(Error::BAD_PORT_SYMBOL_WARNING);
         return errors;
     }
@@ -142,23 +142,23 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
             if(std::iscntrl(containerId.at(0)))
             {
                 errors.addError(Error::ID_CANNOT_BE_READ_WARINING);
-                std::cout << "Bad input: cannot read container ID " << containerId << std::endl;
+                std::cout << "\t\tBad input: cannot read container ID " << containerId << std::endl;
                 continue;
             }
             if (!Container::isValidId(containerId)){
                 errors.addError(Error::ILLEGAL_ID_CHECK_WARNING);
-                std::cout << "Bad input: invalid container id " << containerId << std::endl;
+                std::cout << "\t\tBad input: invalid container id " << containerId << std::endl;
                 badContainer = true;
             }
             if (updatedContainersId.find(containerId) != updatedContainersId.end())
             {
                 errors.addError(Error:: DUPLICATE_CONTAINER_ID_WARINING);
-                std::cout << "Bad input: port already provide this container id " << containerId << std::endl;
+                std::cout << "\t\tBad input: port already provide this container id " << containerId << std::endl;
                 badContainer = true;
             }
             if (ship.knowContainerId(containerId)){
                 errors.addError(Error::CONTAINER_ID_ALREADY_IN_SHIP_WARINING);
-                std::cout << "Warning: container " << containerId << " appears twice" << std::endl;
+                std::cout << "\t\t\tWarning: container " << containerId << " appears twice" << std::endl;
                 badContainer = true;
             }
 
@@ -185,12 +185,12 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
             }
             if (!isAlphabetString(destinationPort)){
                 errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
-                std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id contains non alphabet chars" << std::endl;
+                std::cout << "\t\tBad input: line in ContainerAwaitingAtPort input file ignored because container id contains non alphabet chars" << std::endl;
                 badContainer = true;
             }
             if (destinationPort.size() != 5) {
                 errors.addError(Error::MISSING_OR_BAD_WEIGHT_WARINING);
-                std::cout << "Bad input: line in ContainerAwaitingAtPort input file ignored because container id isn't in the correct size" << std::endl;
+                std::cout << "\t\tBad input: line in ContainerAwaitingAtPort input file ignored because container id isn't in the correct size" << std::endl;
                 badContainer = true;
             }
 
@@ -209,7 +209,7 @@ int IO::readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, ve
     else
     {
         errors.addError(Error::CONTAINER_FILE_CANNOT_BE_READ_WARNING);
-        std::cout << "Container file cannot be read" << std::endl;
+        std::cout << "\t\tContainer file cannot be read" << std::endl;
     }
     return errors.getErrorsCode();
 }
@@ -333,7 +333,7 @@ int IO::writeToFile(const string &writingPath, const string &content) {
         return 0;
     }
 
-    std::cout << "Unable to open file";
+    std::cout << "\t\tUnable to open file";
     return 1;
 }
 
