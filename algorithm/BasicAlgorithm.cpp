@@ -62,7 +62,7 @@ int BasicAlgorithm::readShipRoute(const string &path) {
     Errors errors;
     errors.addErrors(IO::readShipRoute(path,route));
     for (size_t i = 0 ; i < route.getPorts().size() ; i++){
-        portToIndexesInRoute[route.getPorts().at(i).substr(0,5)].push_back(i); // TODO remove substr !
+        portToIndexesInRoute[route.getPorts().at(i).substr(0,5)].push_back(i);
     }
     return errors.getErrorsCode();
 }

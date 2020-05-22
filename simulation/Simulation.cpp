@@ -204,6 +204,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     algErrors.addErrors(algorithm->readShipPlan(shipPlanPath));
     if(algErrors.hasTravelError())
     {
+        std::cout << "false travel error" << std::endl;
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
         IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(Error::ALGORITHM_FALSE_TRAVEL_ERROR));
