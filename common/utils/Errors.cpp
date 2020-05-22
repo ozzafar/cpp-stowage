@@ -52,6 +52,20 @@ string Errors::errorToString(Error error) {
             return "last port has waiting containers (ignored)";
         case Error::PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING:
             return "total containers amount exceeds ship capacity (rejecting far containers)";
+        case Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION:
+            return "algorithm command on not allowed instruction";
+        case Error::ALGORITHM_BAD_CONTAINER_WASNT_REJECT:
+            return "invalid container was loaded";
+        case Error::ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_LOADED:
+            return "there are some valid containers in port that were ignored";
+        case Error::SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL:
+            return "the ship isn't empty in end of travel";
+        case Error::ALGORITHM_FALSE_TRAVEL_ERROR:
+            return "the algorithm reported travel error for vain";
+        case Error::ALGORITHM_INVALID_COMMAND:
+            return "algorithm provided invalid command to the crane management";
+        case Error::FULL_CONTAINER_POSITION:
+            return "can't load container to a full position";
 
         default:
             return "";
