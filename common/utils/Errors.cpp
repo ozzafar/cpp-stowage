@@ -52,13 +52,6 @@ string Errors::errorToString(Error error) {
             return "last port has waiting containers (ignored)";
         case Error::PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING:
             return "total containers amount exceeds ship capacity (rejecting far containers)";
-        // Crane Management Code
-        case Error::ALGORITHM_INVALID_COMMAND:
-            return "algorithm provided invalid command to the crane management";
-        case Error::FULL_CONTAINER_POSITION:
-            return "can't load container to a full position";
-        case Error::UNLOAD_NOT_TOP_CONTAINER:
-            return "can't load container to a full position";
 
         default:
             return "";

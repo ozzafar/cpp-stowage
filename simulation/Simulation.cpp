@@ -4,7 +4,6 @@
 
 
 #include "Simulation.h"
-#include "CheckAlgorithmError.h"
 #include <vector>
 
 #ifndef RUNNING_ON_NOVA
@@ -51,7 +50,7 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
         {
             Registrar::getInstance().loadSO(path);
             if (Registrar::getInstance().factoryVec.size() - size != 1){
-               // CheckAlgorithmError::FAILED_TO_LOAD_ALGORITHM // TODO handle this error
+                IO::writeToFile(outputPath + "/general_errors.csv", so.path().stem().string() + " couldn't be loaded,");
             }
             size = Registrar::getInstance().factoryVec.size();
         }
@@ -134,10 +133,10 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath) {
         else
         {
             std::cout << "travel error" << std::endl;
-            //TODO: write to error file that travel error occurred
         }
         if (simErrors.hasTravelError() == 1)
         {
+            IO::writeToFile(outputPath + "/general_errors.csv", travelName + " has travel error,");
             travelNames.erase(std::remove(travelNames.begin(), travelNames.end(), travelName), travelNames.end());
         }
     }
@@ -169,12 +168,6 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
 
     algErrors.addErrors(algorithm->setWeightBalanceCalculator(weightBalanceCalculator));
 
-    if(simErrors.hasTravelError())
-    {
-        IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors,outputPathOfErrorsFile);
-        return simErrors;
-    }
-
     std::cout << "Reading route" << std::endl;
     simErrors.addErrors(IO::readShipRoute(travelPath, route));
     if(simErrors.hasTravelError())
@@ -190,9 +183,9 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     algErrors.addErrors(algorithm->readShipRoute(travelPath));
     if(algErrors.hasTravelError())
     {
-        //TODO: change this block. simulator read route without problems but algorithm says that there is
-        // a problem. meaning algorithm fault. result should be -1 and proper error should be updated for return
+        algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
+        IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(Error::ALGORITHM_FALSE_TRAVEL_ERROR));
         return simErrors;
     }
 
@@ -207,10 +200,9 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     algErrors.addErrors(algorithm->readShipPlan(travelPath));
     if(algErrors.hasTravelError())
     {
-        std::cout << "algorithm travel error" << std::endl;
-        //TODO: change this block. simulator read ship plan without problems but algorithm says that there is
-        // a problem. meaning algorithm fault. result should be -1 and proper error should be updated for return
+        algorithmsResults[algorithmName].addTravelResult(travelName, -1);
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
+        IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(Error::ALGORITHM_FALSE_TRAVEL_ERROR));
         return simErrors;
     }
 
@@ -225,44 +217,47 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
         {
             std::cout << "No containers awaiting at port input file for " << ports[i] << " for visiting number " << indexOfVisitAtPort[ports[i]] + 1 << std::endl;
             algErrors.addErrors(algorithm->getInstructionsForCargo(travelPath + "/" + "empty_containers_awaiting_at_port_file", pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".crane_instructions"));
-            if(algErrors.hasTravelError())
-            {
-                IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
-                return simErrors;
-            }
         }
         else
         {
             simErrors.addErrors(IO::readContainerAwaitingAtPortFile(pathOfContainersAwaitingAtPortFile.string(),ship,containers,badContainers));
             if (route.inLastStop() && (!containers.empty() || !badContainers.empty()))
             {
-                // CheckAlgorithmError::SHIP_HAS_CONTAINERS_AT_THE_END_OF_THE_ROUTE); TODO handle it
-                return simErrors;
-            }
-            if(simErrors.hasTravelError())
-            {
-                IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
-                return simErrors;
+                simErrors.addError(Error::LAST_PORT_HAS_CONTAINERS_WARNING);
             }
             algErrors.addErrors(algorithm->getInstructionsForCargo(pathOfContainersAwaitingAtPortFile.string(), pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".crane_instructions"));
-            if(algErrors.hasTravelError())
-            {
-                IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
-                return simErrors;
-            }
         }
 
-        string j = pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".crane_instructions";
+        if(algErrors.hasTravelError())
+        {
+            algorithmsResults[algorithmName].addTravelResult(travelName, -1);
+            IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
+            IO::writeToFile(outputPathOfErrorsFile, Errors::errorToString(Error::ALGORITHM_FALSE_TRAVEL_ERROR));
+            return simErrors;
+        }
+
         craneManagementAnswer = craneManagement.readAndExecuteInstructions(ship, pathOfOutputFilesForAlgorithmAndTravel.string() + "/" + ports[i] + "_" + std::to_string(indexOfVisitAtPort[ports[i]]+1) + ".crane_instructions");
         simErrors.addErrors(craneManagementAnswer.errors);
-        if(simErrors.hasError(Error::ALGORITHM_INVALID_COMMAND))
+        if(craneManagementAnswer.errors != (int) Error::SUCCESS)
         {
+            algorithmsResults[algorithmName].addTravelResult(travelName, -1);
             IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
             return simErrors;
         }
         totalOperations += craneManagementAnswer.numOfOperations;
-        simErrors.addErrors(checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route,containers, badContainers));
-        //TODO: add here check for algorithm errors, and stop the iteration if needed
+        if(travelName == "travel3")
+        {
+            std::cout << "travel 3" << std::endl;
+        }
+        int checkForErrorsAfterPortResult = checkForErrorsAfterPort(ship, ports[i], craneManagementAnswer, route,containers, badContainers);
+        simErrors.addErrors(checkForErrorsAfterPortResult);
+        if(checkForErrorsAfterPortResult != (int) Error::SUCCESS)
+        {
+            algorithmsResults[algorithmName].addTravelResult(travelName, -1);
+            IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
+            return simErrors;
+        }
+
         indexOfVisitAtPort[ports[i]]++;
         std::cout << "----------------" <<"Ship left port " << ports[i] << "----------------" << std::endl;
         route.incrementCurrentPort();
@@ -287,7 +282,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
     // --------------- check all containers supposed to be unloaded were unloaded ---------------
     if (ship.portToContainers[port].size() > 0) {
         std::cout << "Not all of the containers with of this port destination were unloaded" << std::endl;
-        // CheckAlgorithmError::CONTAINERS_SHOULD_BE_UNLOADED_SKIPPED_BY_THE_ALGORITHM; TODO report it to errors file and return -1
+        errors.addError(Error::ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_UNLOADED);
     }
 
     // --------------- check all bad containers were rejected ---------------
@@ -304,7 +299,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
         }
         if (!found){
             std::cout << "algorithm didn't reject bad container" << std::endl;
-            //CheckAlgorithmError::BAD_CONTAINER_WASNT_REJECTED; TODO report it to errors file and return -1
+            errors.addError(Error::ALGORITHM_BAD_CONTAINER_WASNT_REJECT);
         }
     }
 
@@ -315,28 +310,30 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
         bool destIsntInNextStops = !route.portInNextStops(ship.containerIdToDestination(container.getId()));
         bool destIsFar = checkIfAllLoadedContainersAreCloser(ship, answer, route, container);
 
-        for (string &id : answer.changedContainers[Action::REJECT]) {
+        for (string &id : rejected) {
             // container isn't bad because all bad were removed
             if (!id.compare(container.getId())) {
                 if (!destIsCurrentPort && !destIsntInNextStops) {
                     // there is no reason to reject related the container itself,
                     // it must be because of lack of place - container must be farther then the loaded containers
                     if (!destIsFar) {
-                        // CheckAlgorithmError::REJECTED_NOT_FAR_CONTAINERS TODO report it to errors file and return -1
-                        inRejected = true;
-                        break;
+                        errors.addError(Error::ALGORITHM_INCORRECTLY_REJECTED_CONTAINER);
+                        //TODO: specify reason
                     }
                 }
+                inRejected = true;
+                break;
             }
         }
 
         for (string &id : answer.changedContainers[Action::LOAD]) {
             if (!id.compare(container.getId())) {
                 if (destIsCurrentPort){
-                    // CheckAlgorithmError::LOADED_PORT_DESTINATION_IS_CURRENT_PORT TODO report it to errors file and return -1
+                    errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
+                    //TODO: specify reason
                 }
                 if (destIsntInNextStops){
-                    // CheckAlgorithmError::CONTAINER_DESTINATION_ISNT_IN_NEXT_STOPS TODO report it to errors file and return -1
+                    errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
                 }
                 inLoaded = true;
                 break;
@@ -344,7 +341,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
         }
         if (!inRejected && !inLoaded) {
             std::cout << "algorithm didn't review some waiting-in-port containers" << std::endl;
-            // CheckAlgorithmError::CONTAINER_WASNT_REVIEWED TODO report it to errors file and return -1
+            errors.addError(Error::ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_LOADED);
         }
     }
 
@@ -352,7 +349,7 @@ int Simulation::checkForErrorsAfterPort(Ship& ship, const string &port, CraneMan
     if (route.inLastStop()) {
         int amountOfContainers = ship.getAmountOfContainers() > 0;
         if (amountOfContainers > 0) {
-            //CheckAlgorithmError::SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL TODO report it to errors file and return -1
+            errors.addError(Error::SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL);
         }
     }
 
