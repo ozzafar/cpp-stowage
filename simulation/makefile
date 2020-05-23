@@ -22,4 +22,4 @@ $(OBJS):
 clean:
 	rm -f $(OBJS) $(EXEC)
 
-# ./simulator -travel_path ../travels -algorithm_path ../algorithms -output ../output
+# ./simulator -travel_path ../input/travels -algorithm_path ../algorithm -output ../input

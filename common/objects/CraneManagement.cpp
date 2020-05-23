@@ -15,17 +15,16 @@
 
 int CraneManagement::load(Ship& ship, string& containerId, int floor, int row, int column) {
     Errors errors;
-    if(row < 0 || column < 0 || row >= ship.getShipPlan().getPlanLength() || column >= ship.getShipPlan().getPlanWidth())
-    {
-        errors.addError(Error::ALGORITHM_INSTRUCTION_OUT_OF_BOUND);
+    if(row < 0 || column < 0 || row >= ship.getShipPlan().getPlanLength() || column >= ship.getShipPlan().getPlanWidth()) {
+        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION,
+                        std::to_string(row) + "," + std::to_string(column) + " illegal position in ship");
         return errors.getErrorsCode();
     }
-
-
     ShipPlan& shipPlan = ship.getShipPlan();
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor-1){
-        errors.addError(Error::FULL_CONTAINER_POSITION);
+        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION,"there is no place to load containers in position "+
+                        std::to_string(row) + "," + std::to_string(column));
         return errors.getErrorsCode();
     }
 
@@ -39,13 +38,14 @@ int CraneManagement::unload(Ship& ship, string &containerId, int floor,int row, 
     ShipPlan& shipPlan = ship.getShipPlan();
     if(row < 0 || column < 0 || row >= ship.getShipPlan().getPlanLength() || column >= ship.getShipPlan().getPlanWidth())
     {
-        errors.addError(Error::ALGORITHM_INSTRUCTION_OUT_OF_BOUND);
+        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION,
+                        std::to_string(row) + "," + std::to_string(column) + " illegal position in ship");
         return errors.getErrorsCode();
     }
 
     if(!ship.knowContainerId(containerId))
     {
-        errors.addError(Error::ALGORITHM_UNKNOWN_CONTAINER_ID);
+        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION,"container id "+containerId+ " is unknown");
         return errors.getErrorsCode();
     }
 
@@ -62,7 +62,7 @@ int CraneManagement::move(Ship& ship, string &containerId, int oldFloor, int old
     if(newRow < 0 || newColumn < 0 || newRow >= ship.getShipPlan().getPlanLength() || newColumn >= ship.getShipPlan().getPlanWidth()
     || oldRow < 0 || oldColumn < 0 || oldRow >= ship.getShipPlan().getPlanLength() || oldColumn >= ship.getShipPlan().getPlanWidth())
     {
-        errors.addError(Error::ALGORITHM_INSTRUCTION_OUT_OF_BOUND);
+        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
         return errors.getErrorsCode();
     }
 

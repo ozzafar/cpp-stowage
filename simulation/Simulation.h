@@ -42,7 +42,7 @@ public:
 
     int checkForErrorsAfterPort(Ship &ship, const string &port,
                             CraneManagement::CraneManagementAnswer &answer,
-                            Route &route, vector<Container>& containers, vector<Container>& badContainers);
+                            Route &route, vector<Container>& containers, vector<Container>& badContainers,Errors& errors);
 
     int checkTravelsPath(const string &travelsPathToCheck);
 

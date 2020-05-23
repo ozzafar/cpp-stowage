@@ -25,18 +25,18 @@ void BasicAlgorithm::writeOperation(const std::string& filename, AbstractAlgorit
         }
         else{
             // op == AbstractAlgorithm::Action::MOVE
-            // TODO - complete for HW3
+            // TODO - complete for HW4
         }
         fout.close();
     }
     else {
-        std::cout << "Unable to open file";
+        std::cout << "Unable to open file" << std::endl;
     }
 }
 
 int BasicAlgorithm::readContainerAwaitingAtPortFile(const string &path,vector<Container>& waitingContainers, vector<Container>& badContainers) {
     Errors errors;
-    errors.addErrors(IO::readContainerAwaitingAtPortFile(path, ship, waitingContainers, badContainers));
+    IO::readContainerAwaitingAtPortFile(path, ship, waitingContainers, badContainers,errors);
     return errors.getErrorsCode();
 }
 
@@ -54,13 +54,13 @@ Route BasicAlgorithm::getShipRoute() {
 
 int BasicAlgorithm::readShipPlan(const std::string &full_path_and_file_name)  {
     Errors errors;
-    errors.addErrors(IO::readShipPlan(full_path_and_file_name,ship.getShipPlan()));
+    IO::readShipPlan(full_path_and_file_name,ship.getShipPlan(),errors);
     return errors.getErrorsCode();
 }
 
 int BasicAlgorithm::readShipRoute(const string &path) {
     Errors errors;
-    errors.addErrors(IO::readShipRoute(path,route));
+    IO::readShipRoute(path,route,errors);
     for (size_t i = 0 ; i < route.getPorts().size() ; i++){
         portToIndexesInRoute[route.getPorts().at(i).substr(0,5)].push_back(i);
     }

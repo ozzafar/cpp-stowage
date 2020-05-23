@@ -27,13 +27,13 @@ class IO {
 public:
 
     // push containers into waitingContainers param
-    static int readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers,vector<Container>& badContainers);
+    static int readContainerAwaitingAtPortFile(const string &input_path, Ship& ship, vector<Container>& waitingContainers,vector<Container>& badContainers, Errors& errors);
 
     // update plan param with the read plan
-    static int readShipPlan(const string &path, ShipPlan& plan);
+    static int readShipPlan(const string &path, ShipPlan& plan,Errors& errors);
 
     // update route param with the read route
-    static int readShipRoute(const string &path,Route& route);
+    static int readShipRoute(const string &path,Route& route,Errors& errors);
 
     static vector<string> breakLineToWords(string &line, char delimeter);
 
@@ -55,7 +55,7 @@ public:
 
     static void trim(std::string &s);
 
-    static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, ShipPlan& shipPlan);
+    static int createPositionFromRowInput(int numOfFloors, int X, int Y, string &line, ShipPlan& shipPlan,Errors& errors);
     };
 
 #endif //CPP_STOWAGE_IO_H

@@ -35,6 +35,8 @@ enum class Error {
     CONTAINER_FILE_CANNOT_BE_READ_WARNING          = 1 << 16,
     LAST_PORT_HAS_CONTAINERS_WARNING               = 1 << 17,
     PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING     = 1 << 18,
+
+    // Our Simulation Codes
     ALGORITHM_NOT_ALLOWED_INSTRUCTION              = 1 << 19,
     ALGORITHM_INVALID_COMMAND                      = 1 << 20,
     ALGORITHM_FALSE_TRAVEL_ERROR                   = 1 << 21,
@@ -44,9 +46,6 @@ enum class Error {
     ALGORITHM_IGNORED_CONTAINER_SHOULD_BE_UNLOADED = 1 << 25,
     SHIP_ISNT_EMPTY_IN_END_OF_TRAVEL               = 1 << 26,
     FAILED_TO_LOAD_ALGORITHM                       = 1 << 27,
-    FULL_CONTAINER_POSITION                        = 1 << 28,
-    ALGORITHM_INSTRUCTION_OUT_OF_BOUND             = 1 << 29,
-    ALGORITHM_UNKNOWN_CONTAINER_ID                 = 1 << 30
 };
 
 

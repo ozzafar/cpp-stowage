@@ -7,18 +7,22 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <list>
 #include "Error.h"
 #include "ErrorsIterator.h"
 
 using std::string;
+using std::map;
+using std::list;
 
-//#define RUNNING_ON_NOVA
+#define RUNNING_ON_NOVA
 
 class Errors {
 
 private:
     int errors = (int)(Error::SUCCESS);
-
+    std::map<Error,list<string>> testimonies;
 public:
     Errors();
 
@@ -36,6 +40,8 @@ public:
 
     void addError(Error newError);
 
+    void addError(Error newError,string testimony);
+
     void addErrors(Errors newErrors);
 
     void addErrors(int newErrors);
@@ -44,11 +50,12 @@ public:
 
     ErrorsIterator getIterator();
 
-    static string errorToString(Error error);
+    string errorToString(Error error);
 
     static int getCodeOfError(Error error);
 
-    static string errorFromAlgorithmToString(Error error);
+    string errorFromAlgorithmToString(Error error);
 
+    string &createDetailedErrorToString(Error error, string &ret) const;
 };
 #endif //CPP_STOWAGE_ERRORS_H
