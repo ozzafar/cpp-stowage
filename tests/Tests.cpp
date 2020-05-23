@@ -130,7 +130,7 @@ TEST(NaiveAlgorithm, getLoadInstructionsANDgetUnloadInstructions){
 // region Crane Management tests
 TEST(CraneManagement, readAndExecuteInstructions) {
     std::ofstream fout;
-    string filename = prefix+"simulation.errors.csv";
+    string filename = prefix+"simulator.errors.csv";
     fout.open(filename,std::fstream::app);
     if (fout.is_open()) {
         fout << "NaiveAlgorithm,";

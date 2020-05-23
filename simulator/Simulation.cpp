@@ -105,7 +105,7 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
         simulateOneTravelWithAllAlgorithms(pathOfCurrentTravel);
     }
 
-    string resultOutputPath = outputPath + "/simulation.results";
+    string resultOutputPath = outputPath + "/simulator.results";
     IO::writeResultsOfSimulation(resultOutputPath, travelNames, algorithmsResults);
 
     return 0;
@@ -195,7 +195,7 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
 
     algErrors.addErrors(algorithm->readShipRoute(routePath));
 
-    //simulation indicated that there is no travel error, so if algorithm indicates about error, he fails
+    //simulator indicated that there is no travel error, so if algorithm indicates about error, he fails
     if(algErrors.hasTravelError())
     {
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);
@@ -210,14 +210,14 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(const string &travelPath, s
     IO::readShipPlan(shipPlanPath, ship.getShipPlan(),simErrors);
     if(simErrors.hasTravelError())
     {
-        std::cout << "\t\tsimulation travel error" << std::endl;
+        std::cout << "\t\tsimulator travel error" << std::endl;
         IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
         return simErrors;
     }
 
     algErrors.addErrors(algorithm->readShipPlan(shipPlanPath));
 
-    //simulation indicated that there is no travel error, so if algoirthm indicates about error, he fails
+    //simulator indicated that there is no travel error, so if algoirthm indicates about error, he fails
     if(algErrors.hasTravelError())
     {
         algorithmsResults[algorithmName].addTravelResult(travelName, -1);

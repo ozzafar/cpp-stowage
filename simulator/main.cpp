@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
     simulation.simulateAllTravelsWithAllAlgorithms();
 
 
-//    Simulation simulation("C://input/travels", "", "C://input/output");
-//    simulation.simulateAllTravelsWithAllAlgorithms();
+//    Simulation simulator("C://input/travels", "", "C://input/output");
+//    simulator.simulateAllTravelsWithAllAlgorithms();
     return 0;
 }

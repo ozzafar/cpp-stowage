@@ -9,7 +9,7 @@
 #include "../objects/Container.h"
 #include "../objects/Ship.h"
 #include "../objects/Route.h"
-#include "../../simulation/AlgorithmResults.h"
+#include "../../simulator/AlgorithmResults.h"
 #include "Errors.h"
 #include <vector>
 #include <stdio.h>
