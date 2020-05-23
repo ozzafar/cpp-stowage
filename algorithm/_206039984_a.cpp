@@ -7,6 +7,6 @@
 #include "_206039984_a.h"
 #include "../common/utils/Errors.h"
 
-//#ifdef RUNNING_ON_NOVA
+#ifdef RUNNING_ON_NOVA
 REGISTER_ALGORITHM (_206039984_a)
-//#endif
+#endif
