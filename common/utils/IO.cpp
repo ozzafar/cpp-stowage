@@ -316,6 +316,7 @@ vector<string> IO::breakLineToWords(string &line, char delimeter) {
 }
 
 int IO::writeToFile(const string &writingPath, const string &content) {
+    // TODO dont open file every call to this function
     std::ofstream fout;
     fout.open(writingPath, std::fstream::app);
     if (fout.is_open())
@@ -372,13 +373,14 @@ void IO::writeResultsOfSimulation(const string &resultOutputPath, const vector<s
 }
 
 void IO::writeErrorsOfTravelAndAlgorithm (Errors &simErrors,Errors &algErrors, const string &outputPathOfErrorsFile) {
+    IO::writeToFile(outputPathOfErrorsFile, "///////////////////// SIMULATION /////////////////////\n///////////////////// ERRORS     /////////////////////\n\n");
     auto simItr = simErrors.getIterator();
     while(simItr.hasNext())
     {
         Error error = simItr.getNext();
         IO::writeToFile(outputPathOfErrorsFile, simErrors.errorToString(error) + '\n');
     }
-
+    IO::writeToFile(outputPathOfErrorsFile, "///////////////////// ALGORITHM /////////////////////\n///////////////////// ERRORS    /////////////////////\n\n");
     auto algItr = algErrors.getIterator();
     while(algItr.hasNext())
     {

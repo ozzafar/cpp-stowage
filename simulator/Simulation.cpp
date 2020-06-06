@@ -9,8 +9,15 @@
 #include "../algorithm/_206039984_a.h"
 #include "../algorithm/_206039984_b.h"
 #include "../algorithm/_206039984_c.h"
+#include "ThreadPoolExecuter.h"
+#include "SimpleTasksProducer.h"
+
 #endif
 
+const string Simulation::GENERAL_ERRORS = "/general_errors.csv";
+const string Simulation::SIMULATION_RESULTS = "/simulator.results";
+const string Simulation::SHIP_PLAN = "ship_plan";
+const string Simulation::ROUTE = "route";
 
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
 {
@@ -50,7 +57,7 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
         {
             Registrar::getInstance().loadSO(path);
             if (Registrar::getInstance().factoryVec.size() - size != 1){
-                IO::writeToFile(outputPath + "/general_errors.csv", so.path().stem().string() + " couldn't be loaded,");
+                IO::writeToFile(outputPath + GENERAL_ERRORS, so.path().stem().string() + " couldn't be loaded,");
             }
             size = Registrar::getInstance().factoryVec.size();
         }
@@ -65,6 +72,9 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
 
 int Simulation::simulateAllTravelsWithAllAlgorithms()
 {
+
+    string generalErrorsOutputPath = outputPath + GENERAL_ERRORS;
+
     if (checkTravelsPath(travelsPath) != 0)
     {
         std::cout << "Error: invalid travels path. try again." << std::endl;
@@ -93,9 +103,57 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
     if(Registrar::getInstance().factoryVec.size() == 0)
     {
         std::cout << "Error: failed to load algorithms. Try again or enter different path" << std::endl;
-        IO::writeToFile(outputPath + "/general_errors.csv", "failed to load algorithms,");
+        IO::writeToFile(generalErrorsOutputPath, "failed to load algorithms,");
         return 1;
     }
+
+
+    // -----------------------------------------------------------
+    for(auto& travelPath: std::filesystem::directory_iterator(travelsPath))
+    {
+        string travelPathString = travelPath.path().string();
+//        travelNames.push_back(travelPath.path().stem().string());
+
+        Route route;
+        ShipPlan shipPlan;
+        Errors simErrors,algErrors;
+
+        std::cout << "\t\tReading route" << std::endl;
+        string routePath = IO::firstFileWithExtensionInDirectory(travelPathString, ROUTE);
+        IO::readShipRoute(routePath, route, simErrors);
+        if(simErrors.hasTravelError())
+        {
+            std::cout << "\t\tsimulator travel error" << std::endl;
+            IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, generalErrorsOutputPath);
+            continue;
+        }
+
+        std::cout << "\t\tReading ship plan" << std::endl;
+        string shipPlanPath = IO::firstFileWithExtensionInDirectory(travelPathString, SHIP_PLAN);
+        IO::readShipPlan(shipPlanPath, shipPlan,simErrors);
+        if(simErrors.hasTravelError())
+        {
+            std::cout << "\t\tsimulator travel error" << std::endl;
+            IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, generalErrorsOutputPath);
+            continue;
+        }
+
+        // TODO check with Adam it's not bullshit:
+        string travelName = travelPath.path().stem().string();
+        Travel travel(std::move(shipPlan),std::move(route),std::move(travelName));
+        travels.push_back(std::move(travel));
+    }
+
+    // TODO add NumThreads to main arguments
+    ThreadPoolExecuter executer {
+            SimpleTasksProducer{NumTasks{(int)travels.size() * Registrar::getInstance().getSize()}},NumThreads{5}
+    };
+    executer.start();
+    executer.wait_till_finish();
+    // ------------------------------------------------------------
+    
+    
+    
 
     //iterate over folders in "travels" directory
     for(auto& travel: std::filesystem::directory_iterator(travelsPath))
@@ -105,7 +163,7 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
         simulateOneTravelWithAllAlgorithms(pathOfCurrentTravel);
     }
 
-    string resultOutputPath = outputPath + "/simulator.results";
+    string resultOutputPath = outputPath + SIMULATION_RESULTS;
     IO::writeResultsOfSimulation(resultOutputPath, travelNames, algorithmsResults);
 
     return 0;
@@ -147,7 +205,7 @@ void Simulation::simulateOneTravelWithAllAlgorithms(const string &travelPath)
 
         if (simErrors.hasTravelError() == 1)
         {
-            IO::writeToFile(outputPath + "/general_errors.csv", travelName + " has travel error,");
+            IO::writeToFile(outputPath + GENERAL_ERRORS, travelName + " has travel error,");
             travelNames.erase(std::remove(travelNames.begin(), travelNames.end(), travelName), travelNames.end());
         }
     }

@@ -13,6 +13,7 @@ using std::vector;
 
 void BasicAlgorithm::writeOperation(const std::string& filename, AbstractAlgorithm::Action op, const string& containerId, int floor, int x, int y)
 {
+    // TODO dont open file every call to this function
     std::ofstream fout;
     fout.open(filename,std::fstream::app);
     if (fout.is_open())
@@ -25,7 +26,7 @@ void BasicAlgorithm::writeOperation(const std::string& filename, AbstractAlgorit
         }
         else{
             // op == AbstractAlgorithm::Action::MOVE
-            // TODO - complete for HW4
+            // TODO - complete for HW3
         }
         fout.close();
     }

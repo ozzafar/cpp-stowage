@@ -3,3 +3,7 @@
 //
 
 #include "Travel.h"
+
+
+Travel::Travel(ShipPlan shipPlan, Route route, string travelName) : shipPlan(shipPlan) , route(route), travelName(travelName){
+}

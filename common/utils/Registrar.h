@@ -26,6 +26,7 @@ public:  // need to be private
     vector<std::function<std::unique_ptr<AbstractAlgorithm>()>> factoryVec;
     vector<std::string> names;
     std::string extractFilenameFromPath(const std::string &path, bool removeExtension);
+    int getSize();
 
     virtual ~Registrar();
 

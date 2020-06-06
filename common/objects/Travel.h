@@ -9,8 +9,12 @@
 
 
 class Travel {
-    Route route;
     ShipPlan shipPlan;
+    Route route;
+    string travelName;
+
+public:
+    Travel(ShipPlan shipPlan, Route route, string travelName);
 };
 
 

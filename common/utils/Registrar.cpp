@@ -55,3 +55,7 @@ Registrar::~Registrar() {
 void Registrar::addName(const std::string &name) {
     names.push_back(name);
 }
+
+int Registrar::getSize() {
+    return getInstance().factoryVec.size();
+}

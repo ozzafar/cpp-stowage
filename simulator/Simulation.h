@@ -20,16 +20,22 @@
 #include "../interfaces/AbstractAlgorithm.h"
 #include "../interfaces/WeightBalanceCalculator.h"
 #include "AlgorithmResults.h"
+#include "../common/objects/Travel.h"
 
 class Simulation {
 
 private:
     string travelsPath;
     vector <string> travelNames;
+    vector <Travel> travels;
     string algorithmPath;
     string outputPath;
     bool isOutputPathSupplied = false;
     map<std::string, AlgorithmResults> algorithmsResults;
+    static const string GENERAL_ERRORS;
+    static const string ROUTE;
+    static const string SHIP_PLAN;
+    static const string SIMULATION_RESULTS;
 
     void simulateOneTravelWithAllAlgorithms(const string &travelPath);
     Errors simulateOneTravelWithOneAlgorithm(const string &travelPath, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName);
@@ -48,5 +54,6 @@ public:
 
     bool checkIfAllLoadedContainersAreCloser(Ship &ship, CraneManagement::CraneManagementAnswer &answer, Route &route, Container &container);
 };
+
 
 #endif //SIMULATOR_SIMULATION_H
