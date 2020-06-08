@@ -37,12 +37,11 @@ private:
     static const string SHIP_PLAN;
     static const string SIMULATION_RESULTS;
 
-    void simulateOneTravelWithAllAlgorithms(const string &travelPath);
-    Errors simulateOneTravelWithOneAlgorithm(const string &travelPath, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName);
+    void simulateOneTravelWithAllAlgorithms(Travel travel);
 
 public:
 
-
+    Errors simulateOneTravelWithOneAlgorithm(Travel travel, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName);
     Simulation(const string &travelsPath, const string &algorithmPath = "", const string &outputPath = "");
     int simulateAllTravelsWithAllAlgorithms();
 

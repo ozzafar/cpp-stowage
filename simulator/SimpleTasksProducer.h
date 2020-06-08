@@ -11,20 +11,29 @@
 #include <optional>
 #include <thread>
 #include <iostream>
+#include <functional>
 #include "NumTasks.h"
+#include "../common/objects/Travel.h"
+#include "../interfaces/AbstractAlgorithm.h"
+#include "Simulation.h"
+
+using std::vector;
 
 class SimpleTasksProducer {
+
     const int numTasks = -1;
     std::atomic_int task_counter = 0;
     std::mutex m;
-
     std::optional<int> next_task_index();
-
     std::optional<int> next_task_index_simple();
+    vector<Travel>& travels;
+    vector<std::function<std::unique_ptr<AbstractAlgorithm>()>> factoryVec;
+    Simulation& simulation;
+
 
 public:
-    SimpleTasksProducer(NumTasks numTasks);
-    SimpleTasksProducer(SimpleTasksProducer&& other);
+    SimpleTasksProducer(NumTasks numTasks, vector<Travel> &travels, vector<std::function<std::unique_ptr<AbstractAlgorithm>()>> &factoryVec, Simulation &simulation);
+    SimpleTasksProducer(SimpleTasksProducer &&other);
     std::optional<std::function<void(void)>> getTask();
 };
 

@@ -39,20 +39,29 @@ std::optional<int> SimpleTasksProducer::next_task_index_simple() {
 
 }
 
-SimpleTasksProducer::SimpleTasksProducer(NumTasks numTasks) : numTasks(numTasks){
+SimpleTasksProducer::SimpleTasksProducer(NumTasks numTasks, vector<Travel> &travels, vector<std::function<std::unique_ptr<AbstractAlgorithm>()>>& factoryVec, Simulation &simulation)
+        : numTasks(numTasks), travels(travels), factoryVec(factoryVec), simulation(simulation) {
 }
 
-SimpleTasksProducer::SimpleTasksProducer(SimpleTasksProducer &&other): numTasks(other.numTasks), task_counter(other.task_counter.load()) {}
+SimpleTasksProducer::SimpleTasksProducer(SimpleTasksProducer &&other)
+        : numTasks(other.numTasks), task_counter(other.task_counter.load()), travels(other.travels), factoryVec(other.factoryVec), simulation(other.simulation) {}
 
 std::optional<std::function<void(void)>> SimpleTasksProducer::getTask() {
 
     auto task_index = next_task_index(); // or: next_task_index_simple();
     if(task_index) {
         return [task_index, this]{
-            std::lock_guard g{m};
-            std::cout << std::this_thread::get_id() << "-" << *task_index << std::endl;
-            // TODO Yarden - run simulate one travel one algorithm on {task_index // travels.size()}'th travel from travels vector and {task_index % Registrar::getInstance().getSize()}'th algorithm from the factory in Registrar
+            {
+                std::lock_guard g{m};
+                std::cout << std::this_thread::get_id() << "-" << *task_index << std::endl;
+            }
+
             // TODO - think we should add travels-size and algorithms-size as members of simulation
+            int travelIndex = *task_index/factoryVec.size();
+            int algorithmIndex = *task_index%factoryVec.size();
+            std::cout << "travelIndex: "<< travelIndex << std::endl;
+            std::cout << "algorithmIndex: "<< algorithmIndex << std::endl;
+            simulation.simulateOneTravelWithOneAlgorithm(travels[travelIndex], factoryVec[algorithmIndex](), Registrar::getInstance().names[algorithmIndex]);
             std::this_thread::yield(); //TODO really need this?
         };
     }

@@ -10,11 +10,22 @@
 
 class Travel {
     ShipPlan shipPlan;
+public:
+    const string &getTravelPath() const;
+
+private:
     Route route;
     string travelName;
+    string travelPath;
 
 public:
-    Travel(ShipPlan shipPlan, Route route, string travelName);
+    Travel(ShipPlan shipPlan, Route route, string travelName, string travelPath);
+
+    const string &getTravelName() const;
+
+    const ShipPlan &getShipPlan() const;
+
+    const Route &getRoute() const;
 };
 
 
