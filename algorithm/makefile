@@ -1,6 +1,6 @@
 COMP = g++-9.3.0
 
-SHARED_OBJS = _206039984_a.so _206039984_b.so _206039984_c.so
+SHARED_OBJS = _206039984_a.so _206039984_b.so _206039984_c.so _206039984_d.so _206039984_e.so
 
 OBJS = BasicAlgorithm.o NaiveAlgorithm.o NaiveAlgorithmVertical.o NaiveAlgorithmHorizontal.o  $\
 $\
@@ -26,7 +26,13 @@ _206039984_b.so: $(OBJS) _206039984_b.o
 _206039984_c.so: $(OBJS) _206039984_c.o
 	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
 
-$(OBJS) _206039984_a.o _206039984_b.o _206039984_c.o:
+_206039984_d.so: $(OBJS) _206039984_d.o
+	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
+
+_206039984_e.so: $(OBJS) _206039984_e.o
+	$(COMP) $(CPP_LINK_FLAG) -o $@ $^
+
+$(OBJS) _206039984_a.o _206039984_b.o _206039984_c.o _206039984_d.0 _206039984_e.o:
 	$(COMP) $(CPP_COMP_FLAG) -c $*.cpp -o $@
 
 clean:
