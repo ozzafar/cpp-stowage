@@ -24,8 +24,8 @@ public:
 
     int unload(Ship& ship, string &containerId, int floor, int row, int column);
 
-    int move(Ship& ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn,
-         int newFloor);
+    int move(Ship& ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newFloor, int newColumn,
+         int newRow);
 
 
     typedef struct {

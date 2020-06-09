@@ -57,7 +57,7 @@ int CraneManagement::unload(Ship& ship, string &containerId, int floor,int row, 
     shipPlan.getContainerPosition(row, column).unload(containerId, true);
     return errors.getErrorsCode();
 }
-int CraneManagement::move(Ship& ship, string &containerId, int oldFloor, int oldRow, int oldColumn, int newRow, int newColumn, int newFloor) {
+int CraneManagement::move(Ship& ship, string &containerId, int oldFloor, int oldRow, int oldColumn,int newFloor, int newRow, int newColumn) {
     Errors errors;
     if(newRow < 0 || newColumn < 0 || newRow >= ship.getShipPlan().getPlanLength() || newColumn >= ship.getShipPlan().getPlanWidth()
     || oldRow < 0 || oldColumn < 0 || oldRow >= ship.getShipPlan().getPlanLength() || oldColumn >= ship.getShipPlan().getPlanWidth())
@@ -71,6 +71,7 @@ int CraneManagement::move(Ship& ship, string &containerId, int oldFloor, int old
 //        errors.addError(Error::ALGORITHM_UNKNOWN_CONTAINER_ID);
 //        return errors.getErrorsCode();
 //    }
+
     errors.addErrors(CraneManagement::unload(ship,containerId,oldFloor,oldRow,oldColumn));
     if (!errors.hasError()){
         errors.addErrors(CraneManagement::load(ship,containerId,newFloor,newRow,newColumn));
@@ -111,7 +112,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         errors.addErrors(load(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4])));
                         if (errors.getErrorsCode() == SUCCESS){
                             changedContainers[Action::LOAD].push_back(containerId);
-                            count++;
+                            count+=5;
                             string destination = ship.containerIdToDestination(containerId);
                             ship.portToContainers[destination].insert(containerId);
                         }
@@ -126,7 +127,7 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         errors.addErrors(unload(ship, containerId, stoi(row[2]), stoi(row[3]), stoi(row[4])));
                         if (errors.getErrorsCode() == SUCCESS){
                             changedContainers[Action::UNLOAD].push_back(containerId);
-                            count++;
+                            count+=5;
                             string destination = ship.containerIdToDestination(containerId);
                             ship.portToContainers[destination].erase(containerId);
                             ship.containerIdToContainer.erase(containerId);
@@ -146,10 +147,10 @@ CraneManagement::CraneManagementAnswer CraneManagement::readAndExecuteInstructio
                         std::cout << "Error: invalid number of arguments for command: " << command << std::endl;
                         errors.addError(Error::ALGORITHM_INVALID_COMMAND);
                     } else {
-                        errors.addErrors(move(ship, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[4]), stoi(row[5]),
-                                              stoi(row[6])));
+                        errors.addErrors(move(ship, row[1], stoi(row[2]), stoi(row[3]), stoi(row[4]), stoi(row[5]), stoi(row[6]),
+                                              stoi(row[7])));
                         if (errors.getErrorsCode() == SUCCESS){
-                            count++;
+                            count+=3;
                             changedContainers[Action::MOVE].push_back(row[1]);
                         }
                     }

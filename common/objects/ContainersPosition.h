@@ -26,7 +26,13 @@ public:
 
     int load(const string& containerId, bool print);
 
+    int load(const string& containerId);
+
     int unload(const string& containerId, bool print);
+
+    int unload(const string& containerId);
+
+    static int move(ContainersPosition &source, ContainersPosition &target, const string& containerId);
 
     // return how many places are available for loading containers
     int howManyAvailiable();

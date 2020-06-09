@@ -11,6 +11,8 @@
 #include "../algorithm/_206039984_c.h"
 #include "ThreadPoolExecuter.h"
 #include "SimpleTasksProducer.h"
+#include "../algorithm/OptimizedAlgorithmVertical.h"
+#include "../algorithm/OptimizedAlgorithmHorizontal.h"
 
 #endif
 
@@ -22,9 +24,13 @@ const string Simulation::ROUTE = "route";
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
 {
 #ifndef RUNNING_ON_NOVA
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<OptimizedAlgorithmVertical>();});
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<OptimizedAlgorithmHorizontal>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_a>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_b>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_c>();});
+    Registrar::getInstance().addName("optimized_vertical");
+    Registrar::getInstance().addName("optimized_horizontal");
     Registrar::getInstance().addName("_206039984_a");
     Registrar::getInstance().addName("_206039984_b");
     Registrar::getInstance().addName("_206039984_c");
@@ -128,7 +134,7 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
             continue;
         }
 
-        std::cout << "\t\tReading ship plan of" << travelName << std::endl;
+        std::cout << "\t\tReading ship plan of " << travelName << std::endl;
         string shipPlanPath = IO::firstFileWithExtensionInDirectory(travelPathString, SHIP_PLAN);
         IO::readShipPlan(shipPlanPath, shipPlan,simErrors);
         if(simErrors.hasTravelError())

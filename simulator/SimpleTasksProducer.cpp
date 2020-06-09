@@ -53,7 +53,7 @@ std::optional<std::function<void(void)>> SimpleTasksProducer::getTask() {
         return [task_index, this]{
             {
                 std::lock_guard g{m};
-                std::cout << std::this_thread::get_id() << "-" << *task_index << std::endl;
+                std::cout << "thread Id: " << std::this_thread::get_id() << ", task index: " << *task_index << std::endl;
             }
 
             // TODO - think we should add travels-size and algorithms-size as members of simulation

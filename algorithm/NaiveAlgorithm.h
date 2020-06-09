@@ -56,7 +56,7 @@ protected:
 
     virtual int getLoadInstructions(const string &input_path, const string &output_path) = 0;
 
-    int getUnloadInstructions(const string &output_path);
+    virtual int getUnloadInstructions(const string &output_path);
 };
 
 

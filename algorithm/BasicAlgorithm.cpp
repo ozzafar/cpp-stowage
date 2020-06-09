@@ -11,7 +11,7 @@ using std::vector;
 
 // region CLASS FUNCTIONS
 
-void BasicAlgorithm::writeOperation(const std::string& filename, AbstractAlgorithm::Action op, const string& containerId, int floor, int x, int y)
+void BasicAlgorithm::writeOperation(const std::string& filename, AbstractAlgorithm::Action op, const string& containerId, int floor, int x, int y,int floorNew,int xNew, int yNew)
 {
     // TODO dont open file every call to this function
     std::ofstream fout;
@@ -26,13 +26,18 @@ void BasicAlgorithm::writeOperation(const std::string& filename, AbstractAlgorit
         }
         else{
             // op == AbstractAlgorithm::Action::MOVE
-            // TODO - complete for HW3
+            fout << (char)op << "," << containerId << "," << floor << "," << x << "," << y <<"," << floorNew << "," << xNew << "," << yNew << '\n';
         }
         fout.close();
     }
     else {
         std::cout << "Unable to open file" << std::endl;
     }
+}
+
+void BasicAlgorithm::writeOperation(const std::string &filename, AbstractAlgorithm::Action op, const string &containerId,
+                               int floor, int x, int y) {
+    writeOperation(filename,op,containerId,floor,x,y,-1,-1,-1);
 }
 
 int BasicAlgorithm::readContainerAwaitingAtPortFile(const string &path,vector<Container>& waitingContainers, vector<Container>& badContainers) {

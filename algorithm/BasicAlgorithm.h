@@ -33,6 +33,7 @@ public:
     // class functions
     int readContainerAwaitingAtPortFile(const string &path,vector<Container>& waitingContainers, vector<Container>& badContainers);
     void writeOperation(const std::string &filename, AbstractAlgorithm::Action op, const string &containerId, int floor, int x, int y);  // writes single operation to output file
+    void writeOperation(const std::string &filename, AbstractAlgorithm::Action op, const string &containerId, int floor, int x, int y,int floorNew, int xNew, int yNew);  // writes single operation to output file
     Ship getShip();
     Route getShipRoute();
 

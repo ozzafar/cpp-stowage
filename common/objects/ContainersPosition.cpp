@@ -74,6 +74,21 @@ string &ContainersPosition::getTop() {
 
 ContainersPosition::ContainersPosition(int numOfFloors) : numOfFloors(numOfFloors) {}
 
+int ContainersPosition::load(const string &containerId) {
+    return load(containerId, false);
+}
+
+int ContainersPosition::unload(const string &containerId) {
+    return unload(containerId, false);
+}
+
+int ContainersPosition::move(ContainersPosition &source, ContainersPosition &target, const string& containerId) {
+    if (source.unload(containerId)==(int)Error::SUCCESS){
+        return target.load(containerId);
+    }
+    return 1;
+}
+
 
 
 // endregion
