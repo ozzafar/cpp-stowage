@@ -23,7 +23,7 @@ const string Simulation::SIMULATION_RESULTS = "/simulator.results";
 const string Simulation::SHIP_PLAN = "ship_plan";
 const string Simulation::ROUTE = "route";
 
-Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
+Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath, int numOfThreads): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath), numOfThreads(numOfThreads)
 {
 #ifndef RUNNING_ON_NOVA
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<OptimizedAlgorithmVertical>();});
@@ -123,7 +123,6 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
     for(auto& travelPath: std::filesystem::directory_iterator(travelsPath))
     {
         string travelPathString = travelPath.path().string();
-        //travelsPaths.push_back(travelPathString);
         string travelName = travelPath.path().stem().string();
 
         Route route;
@@ -161,17 +160,11 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
     ThreadPoolExecuter executer {
             //SimpleTasksProducer{NumTasks{(int)travels.size() * Registrar::getInstance().getSize()}},NumThreads{5}
 
-            SimpleTasksProducer{NumTasks{numTasks}, travels, Registrar::getInstance().factoryVec, *this},NumThreads{3}
+            SimpleTasksProducer{NumTasks{numTasks}, travels, Registrar::getInstance().factoryVec, *this},NumThreads{numOfThreads}
     };
     executer.start();
     executer.wait_till_finish();
     // ------------------------------------------------------------
-
-
-//    for(Travel& travel: travels)
-//    {
-//        simulateOneTravelWithAllAlgorithms(travel);
-//    }
 
     string resultOutputPath = outputPath + SIMULATION_RESULTS;
     IO::writeResultsOfSimulation(resultOutputPath, travelNames, algorithmsResults);
@@ -179,57 +172,16 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
     return 0;
 }
 
-void Simulation::simulateOneTravelWithAllAlgorithms(Travel travel)
-{
-    string travelName = travel.getTravelName();
-    string travelPath = travel.getTravelPath();
-    std::cout << "Started simulate " << travelPath << std::endl;
-    Errors simErrors;
-
-    const std::filesystem::path path = travelPath;
-
-    //travelPath isn't a directory
-    if(is_directory(path) == 0)
-    {
-        std::cout << "\tTravel error: " << travelPath << " is not a directory" << std::endl;
-        travelNames.pop_back();
-        return;
-    }
-
-    //create empty containers awaiting at port file for cases that port visit hasn't such file
-    std::ofstream file { travelPath + "/empty_containers_awaiting_at_port_file" };
-
-    Registrar &registrar = Registrar::getInstance();
-    for(size_t i = 0 ; i < registrar.factoryVec.size() ; i++ )
-    {
-        if(simErrors.hasTravelError() == 0)
-        {
-            std::unique_ptr<AbstractAlgorithm> algorithm = registrar.factoryVec[i]();
-            simErrors.addErrors(simulateOneTravelWithOneAlgorithm(travel, std::move(algorithm), registrar.names[i]));
-        }
-
-        //don't run algorithms on defective travel
-        else
-        {
-            std::cout << "\ttravel error" << std::endl;
-        }
-
-        if (simErrors.hasTravelError() == 1)
-        {
-            IO::writeToFile(outputPath + GENERAL_ERRORS, travelName + " has travel error,");
-            travelNames.erase(std::remove(travelNames.begin(), travelNames.end(), travelName), travelNames.end());
-        }
-    }
-
-    std::cout << "Finished simulate " << travelPath << std::endl;
-}
-
 Errors Simulation::simulateOneTravelWithOneAlgorithm(Travel travel, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName) {
 
     string travelName = travel.getTravelName();
+    std::thread::id this_id = std::this_thread::get_id();
+    std::mutex g_display_mutex;
+    g_display_mutex.lock();
     std::cout <<"\t===============================================================" << std::endl;
-    std::cout <<"\tstarted simulate " << algorithmName << " on " << travelName << std::endl;
+    std::cout <<"\t" << "Thread " << this_id << " started simulate " << algorithmName << " on " << travelName << std::endl;
     std::cout <<"\t===============================================================" << std::endl;
+    g_display_mutex.unlock();
 
     string travelPath = travel.getTravelPath();
     Errors simErrors,algErrors;
@@ -242,22 +194,16 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(Travel travel, std::unique_
     WeightBalanceCalculator weightBalanceCalculator;
     std::map<string,int> indexOfVisitAtPort;
     std::map<string,int> totalNumbersOfVisitingPort;
-    //const std::filesystem::path pathOfTravel = travelPath;
-    //const string travelName = pathOfTravel.stem().string();
     const std::filesystem::path pathOfOutputFilesForAlgorithmAndTravel = outputPath + "/" + algorithmName + "_" + travelName + "_crane_instructions";
     string outputPathOfErrorsFile = outputPath + "/errors/errors_of_" + algorithmName + "_" + travelName + ".csv";
     std::filesystem::create_directory(pathOfOutputFilesForAlgorithmAndTravel);
 
     algErrors.addErrors(algorithm->setWeightBalanceCalculator(weightBalanceCalculator));
 
+
     std::cout << "\t\tReading route" << std::endl;
     string routePath = IO::firstFileWithExtensionInDirectory(travelPath, "route");
-//    IO::readShipRoute(routePath, route,simErrors);
-//    if(simErrors.hasTravelError())
-//    {
-//        IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
-//        return simErrors;
-//    }
+
     ports = route.getPorts();
     for(string port : ports)
     {
