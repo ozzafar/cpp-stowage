@@ -10,7 +10,7 @@
 
 #include <functional>
 #include <memory>
-#include "../interfaces/AbstractAlgorithm.h"
+#include "AbstractAlgorithm.h"
 
 class AlgorithmRegistration {
 public:

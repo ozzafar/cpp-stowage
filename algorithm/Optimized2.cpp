@@ -3,7 +3,7 @@
 //
 
 #include "Optimized2.h"
-#include "../simulator/AlgorithmRegistration.h"
+#include "../interfaces/AlgorithmRegistration.h"
 
 #ifdef RUNNING_ON_NOVA
 REGISTER_ALGORITHM (Optimized2)
