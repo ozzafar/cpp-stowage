@@ -9,7 +9,7 @@ $\
 $\
 ../common/utils/Errors.o ../common/utils/ErrorsIterator.o  ../common/utils/IO.o ../common/utils/ISO_6346.o $\
 $\
-../interfaces/WeightBalanceCalculator.o ../interfaces/AlgorithmRegistration.o$\
+../interfaces/WeightBalanceCalculator.o $\
 
 
 CPP_COMP_FLAG = -std=c++2a -Wall -Wextra -Werror -pedantic-errors -DNDEBUG -fPIC -fvisibility=hidden -fvisibility-inlines-hidden
