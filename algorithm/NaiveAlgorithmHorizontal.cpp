@@ -55,6 +55,7 @@ int NaiveAlgorithmHorizontal::getLoadInstructions(const string &input_path, cons
             errors.addError(Error::PASS_TOTAL_CONTAINERS_AMOUNT_LIMIT_WARNING);
             writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
         } else {
+
             std::cout << "Warning: can't load container " << containers[index].getId()
                       << " because it's destination port " << containers[index].getDestinationPort()
                       << " isn't in the next stops of the route" << std::endl;
