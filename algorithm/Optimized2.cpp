@@ -141,10 +141,12 @@ void Optimized2::findNextBestPosition(Container& container, int &nextPositionX,i
                     if (saveX == -1 && saveY == -1) {
                         saveX = i, saveY = j;
                     }
+
+                    if (ship.containerIdToDestination(containersPosition.getTop()) == container.getDestinationPort()) {
+                        saveX = i, saveY = j;
+                    }
                 }
-                if (ship.containerIdToDestination(containersPosition.getTop()) == container.getDestinationPort()) {
-                    saveX = i, saveY = j;
-                }
+
                 if (containersPosition.getNumOfActiveFloors() == 0) {
                     nextPositionX = i, nextPositionY = j;
                     return;
