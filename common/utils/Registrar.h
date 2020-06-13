@@ -51,7 +51,7 @@ public:
     void registerAlgorithm(std::function<std::unique_ptr<AbstractAlgorithm>()> algorithm) {
 
         factoryVec.push_back(algorithm);
-        std::cout << "Algorithm was registered!";
+        std::cout << "Algorithm was registered!" << std::endl;
     }
 
     static Registrar& getInstance() {
