@@ -2,6 +2,8 @@
 // Created by Oz Zafar on 03/04/2020.
 //
 
+#include <thread>
+#include <mutex>
 #include "ContainersPosition.h"
 #include "../utils/Errors.h"
 
@@ -10,29 +12,39 @@
 
 
 int ContainersPosition::load(const string& containerId, bool print) {
+    std::mutex g_display_mutex;
     if (howManyAvailiable() > 0) {
         containers.push_back(containerId);
         if(print)
         {
-            std::cout << "\t\tContainer with id: " + containerId + " was loaded" << std::endl;
+            g_display_mutex.lock();
+            std::cout << "\t\tThread id " << std::this_thread::get_id() <<" Container with id: " + containerId + " was loaded" << std::endl;
+            g_display_mutex.unlock();
         }
         return (int)Error::SUCCESS;
     }
-    std::cout << "\t\tNo available place for container with id: " + containerId << std::endl;
+    g_display_mutex.lock();
+    std::cout << "\t\tThread id " << std::this_thread::get_id() << "No available place for container with id: " + containerId << std::endl;
+    g_display_mutex.unlock();
     return 1;
 }
 
 int ContainersPosition::unload(const string& containerId, bool print){
+    std::mutex g_display_mutex;
     string& topId = containers.back();
     if (topId == containerId){
         containers.pop_back();
         if(print)
         {
-            std::cout << "\t\tContainer with id: " + containerId + " was unloaded" << std::endl;
+            g_display_mutex.lock();
+            std::cout << "\t\tThread id " << std::this_thread::get_id() << "Container with id: " + containerId + " was unloaded" << std::endl;
+            g_display_mutex.unlock();
         }
         return (int)Error::SUCCESS;
     } else {
-        std::cout << "\t\tContainer with id: " + containerId + " isn't on top of the position" << std::endl;
+        g_display_mutex.lock();
+        std::cout << "\t\tThread id " << std::this_thread::get_id() << "Container with id: " + containerId + " isn't on top of the position" << std::endl;
+        g_display_mutex.unlock();
         return 1;
     }
 }

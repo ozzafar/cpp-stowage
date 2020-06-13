@@ -32,17 +32,16 @@ private:
     string outputPath;
     bool isOutputPathSupplied = false;
     map<std::string, AlgorithmResults> algorithmsResults;
+    int numOfThreads = 1;
     static const string GENERAL_ERRORS;
     static const string ROUTE;
     static const string SHIP_PLAN;
     static const string SIMULATION_RESULTS;
 
-    void simulateOneTravelWithAllAlgorithms(Travel travel);
-
 public:
 
     Errors simulateOneTravelWithOneAlgorithm(Travel travel, std::unique_ptr<AbstractAlgorithm> algorithm, const string &algorithmName);
-    Simulation(const string &travelsPath, const string &algorithmPath = "", const string &outputPath = "");
+    Simulation(const string &travelsPath, const string &algorithmPath = "", const string &outputPath = "", int numOfThreads = 1);
     int simulateAllTravelsWithAllAlgorithms();
 
     int checkForErrorsAfterPort(Ship &ship, const string &port,
@@ -52,6 +51,8 @@ public:
     int checkTravelsPath(const string &travelsPathToCheck);
 
     bool checkIfAllLoadedContainersAreCloser(Ship &ship, CraneManagement::CraneManagementAnswer &answer, Route &route, Container &container);
+
+    void simulateOneTravelWithAllAlgorithms(Travel travel);
 };
 
 
