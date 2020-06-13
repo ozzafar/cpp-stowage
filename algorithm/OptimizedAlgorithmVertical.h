@@ -5,7 +5,6 @@
 #ifndef CPP_STOWAGE_OPTIMIZEDALGORITHMVERTICAL_H
 #define CPP_STOWAGE_OPTIMIZEDALGORITHMVERTICAL_H
 
-
 #include "NaiveAlgorithm.h"
 
 class OptimizedAlgorithmVertical : public NaiveAlgorithm{

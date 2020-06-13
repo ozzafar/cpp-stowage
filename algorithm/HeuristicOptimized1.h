@@ -2,14 +2,12 @@
 // Created by Oz Zafar on 12/06/2020.
 //
 
-#ifndef CPP_STOWAGE_OPTIMIZED2_H
-#define CPP_STOWAGE_OPTIMIZED2_H
-
+#ifndef CPP_STOWAGE_HEURISTICOPTIMIZED1_H
+#define CPP_STOWAGE_HEURISTICOPTIMIZED1_H
 
 #include "NaiveAlgorithm.h"
 
-class Optimized2 : public NaiveAlgorithm{
-
+class HeuristicOptimized1 : public NaiveAlgorithm {
     int getUnloadInstructions(const string &output_path) override;
     int getLoadInstructions(const string &input_path, const string &output_path) override ;
 
@@ -28,5 +26,4 @@ class Optimized2 : public NaiveAlgorithm{
 };
 
 
-
-#endif //CPP_STOWAGE_OPTIMIZED2_H
+#endif //CPP_STOWAGE_HEURISTICOPTIMIZED1_H

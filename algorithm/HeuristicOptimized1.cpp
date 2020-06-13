@@ -2,14 +2,13 @@
 // Created by Oz Zafar on 12/06/2020.
 //
 
-#include "Optimized2.h"
+#include "HeuristicOptimized1.h"
 #include "../interfaces/AlgorithmRegistration.h"
 
 #ifdef RUNNING_ON_NOVA
-REGISTER_ALGORITHM (Optimized2)
+REGISTER_ALGORITHM (HeuristicOptimized1)
 #endif
-
-int Optimized2::getUnloadInstructions(const string &output_path) {
+int HeuristicOptimized1::getUnloadInstructions(const string &output_path) {
     Errors errors;
     Container container;
     ShipPlan& shipPlan = ship.getShipPlan();
@@ -44,8 +43,8 @@ int Optimized2::getUnloadInstructions(const string &output_path) {
 }
 
 
-void Optimized2::moveOrTemporaryUnloadContainer(const string &output_path, string &containerId, int i,
-                                                                  int j, ContainersPosition &containersPosition, vector<string> &containersToReturn) {
+void HeuristicOptimized1::moveOrTemporaryUnloadContainer(const string &output_path, string &containerId, int i,
+                                                         int j, ContainersPosition &containersPosition, vector<string> &containersToReturn) {
     ShipPlan& shipPlan = ship.getShipPlan();
     int targetX = -1 , targetY = -1, targetFloor = -1;
 
@@ -65,7 +64,7 @@ void Optimized2::moveOrTemporaryUnloadContainer(const string &output_path, strin
     }
 }
 
-void Optimized2::findFirstAvailablePosition(int i, int j, int & targetFloor, int &targetX, int &targetY)  {
+void HeuristicOptimized1::findFirstAvailablePosition(int i, int j, int & targetFloor, int &targetX, int &targetY)  {
     /* better to move to previous positions because the algorithm already
     * removed from them the relevant containers so it won't come back there */
     ShipPlan& shipPlan = ship.getShipPlan();
@@ -84,37 +83,72 @@ void Optimized2::findFirstAvailablePosition(int i, int j, int & targetFloor, int
     }
 }
 
-int Optimized2::getLoadInstructions(const string &input_path, const string &output_path) {
+int HeuristicOptimized1::getLoadInstructions(const string &input_path, const string &output_path) {
     Errors errors;
     vector<Container> containers;
     vector<Container> badContainers;
     errors.addErrors(readContainerAwaitingAtPortFile(input_path, containers,badContainers));
     NaiveAlgorithm::sortContainers(containers);
     ShipPlan& shipPlan = ship.getShipPlan();
+    bool done;
 
     for (auto& container : badContainers){
         writeOperation(output_path, Action::REJECT, container.getId(), -1, -1, -1);
     }
 
-    int amount = containers.size(), index = 0,nextPositionX = -1,nextPositionY = -1;
-    while (index < amount) {
-        string dest = containers[index].getDestinationPort().substr(0, 5);
-        if ((containers[index].getDestinationPort() != route.getCurrentPortName()) && route.portInNextStops(dest)) {
-            findNextBestPosition(containers[index], nextPositionX, nextPositionY);
-            if (nextPositionX != -1 && nextPositionY != -1) {
-                ContainersPosition& containersPosition = shipPlan.getContainerPosition(nextPositionX, nextPositionY);
-                writeOperation(output_path, Action::LOAD, containers[index].getId(),containersPosition.getTopFloorNumber() + 1, nextPositionX, nextPositionY);
-                containersPosition.load(containers[index].getId(), false);
-                index++;
-            } else {
-                break;
+    int floor = 0, numOfFloors = shipPlan.getFloors(), amount = containers.size(),
+            index = 0, X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth(),saveX = -1,saveY = -1;
+    while (index < amount && floor < numOfFloors) {
+        for (int i = 0; i < X; ++i) {
+            for (int j = 0; j < Y; ++j) {
+                ContainersPosition &containersPosition = shipPlan.getContainerPosition(i, j);
+                if (containersPosition.howManyAvailiable() > 0) {
+                    if (containers[index].getDestinationPort() != route.getCurrentPortName()) {
+                        if (calculator.tryOperation((char) Action::LOAD, containers.at(index).getWeight(), i, j) ==
+                            WeightBalanceCalculator::APPROVED) {
+                            string des = containers[index].getDestinationPort().substr(0, 5);
+                            if (!route.portInNextStops(des)) {
+                                done = true;
+                                writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
+                            } else {
+                                if (containersPosition.getNumOfActiveFloors()>0) {
+                                    saveX = i, saveY = j;
+                                    continue;
+                                }
+                                done = true;
+                                writeOperation(output_path, Action::LOAD, containers[index].getId(),
+                                               containersPosition.getTopFloorNumber() + 1, i, j);
+                                containersPosition.load(containers[index].getId(), false);
+                            }
+                            if (index+1 < amount && containers[index].getDestinationPort()==containers[index+1].getDestinationPort()){
+                                j--;
+                            }
+                        }
+                    } else {
+                        writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
+                    }
+                    finishIteration(index, saveX, saveY);
+                    if (index==amount){
+                        return errors.getErrorsCode();
+                    }
+                } else {
+                    continue;
+                }
             }
-        } else {
-            writeOperation(output_path, Action::REJECT, containers[index].getId(), -1, -1, -1);
-            index++;
         }
+        if (!done && saveX!=-1){
+            ContainersPosition &containersPosition = shipPlan.getContainerPosition(saveX, saveY);
+            writeOperation(output_path, Action::LOAD, containers[index].getId(),
+                           containersPosition.getTopFloorNumber() + 1, saveX, saveY);
+            containersPosition.load(containers[index].getId(), false);
+            finishIteration(index, saveX, saveY);
+            if (index==amount){
+                return errors.getErrorsCode();
+            }
+        }
+        done = false;
+        floor++;
     }
-
     // most far containers will be rejected if there is no enough space
     for (; index < amount; index++) {
         if (route.portInNextStops(containers[index].getDestinationPort())) {
@@ -129,31 +163,7 @@ int Optimized2::getLoadInstructions(const string &input_path, const string &outp
     return errors.getErrorsCode();
 }
 
-
-void Optimized2::findNextBestPosition(Container& container, int &nextPositionX,int &nextPositionY) {
-    ShipPlan& shipPlan = ship.getShipPlan();
-    int X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth(),saveX = -1, saveY = -1;
-    for (int i = 0; i < X; ++i) {
-        for (int j = 0; j < Y; ++j) {
-            ContainersPosition& containersPosition = shipPlan.getContainerPosition(i, j);
-            if (containersPosition.howManyAvailiable() > 0) {
-                if (containersPosition.getNumOfActiveFloors() > 0) {
-                    if (saveX == -1 && saveY == -1) {
-                        saveX = i, saveY = j;
-                    }
-
-                    if (ship.containerIdToDestination(containersPosition.getTop()) == container.getDestinationPort()) {
-                        saveX = i, saveY = j;
-                    }
-                }
-
-                if (containersPosition.getNumOfActiveFloors() == 0) {
-                    nextPositionX = i, nextPositionY = j;
-                    return;
-                }
-            }
-        }
-    }
-    nextPositionX = saveX;
-    nextPositionY = saveY;
+void HeuristicOptimized1::finishIteration(int &index, int &saveX, int &saveY) const {
+    index++;
+    saveX = -1, saveY = -1;
 }

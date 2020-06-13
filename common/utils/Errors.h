@@ -16,7 +16,7 @@ using std::string;
 using std::map;
 using std::list;
 
-//#define RUNNING_ON_NOVA
+#define RUNNING_ON_NOVA
 
 class Errors {
 
