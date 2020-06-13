@@ -11,10 +11,10 @@
 #include "../algorithm/_206039984_a.h"
 #include "../algorithm/_206039984_b.h"
 #include "../algorithm/_206039984_c.h"
-#include "../algorithm/OptimizedAlgorithmVertical.h"
-#include "../algorithm/OptimizedAlgorithmHorizontal.h"
-#include "../algorithm/Optimized1.h"
-#include "../algorithm/Optimized2.h"
+#include "../algorithm/_206039984_d.h"
+#include "../algorithm/_206039984_f.h"
+#include "../algorithm/_206039984_g.h"
+#include "../algorithm/_206039984_e.h"
 
 #endif
 
@@ -26,20 +26,20 @@ const string Simulation::ROUTE = "route";
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath)
 {
 #ifndef RUNNING_ON_NOVA
-    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<OptimizedAlgorithmVertical>();});
-    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<OptimizedAlgorithmHorizontal>();});
-    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<Optimized1>();});
-    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<Optimized2>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_a>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_b>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_c>();});
-    Registrar::getInstance().addName("optimized_vertical");
-    Registrar::getInstance().addName("optimized_horizontal");
-    Registrar::getInstance().addName("optimized1");
-    Registrar::getInstance().addName("optimized2");
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_d>();});
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_e>();});
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_f>();});
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_g>();});
     Registrar::getInstance().addName("_206039984_a");
     Registrar::getInstance().addName("_206039984_b");
     Registrar::getInstance().addName("_206039984_c");
+    Registrar::getInstance().addName("optimized_vertical");
+    Registrar::getInstance().addName("optimized_horizontal");
+    Registrar::getInstance().addName("heuristic_optimized1");
+    Registrar::getInstance().addName("heuristic_optimized2");
 #endif
 
 
