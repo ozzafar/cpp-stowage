@@ -5,10 +5,6 @@
 #include "OptimizedAlgorithmHorizontal.h"
 #include "../interfaces/AlgorithmRegistration.h"
 
-#ifdef RUNNING_ON_NOVA
-REGISTER_ALGORITHM (OptimizedAlgorithmHorizontal)
-#endif
-
 int OptimizedAlgorithmHorizontal::getUnloadInstructions(const string &output_path) {
     Errors errors;
     Container container;

@@ -5,10 +5,6 @@
 #include "OptimizedAlgorithmVertical.h"
 #include "../interfaces/AlgorithmRegistration.h"
 
-#ifdef RUNNING_ON_NOVA
-REGISTER_ALGORITHM (OptimizedAlgorithmVertical)
-#endif
-
 int OptimizedAlgorithmVertical::getUnloadInstructions(const string &output_path) {
     Errors errors;
     Container container;

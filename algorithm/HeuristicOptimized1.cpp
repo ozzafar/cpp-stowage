@@ -5,9 +5,6 @@
 #include "HeuristicOptimized1.h"
 #include "../interfaces/AlgorithmRegistration.h"
 
-#ifdef RUNNING_ON_NOVA
-REGISTER_ALGORITHM (HeuristicOptimized1)
-#endif
 int HeuristicOptimized1::getUnloadInstructions(const string &output_path) {
     Errors errors;
     Container container;
