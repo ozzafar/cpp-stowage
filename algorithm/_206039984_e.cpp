@@ -3,6 +3,7 @@
 //
 
 #include "_206039984_e.h"
+#include "../interfaces/AlgorithmRegistration.h"
 
 #ifdef RUNNING_ON_NOVA
 REGISTER_ALGORITHM (_206039984_e)
