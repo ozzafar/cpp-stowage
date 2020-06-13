@@ -3,7 +3,7 @@
 //
 
 
-#include "../simulator/AlgorithmRegistration.h"
+#include "../interfaces/AlgorithmRegistration.h"
 #include "_206039984_a.h"
 #include "../common/utils/Errors.h"
 

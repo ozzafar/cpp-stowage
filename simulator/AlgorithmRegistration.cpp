@@ -2,7 +2,7 @@
 // Created by Oz Zafar on 10/05/2020.
 //
 
-#include "AlgorithmRegistration.h"
+#include "../interfaces/AlgorithmRegistration.h"
 #include "../common/utils/Registrar.h"
 
 

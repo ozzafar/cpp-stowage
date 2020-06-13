@@ -5,7 +5,7 @@
 //
 
 #include "_206039984_c.h"
-#include "../simulator/AlgorithmRegistration.h"
+#include "../interfaces/AlgorithmRegistration.h"
 #include "../common/utils/Errors.h"
 
 #ifdef RUNNING_ON_NOVA
