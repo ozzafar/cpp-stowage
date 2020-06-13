@@ -3,7 +3,7 @@
 //
 
 #include "OptimizedAlgorithmHorizontal.h"
-#include "../interfaces/AlgorithmRegistration.h"
+#include "../simulator/AlgorithmRegistration.h"
 
 #ifdef RUNNING_ON_NOVA
 REGISTER_ALGORITHM (OptimizedAlgorithmHorizontal)

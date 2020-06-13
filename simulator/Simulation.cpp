@@ -13,6 +13,8 @@
 #include "../algorithm/_206039984_c.h"
 #include "../algorithm/OptimizedAlgorithmVertical.h"
 #include "../algorithm/OptimizedAlgorithmHorizontal.h"
+#include "../algorithm/Optimized1.h"
+#include "../algorithm/Optimized2.h"
 
 #endif
 
@@ -26,11 +28,15 @@ Simulation::Simulation(const string &travelsPath, const string &algorithmPath, c
 #ifndef RUNNING_ON_NOVA
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<OptimizedAlgorithmVertical>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<OptimizedAlgorithmHorizontal>();});
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<Optimized1>();});
+    Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<Optimized2>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_a>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_b>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_c>();});
     Registrar::getInstance().addName("optimized_vertical");
     Registrar::getInstance().addName("optimized_horizontal");
+    Registrar::getInstance().addName("optimized1");
+    Registrar::getInstance().addName("optimized2");
     Registrar::getInstance().addName("_206039984_a");
     Registrar::getInstance().addName("_206039984_b");
     Registrar::getInstance().addName("_206039984_c");

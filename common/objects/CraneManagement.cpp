@@ -51,7 +51,7 @@ int CraneManagement::unload(Ship& ship, string &containerId, int floor,int row, 
 
     ContainersPosition &position = shipPlan.getContainerPosition(row, column);
     if (position.getTopFloorNumber()!=floor){
-        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
+        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION,"in position "+ std::to_string(row) + "," + std::to_string(column) + " the top position top floor isn't " + std::to_string(floor) + " as expected");
         return errors.getErrorsCode();
     }
     shipPlan.getContainerPosition(row, column).unload(containerId, true);
@@ -62,7 +62,7 @@ int CraneManagement::move(Ship& ship, string &containerId, int oldFloor, int old
     if(newRow < 0 || newColumn < 0 || newRow >= ship.getShipPlan().getPlanLength() || newColumn >= ship.getShipPlan().getPlanWidth()
     || oldRow < 0 || oldColumn < 0 || oldRow >= ship.getShipPlan().getPlanLength() || oldColumn >= ship.getShipPlan().getPlanWidth())
     {
-        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION);
+        errors.addError(Error::ALGORITHM_NOT_ALLOWED_INSTRUCTION,"illegal position in ship");
         return errors.getErrorsCode();
     }
 
