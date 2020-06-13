@@ -137,7 +137,6 @@ void HeuristicOptimized2::findNextBestPosition(Container& container, int &nextPo
                     if (saveX == -1 && saveY == -1) {
                         saveX = i, saveY = j;
                     }
-
                     if (ship.containerIdToDestination(containersPosition.getTop()) == container.getDestinationPort()) {
                         saveX = i, saveY = j;
                     }
