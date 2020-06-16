@@ -26,6 +26,7 @@ const string Simulation::ROUTE = "route";
 Simulation::Simulation(const string &travelsPath, const string &algorithmPath, const string &outputPath, int numOfThreads): travelsPath(travelsPath), algorithmPath(algorithmPath), outputPath(outputPath), numOfThreads(numOfThreads)
 {
 #ifndef RUNNING_ON_NOVA
+    std::cout << "Loading algorithms manually" << std::endl;
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_a>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_b>();});
     Registrar::getInstance().factoryVec.emplace_back([](){return std::make_unique<_206039984_c>();});
@@ -122,6 +123,11 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
     // -----------------------------------------------------------
     for(auto& travelPath: std::filesystem::directory_iterator(travelsPath))
     {
+        if(!std::filesystem::is_directory(travelPath.path()))
+        {
+            continue;
+        }
+
         string travelPathString = travelPath.path().string();
         string travelName = travelPath.path().stem().string();
 
@@ -366,7 +372,10 @@ Errors Simulation::simulateOneTravelWithOneAlgorithm(Travel travel, std::unique_
     }
 
     algorithmsResults[algorithmName].addTravelResult(travelName, totalOperations);
-    IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
+    if(simErrors.hasError() || algErrors.hasError())
+    {
+        IO::writeErrorsOfTravelAndAlgorithm(simErrors,algErrors, outputPathOfErrorsFile);
+    }
 
     g_display_mutex.lock();
     std::cout <<"\t================================================================" << std::endl;
