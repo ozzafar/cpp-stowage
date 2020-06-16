@@ -138,13 +138,13 @@ void HeuristicOptimized2::findNextBestPosition(Container& container, int &nextPo
                         saveX = i, saveY = j;
                     }
                     if (ship.containerIdToDestination(containersPosition.getTop()) == container.getDestinationPort()) {
-                        saveX = i, saveY = j;
+                        nextPositionX = i, nextPositionY = j;
+                        return;
                     }
                 }
 
                 if (containersPosition.getNumOfActiveFloors() == 0) {
-                    nextPositionX = i, nextPositionY = j;
-                    return;
+                    saveX = i, saveY = j;
                 }
             }
         }

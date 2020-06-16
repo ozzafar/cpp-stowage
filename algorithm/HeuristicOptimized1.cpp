@@ -93,9 +93,9 @@ int HeuristicOptimized1::getLoadInstructions(const string &input_path, const str
         writeOperation(output_path, Action::REJECT, container.getId(), -1, -1, -1);
     }
 
-    int floor = 0, numOfFloors = shipPlan.getFloors(), amount = containers.size(),
+    int  amount = containers.size(),
             index = 0, X = shipPlan.getPlanLength(), Y = shipPlan.getPlanWidth(),saveX = -1,saveY = -1;
-    while (index < amount && floor < numOfFloors) {
+    while (index < amount) {
         for (int i = 0; i < X; ++i) {
             for (int j = 0; j < Y; ++j) {
                 ContainersPosition &containersPosition = shipPlan.getContainerPosition(i, j);
@@ -144,7 +144,6 @@ int HeuristicOptimized1::getLoadInstructions(const string &input_path, const str
             }
         }
         done = false;
-        floor++;
     }
     // most far containers will be rejected if there is no enough space
     for (; index < amount; index++) {
