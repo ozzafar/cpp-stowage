@@ -151,11 +151,12 @@ int Simulation::simulateAllTravelsWithAllAlgorithms()
 
         // TODO check
         //  with Adam it's not bullshit:
+        travelNames.push_back(travelName);
         Travel travel(std::move(shipPlan),std::move(route),std::move(travelName), travelPathString);
         travels.push_back(std::move(travel));
+
     }
 
-    // TODO add NumThreads to main arguments
     int numTasks = travels.size()*Registrar::getInstance().factoryVec.size();
     if(numOfThreads > 1)
     {
