@@ -22,6 +22,8 @@ class HeuristicOptimized2 : public NaiveAlgorithm{
 
     void findFirstAvailablePosition(int i, int j, int& targetFloor, int &targetX, int &targetY);
 
+    void finishIteration(int &index, int &saveX, int &saveY) const;
+
     void findNextBestPosition(Container& container, int &nextPositionX,int &nextPositionY);
 };
 
