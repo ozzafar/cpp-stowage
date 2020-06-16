@@ -16,10 +16,9 @@ using std::string;
 using std::map;
 using std::list;
 
-//#define RUNNING_ON_NOVA
+#define RUNNING_ON_NOVA
 
 class Errors {
-
 private:
     int errors = (int)(Error::SUCCESS);
     std::map<Error,list<string>> testimonies;

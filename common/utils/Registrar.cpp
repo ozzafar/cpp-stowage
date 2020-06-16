@@ -16,8 +16,8 @@ int Registrar::loadSO(const std::string &path) {
     }
 
     handles.push_back(std::move(handle));
-    std::cout << "loadSO succeedded" << std::endl;
     names.push_back(extractFilenameFromPath(path, true));
+    std::cout << "loadSO succeedded" << std::endl;
 #endif
 
     (void) path;
