@@ -6,6 +6,7 @@
 #define CPP_STOWAGE_SHIP_H
 
 #include <vector>
+#include <set>
 #include <unordered_map>
 #include <tuple>
 #include <functional>
@@ -14,6 +15,7 @@
 
 using std::string;
 using std::vector;
+using std::set;
 
 namespace shipping {
     template<typename T> class NamedType {
@@ -84,7 +86,7 @@ namespace shipping {
         public:
             PositionView(const std::vector<Container>& containers) : containers(&containers) {}
 
-            PositionView(int) {}
+            PositionView() {}
 
             auto begin() const {
                 return containers ? containers->rbegin() : iterator_type{};
@@ -102,13 +104,6 @@ namespace shipping {
             PositionsItr positionsItr;
             PositionsItr positionsEnd;
             ContainersItr containersItr;
-
-            void setItrToOccupiedPosition() {
-                while (positionsItr != positionsEnd && !(*positionsItr)) {
-                    ++positionsItr;
-                }
-                containersItr = (*positionsItr)->begin();
-            }
 
         public:
             iterator(PositionsItr containers_itr, PositionsItr containers_end)
@@ -129,6 +124,14 @@ namespace shipping {
             bool operator!=(iterator other) const {
                 return positionsItr != other.positionsItr;
             }
+
+        private:
+            void setItrToOccupiedPosition() {
+                while (positionsItr != positionsEnd && (*positionsItr).empty()) {
+                    ++positionsItr;
+                }
+                containersItr = (*positionsItr).begin();
+            }
         };
 
 
@@ -143,7 +146,7 @@ namespace shipping {
         void addContainerToGroups(X xPos, Y yPos, Height height) {
             Container& container = getTopContainerInPos(xPos, yPos);
             for(auto& group_pair: groupingFunctions) {
-                groups[group_pair.first][group_pair.second(container)].insert({std::tuple{xPos, yPos, height}, container } );
+                groups[group_pair.first][group_pair.second(container)].insert({std::tuple{xPos, yPos, height}, container});
             }
         }
         void removeContainerFromGroups(X xPos, Y yPos, Height height) {
@@ -161,11 +164,16 @@ namespace shipping {
             throw BadShipOperationException(xPos, yPos, "index out of range");
         }
 
-        void addRestrictions(std::vector<std::tuple<X, Y, Height>> restrictionsParam){
-            vector<int> availables (x*y,0);
+        void addRestrictions(std::vector<std::tuple<X, Y, Height>> restrictionsParam, Height maxHeight){
+            vector<int> availables(x * y, maxHeight);
+            set<std::tuple<shipping::X, shipping::Y>> positions;
             for (auto &rest : restrictionsParam) {
                 X xPos = std::get<0>(rest);
                 Y yPos = std::get<1>(rest);
+                if (positions.find({xPos,yPos})!=positions.end()){
+                    throw BadShipOperationException(xPos, yPos, "duplicate restriction of this position");
+                }
+                positions.insert({xPos,yPos});
                 Height height = std::get<2>(rest);
                 if (height < h) {
                     availables[posIndex(xPos, yPos)] = height;
@@ -185,11 +193,11 @@ namespace shipping {
         }
 
         Ship(X x, Y y, Height max_height, std::vector<std::tuple<X, Y, Height>> restrictions) noexcept(false) : Ship(x, y, max_height) {
-            addRestrictions(restrictions);
+            addRestrictions(restrictions, max_height);
         }
 
         Ship(X x, Y y, Height max_height) noexcept : x(x), y(y), h(max_height), stacks(x*y) {
-            availableHeights = vector<int>(x*y,0);
+            availableHeights = vector<int>(x*y,max_height);
         };
 
         // region Managing Containers
@@ -197,11 +205,12 @@ namespace shipping {
         void load(X xPos, Y yPos, Container container) noexcept(false){
             auto& stack = stacks[posIndex(xPos, yPos)];
             if ((int)stack.size() < availableHeights[posIndex(xPos, yPos)]){
-                stack.push_back(std::move(container));
-                addContainerToGroups(xPos, yPos, Height{int(stack.size())});
+                stack.push_back(container);
+                addContainerToGroups(xPos, yPos, Height{int(stack.size()-1)});
             } else {
                 throw BadShipOperationException(xPos,yPos,"out of space");
             }
+            std::cout << "load successfully" << std::endl;
         }
 
         Container unload(X xPos, Y yPos) noexcept(false){
@@ -212,6 +221,7 @@ namespace shipping {
             removeContainerFromGroups(xPos, yPos, Height{int(stack.size())-1});
             Container unloaded = stack.back();
             stack.pop_back();
+            std::cout << "unload successfully" << std::endl;
             return unloaded;
         }
 
@@ -224,26 +234,30 @@ namespace shipping {
         // region Get View
 
         PositionView getContainersViewByPosition(X xPos, Y yPos) const {
-            auto& stack = stacks[posIndex(xPos, yPos)];
-            return stack.begin();
+            try {
+                auto &stack = stacks[posIndex(xPos, yPos)];
+                return PositionView(stack);
+            } catch(BadShipOperationException& e) {
+                return PositionView();
+            }
         }
 
         GroupView getContainersViewByGroup(const std::string& groupingName, const std::string& groupName) const {
-            auto itr = groups.find(groupingName);
-            if(itr == groups.end() && groupingFunctions.find(groupingName) != groupingFunctions.end()) {
+            auto groupItr = groups.find(groupingName);
+            if(groupItr == groups.end() && groupingFunctions.find(groupingName) != groupingFunctions.end()) {
                 // C++17 auto tuple unpack
                 auto [insert_itr, _] = groups.insert({groupingName, Group{}});
-                itr = insert_itr;
+                groupItr = insert_itr;
             }
-            if(itr != groups.end()) {
-                const auto& grouping = itr->second;
-                auto itr2 = grouping.find(groupName);
-                if(itr2 == grouping.end()) {
-                    // C++17 auto tuple unpack
-                    auto [insert_itr, _] = itr->second.insert({groupName, Pos2Container{}});
-                    itr2 = insert_itr;
+            if(groupItr != groups.end()) {
+                const auto& grouping = groupItr->second;
+                auto groupNameItr = grouping.find(groupName);
+                if(groupNameItr == grouping.end()) {
+                    // creating the group
+                    auto [insert_itr, _] = groupItr->second.insert({groupName, Pos2Container{}});
+                    groupNameItr = insert_itr;
                 }
-                return GroupView { itr2->second };
+                return GroupView {groupNameItr->second };
             }
             return GroupView { 0 };
         }
