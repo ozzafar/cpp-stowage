@@ -53,10 +53,7 @@ namespace shipping {
 
     template<typename Container>
     class Ship {
-        X x;
-        Y y;
-        Height h;
-        std::vector<std::tuple<X, Y, Height>> restrictions;
+        X x; Y y; Height h;
         Grouping<Container> groupingFunctions;
         vector<vector<Container>> stacks;
         vector<int> availableHeights;
@@ -150,9 +147,9 @@ namespace shipping {
             }
         }
         void removeContainerFromGroups(X xPos, Y yPos, Height height) {
-            Container& e = getTopContainerInPos(xPos, yPos);
+            Container& container = getTopContainerInPos(xPos, yPos);
             for(auto& group_pair: groupingFunctions) {
-                groups[group_pair.first][group_pair.second(e)].erase(std::tuple{xPos, yPos, height});
+                groups[group_pair.first][group_pair.second(container)].erase(std::tuple{xPos, yPos, height});
             }
         }
 
@@ -170,10 +167,10 @@ namespace shipping {
             for (auto &rest : restrictionsParam) {
                 X xPos = std::get<0>(rest);
                 Y yPos = std::get<1>(rest);
-                if (positions.find({xPos,yPos})!=positions.end()){
+                if (positions.find({xPos, yPos}) != positions.end()) {
                     throw BadShipOperationException(xPos, yPos, "duplicate restriction of this position");
                 }
-                positions.insert({xPos,yPos});
+                positions.insert({xPos, yPos});
                 Height height = std::get<2>(rest);
                 if (height < h) {
                     availables[posIndex(xPos, yPos)] = height;
@@ -186,9 +183,7 @@ namespace shipping {
 
     public:
 
-        Ship(X x, Y y, Height max_height,
-             std::vector<std::tuple<X, Y, Height>> restrictions,
-             Grouping<Container> groupingFunctions) noexcept(false) : Ship(x, y, max_height, restrictions) {
+        Ship(X x, Y y, Height max_height, std::vector<std::tuple<X, Y, Height>> restrictions, Grouping<Container> groupingFunctions) noexcept(false) : Ship(x, y, max_height, restrictions) {
             this->groupingFunctions = groupingFunctions;
         }
 
@@ -197,7 +192,11 @@ namespace shipping {
         }
 
         Ship(X x, Y y, Height max_height) noexcept : x(x), y(y), h(max_height), stacks(x*y) {
-            availableHeights = vector<int>(x*y,max_height);
+            availableHeights = vector<int>(x * y, max_height);
+            for (auto& stack: stacks) {
+                // reserve in order to fix references invalidation
+                stack.reserve(max_height + 1);
+            }
         };
 
         // region Managing Containers
