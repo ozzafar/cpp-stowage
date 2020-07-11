@@ -5,240 +5,256 @@
 //
 // Created by Oz Zafar on 10/04/2020.
 //
+#include "Ship.h"
 
 #include "gtest/gtest.h"
-#include "../common/objects/Container.cpp"
-#include "../algorithm/NaiveAlgorithm.cpp"
-#include "../algorithm/NaiveAlgorithmHorizontal.cpp"
-#include "../algorithm/NaiveAlgorithmVertical.cpp"
-#include "../algorithm/BasicAlgorithm.cpp"
-#include "../common/objects/Route.cpp"
-#include "../common/objects/ContainersPosition.cpp"
-#include "../common/objects/Travel.cpp"
-#include "../common/objects/ShipPlan.cpp"
-#include "../common/objects/Ship.cpp"
-#include "../simulation/Simulation.cpp"
-#include "../simulation/AlgorithmResults.cpp"
-#include "../interfaces/WeightBalanceCalculator.cpp"
-#include "../common/objects/CraneManagement.cpp"
-#include "../common/utils/IO.cpp"
-#include "../common/utils/ErrorsIterator.cpp"
-#include "../common/utils/Errors.cpp"
-#include "../common/utils/Registrar.cpp"
-
-string prefix = "/Users/ozzafar/CLionProjects/cpp-stowage/tests/";
 
 // region Container tests
+using namespace shipping;
 
-TEST(Container, IdValidity){
-    Container container(0,"dest","CSQU3054383");
-    EXPECT_TRUE(Container::isValidId(container.getId()));
-}
+namespace {
 
-//endregion
+    TEST(Ship, BadShipOperationException_expected_duplicate_restrictions) {
+        // exception due duplicate restrictions (whether or not it has same limit):
+        // restriction with X{2}, Y{5} appears more than once
 
+        // create restrictions
+        std::vector<std::tuple<X, Y, Height>> restrictions = {
+                std::tuple(X{2}, Y{6}, Height{0}),
+                std::tuple(X{2}, Y{7}, Height{1}),
+                std::tuple(X{2}, Y{5}, Height{6}),
+        };
 
-// region Read Input tests
+        // create bad ship 1:
+        // exception due duplicate restrictions (whether or not it has same limit):
+        // restriction with X{2}, Y{5} appears more than once
+        restrictions.push_back( std::tuple(X{2}, Y{5}, Height{6}) );
 
-TEST(ReadShipPlan, printCreatedPlan){
-    NaiveAlgorithmVertical algorithm;
-    algorithm.readShipPlan(prefix+"plan.csv");
-    algorithm.getShip().getShipPlan().printPlan();
-}
-
-TEST(ReadShipPlan, printWarning){
-    NaiveAlgorithmVertical algorithm;
-    algorithm.readShipPlan(prefix+"/bad-plan.csv");
-    algorithm.getShip().getShipPlan().printPlan();
-}
-
-TEST(ContainerAwaitingAtPortFile, print){
-    NaiveAlgorithmVertical algorithm;
-    vector<Container> containers;
-     algorithm.readContainerAwaitingAtPortFile(prefix+"SSSSS.cargo_data",containers);
-    for (Container& container : containers){
-        std::cout << container << std::endl;
+        ASSERT_THROW( { Ship<std::string> myShip( X{4}, Y{12}, Height{16}, restrictions ); }, BadShipOperationException);
     }
-}
 
-// endregion
+    TEST(Ship, BadShipOperationException_expected_bad_load_no_room_after_good_load) {
+        // test good load - no exception
+        // test bad load after good load - no room
 
-// region Containers Position tests
+        // create restrictions
+        std::vector<std::tuple<X, Y, Height>> restrictions = {
+                std::tuple(X{2}, Y{6}, Height{0}),
+                std::tuple(X{2}, Y{7}, Height{1}),
+                std::tuple(X{2}, Y{5}, Height{6}),
+        };
 
-//TEST(ContainersPosition, basicFunctionality){
-//    ContainersPosition position(5);
-//    EXPECT_EQ(0,position.getNumOfActiveFloors());
-//    EXPECT_EQ(3,position.howManyAvailiable());
-//    position.load("containerId1", true);
-//    EXPECT_EQ("containerId1",position.getTop());
-//    EXPECT_EQ(1,position.getNumOfActiveFloors());
-//    EXPECT_EQ(2,position.getTopFloorNumber());
-//    EXPECT_EQ(2,position.howManyAvailiable());
-//    position.load("containerId2", true);
-//    EXPECT_EQ("containerId2",position.getTop());
-//    EXPECT_EQ(2,position.getNumOfActiveFloors());
-//    EXPECT_EQ(3,position.getTopFloorNumber());
-//    EXPECT_EQ(1,position.howManyAvailiable());
-//    position.unload("containerId1", true);
-//    EXPECT_EQ("containerId2",position.getTop());
-//    EXPECT_EQ(2,position.getNumOfActiveFloors());
-//    EXPECT_EQ(3,position.getTopFloorNumber());
-//    EXPECT_EQ(1,position.howManyAvailiable());
-//    position.unload("containerId2", true);
-//    EXPECT_EQ("containerId1",position.getTop());
-//    EXPECT_EQ(1,position.getNumOfActiveFloors());
-//    EXPECT_EQ(2,position.getTopFloorNumber());
-//    EXPECT_EQ(2,position.howManyAvailiable());
-//
-//    ContainersPosition position2(3);
-//    EXPECT_EQ(1,position2.howManyAvailiable());
-//    position2.load("containerId", true);
-//    EXPECT_EQ(0,position2.howManyAvailiable());
-//}
+        // create good ship
+        Ship<std::string> myShip{ X{4}, Y{8}, Height{8}, restrictions };
 
-// endregion
+        // good load:
+        ASSERT_NO_THROW( myShip.load(X{2}, Y{7}, "Hello") );
 
-// region Algorithms tests
-
-//TEST(NaiveAlgorithm, sortPortsInRoute) {
-//    NaiveAlgorithmVertical algorithm;
-//    algorithm.readShipRoute(prefix+"route.csv");
-//    vector<Container> containers;
-//    algorithm.readContainerAwaitingAtPortFile(prefix+"SSSSS.cargo_data",containers);
-//    algorithm.sortContainers(containers);
-//    std::cout<<"finish";
-//}
-
-TEST(NaiveAlgorithm, getLoadInstructionsANDgetUnloadInstructions){
-//    NaiveAlgorithmVertical algorithm;
-//    algorithm.readShipPlan(prefix+"plan2.csv");
-//    algorithm.getShip().getShipPlan().printPlan();
-//    algorithm.readShipRoute(prefix+"route.csv");
-//    algorithm.getLoadInstructions(prefix+"SSSSS.cargo_data",prefix+"NaiveAlgorithm-test1.csv");
-//    algorithm.getUnloadInstructions("DDDDD",prefix+"NaiveAlgorithm-test1.csv");
-//    algorithm.getUnloadInstructions("AAAAA",prefix+"NaiveAlgorithm-test1.csv");
-//    algorithm.getUnloadInstructions("BBBBB",prefix+"NaiveAlgorithm-test1.csv");
-//    algorithm.getUnloadInstructions("CCCCC",prefix+"NaiveAlgorithm-test1.csv");
-//    algorithm.getUnloadInstructions("EEEEE",prefix+"NaiveAlgorithm-test1.csv");
-//    algorithm.getUnloadInstructions("FFFFF",prefix+"NaiveAlgorithm-test1.csv");
-//    algorithm.getUnloadInstructions("GGGGG",prefix+"NaiveAlgorithm-test1.csv");
-//    EXPECT_EQ(0,algorithm.getShip()->getAmountOfContainers());
-}
-
-// endregion
-
-// region Crane Management tests
-TEST(CraneManagement, readAndExecuteInstructions) {
-    std::ofstream fout;
-    string filename = prefix+"simulator.errors.csv";
-    fout.open(filename,std::fstream::app);
-    if (fout.is_open()) {
-        fout << "NaiveAlgorithm,";
+        // bad load - no room:
+        ASSERT_THROW( { myShip.load(X{2}, Y{7}, "Goodbye"); }, BadShipOperationException );
     }
-    fout.close();
 
-    NaiveAlgorithmVertical algorithm;
-    algorithm.readShipPlan(prefix+"plan.csv");
-    Ship ship = algorithm.getShip();
-    CraneManagement craneManagement;
-    craneManagement.readAndExecuteInstructions(ship, prefix + "NaiveAlgorithm-test1.csv");
+    TEST(Ship, simple_ship_content) {
+
+        // create grouping pairs
+        Grouping<std::string> groupingFunctions = {
+                { "first_letter",
+                        [](const std::string& s){ return std::string(1, s[0]); }
+                },
+                { "first_letter_toupper",
+                        [](const std::string& s){ return std::string(1, char(std::toupper(s[0]))); }
+                }
+        };
+
+        // create restrictions
+        std::vector<std::tuple<X, Y, Height>> restrictions = {
+                std::tuple(X{2}, Y{6}, Height{4}),
+                std::tuple(X{2}, Y{7}, Height{6}),
+        };
+
+        // create ship
+        Ship<std::string> myShip{ X{5}, Y{12}, Height{8},
+                                  restrictions, groupingFunctions };
+
+        // load “containers”
+        myShip.load(X{0}, Y{0}, "Hello");
+        myShip.load(X{1}, Y{1}, "hey");
+        myShip.load(X{1}, Y{1}, "bye");
+        myShip.load(X{0}, Y{0}, "hi");
+
+        // loop on all “containers” - Hello, hi, hey, bye - in some undefined order
+        // expected: Hello, hi, hey, bye - in some undefined order
+        std::set<std::string> expectedSet_myShip{"Hello", "hi", "hey", "bye"};
+        std::set<std::string> set_myShip;
+        int numElements = 0;
+        for(const auto& container : myShip) {
+            set_myShip.insert(container);
+            ++numElements;
+        }
+
+        EXPECT_EQ( set_myShip, expectedSet_myShip );
+        EXPECT_EQ( numElements, expectedSet_myShip.size() );
+    }
+
+    using ShipSetOfData = std::set< std::tuple<X, Y, Height, std::string> >;
+
+    TEST(Ship, View_getContainersViewByGroup) {
+
+        // create grouping pairs
+        Grouping<std::string> groupingFunctions = {
+                { "first_letter",
+                        [](const std::string& s){ return std::string(1, s[0]); }
+                },
+                { "first_letter_toupper",
+                        [](const std::string& s){ return std::string(1, char(std::toupper(s[0]))); }
+                }
+        };
+
+        // create restrictions
+        std::vector<std::tuple<X, Y, Height>> restrictions = {
+                std::tuple(X{2}, Y{6}, Height{4}),
+                std::tuple(X{2}, Y{7}, Height{6}),
+        };
+
+        // create ship
+        Ship<std::string> myShip{ X{5}, Y{12}, Height{8},
+                                  restrictions, groupingFunctions };
+
+        // load “containers”
+        myShip.load(X{0}, Y{0}, "Hello");
+        myShip.load(X{1}, Y{1}, "hey");
+        myShip.load(X{1}, Y{1}, "bye");
+
+        auto view_h = myShip.getContainersViewByGroup("first_letter", "h");
+
+        myShip.load(X{0}, Y{0}, "hi");
+
+        // loop on view_h:	{X{0}, Y{0}, Height{1}, hi},
+        // 					{X{1}, Y{1}, Height{0}, hey}
+        // - in some undefined order
+
+        ShipSetOfData expectedSetProjectedBy_view_h{
+                {X{0}, Y{0}, Height{1}, "hi"},
+                {X{1}, Y{1}, Height{0}, "hey"}
+        };
+        ShipSetOfData setProjectedBy_view_h;
+
+        int numElement = 0;
+        for(const auto& container_data : view_h) {
+            const std::tuple<X, Y, Height>& container_tuple = container_data.first;
+            ++numElement;
+            setProjectedBy_view_h.emplace(std::get<0>(container_tuple), std::get<1>(container_tuple), std::get<2>(container_tuple), container_data.second);
+        }
+
+        EXPECT_EQ( expectedSetProjectedBy_view_h, setProjectedBy_view_h );
+        EXPECT_EQ( numElement, expectedSetProjectedBy_view_h.size() );
+    }
+
+    TEST(Ship, View_getContainersViewByGroup_initialize_empty) {
+
+        // create grouping pairs
+        Grouping<std::string> groupingFunctions = {
+                { "first_letter",
+                        [](const std::string& s){ return std::string(1, s[0]); }
+                },
+                { "first_letter_toupper",
+                        [](const std::string& s){ return std::string(1, char(std::toupper(s[0]))); }
+                }
+        };
+
+        // create restrictions
+        std::vector<std::tuple<X, Y, Height>> restrictions = {
+                std::tuple(X{2}, Y{6}, Height{4}),
+                std::tuple(X{2}, Y{7}, Height{6}),
+        };
+
+        // create ship
+        Ship<std::string> myShip{ X{5}, Y{12}, Height{8},
+                                  restrictions, groupingFunctions };
+
+        auto view_h = myShip.getContainersViewByGroup("first_letter", "h");
+
+        // load “containers”
+        myShip.load(X{1}, Y{1}, "hey");
+        myShip.load(X{1}, Y{1}, "bye");
+        myShip.load(X{0}, Y{0}, "Hello");
+        myShip.load(X{0}, Y{0}, "hi");
+
+        // loop on view_h:	{X{0}, Y{0}, Height{1}, hi},
+        // 					{X{1}, Y{1}, Height{0}, hey}
+        // - in some undefined order
+
+        ShipSetOfData expectedSetProjectedBy_view_h{
+                {X{0}, Y{0}, Height{1}, "hi"},
+                {X{1}, Y{1}, Height{0}, "hey"}
+        };
+        ShipSetOfData setProjectedBy_view_h;
+
+        int numElements = 0;
+        for(const auto& container_data : view_h) {
+            const std::tuple<X, Y, Height>& container_tuple = container_data.first;
+            ++numElements;
+            setProjectedBy_view_h.emplace(std::get<0>(container_tuple), std::get<1>(container_tuple), std::get<2>(container_tuple), container_data.second);
+        }
+
+        EXPECT_EQ( expectedSetProjectedBy_view_h, setProjectedBy_view_h );
+        EXPECT_EQ( numElements, expectedSetProjectedBy_view_h.size() );
+    }
+
+    template<typename ShipType>
+    void test_copy_constructor() {
+
+        // create grouping pairs
+        Grouping<std::string> groupingFunctions = {
+                { "first_letter",
+                        [](const std::string& s){ return std::string(1, s[0]); }
+                },
+        };
+
+        // create restrictions
+        std::vector<std::tuple<X, Y, Height>> restrictions = {
+                std::tuple(X{2}, Y{6}, Height{4}),
+                std::tuple(X{2}, Y{7}, Height{6}),
+        };
+
+        // create ship
+        ShipType myShip{ X{5}, Y{12}, Height{8},
+                         restrictions, groupingFunctions };
+
+        // load “containers”
+        myShip.load(X{1}, Y{1}, "hey");
+
+        // copy ship
+        ShipType myShip2(myShip);
+
+        // change original ship
+        myShip.unload(X{1}, Y{1});
+        myShip.load(X{1}, Y{1}, "hye");
+
+        // get view of new ship
+        auto view_h = myShip2.getContainersViewByGroup("first_letter", "h");
+
+        auto& from_ship = *myShip2.begin();
+        auto& from_view = view_h.begin()->second;
+
+        // test that view is indeed of new ship
+        EXPECT_EQ( from_ship, from_view );
+
+        // test container is of reference
+        EXPECT_EQ( &from_ship, &from_view );
+    }
+
+    TEST(Ship, CopyConstructor) {
+
+        // test only if copy constructible
+        if constexpr(!std::is_copy_constructible_v<Ship<std::string>>) {
+        }
+        else {
+            test_copy_constructor<Ship<std::string>>();
+        }
+    }
+
+
+
 }
-// endregion
 
-TEST(Errors, addError) {
-    Errors errors;
-    errors.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-    errors.addError(Error::PORT_APPEAR_TWICE_WARNING);
-    EXPECT_TRUE(errors.hasError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT));
-    EXPECT_TRUE(errors.hasError(Error::PORT_APPEAR_TWICE_WARNING));
-}
-
-TEST(Errors, addErrors) {
-    Errors errors1,errors2;
-    errors1.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-    errors1.addError(Error::PORT_APPEAR_TWICE_WARNING);
-    errors2.addErrors(errors1);
-    EXPECT_TRUE(errors2.hasError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT));
-    EXPECT_TRUE(errors2.hasError(Error::PORT_APPEAR_TWICE_WARNING));
-}
-TEST(Errors, iterator) {
-    Errors errors;
-    errors.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-    errors.addError(Error::PORT_APPEAR_TWICE_WARNING);
-    ErrorsIterator it = errors.getIterator();
-    EXPECT_EQ(it.getNext(),Error::PORT_APPEAR_TWICE_WARNING);
-    EXPECT_EQ(it.getNext(),Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-}
-
-
-//Errors errors;
-//errors.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-//errors.addError(Error::PORT_APPEAR_TWICE_WARNING);
-//if (!errors.hasError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT)){
-//std::cout<< "error1";
-//}
-//if (!errors.hasError(Error::PORT_APPEAR_TWICE_WARNING)){
-//std::cout<< "error2";
-//}
-//
-//
-//Errors errors1, errors2;
-//errors1.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-//errors1.addError(Error::PORT_APPEAR_TWICE_WARNING);
-//errors2.addErrors(errors1);
-//if (!errors.hasError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT)){
-//std::cout<< "error3";
-//}
-//if (!errors.hasError(Error::PORT_APPEAR_TWICE_WARNING)){
-//std::cout<< "error4";
-//}
-//
-//Errors errors3;
-//errors3.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-//errors3.addError(Error::PORT_APPEAR_TWICE_WARNING);
-//ErrorsIterator it = errors3.getIterator();
-//
-//if (it.getNext()!=Error::PORT_APPEAR_TWICE_WARNING){
-//std::cout<< "error6";
-//}
-//if (it.getNext()!=Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT){
-//std::cout<< "error5";
-//}
-
-
-
-
-
-//Errors errors;
-//errors.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-//errors.addError(Error::PORT_APPEAR_TWICE_WARNING);
-//if (!errors.hasError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT)){
-//std::cout<< "error1";
-//}
-//if (!errors.hasError(Error::PORT_APPEAR_TWICE_WARNING)){
-//std::cout<< "error2";
-//}
-//
-//
-//Errors errors1, errors2;
-//errors1.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-//errors1.addError(Error::PORT_APPEAR_TWICE_WARNING);
-//errors2.addErrors(errors1);
-//if (!errors.hasError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT)){
-//std::cout<< "error3";
-//}
-//if (!errors.hasError(Error::PORT_APPEAR_TWICE_WARNING)){
-//std::cout<< "error4";
-//}
-//
-//Errors errors3;
-//errors3.addError(Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT);
-//errors3.addError(Error::PORT_APPEAR_TWICE_WARNING);
-//ErrorsIterator it = errors3.getIterator();
-//
-//if (it.getNext()!=Error::PORT_APPEAR_TWICE_WARNING){
-//std::cout<< "error6";
-//}
-//if (it.getNext()!=Error::LOADED_PORT_DESTINATION_IS_CURRENT_PORT){
-//std::cout<< "error5";
-//}
