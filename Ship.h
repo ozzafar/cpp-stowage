@@ -1,6 +1,4 @@
-//
-// Created by Oz Zafar on 06/07/2020.
-//
+// ozzafar 206039984
 
 #ifndef CPP_STOWAGE_SHIP_H
 #define CPP_STOWAGE_SHIP_H
@@ -17,7 +15,12 @@ using std::string;
 using std::vector;
 using std::set;
 
+/// --------------------- Ship class foe ex4 !! ---------------------
+
 namespace shipping {
+
+    // region NamedType
+
     template<typename T> class NamedType {
         T t;
     public:
@@ -39,11 +42,19 @@ namespace shipping {
         using NamedType<int>::NamedType;
     };
 
+    // endregion
+
     using Position = std::tuple<shipping::X, shipping::Y, shipping::Height>;
 
+    /// Exception
     struct BadShipOperationException {
+        string msg;
         BadShipOperationException(X x, Y y, const std::string& msg) {
-            std::cout << msg << " : X {" << x << "}, Y {" << y << "}\n";
+            this->msg = msg + " : X {" + std::to_string(x) + "}, Y {" + std::to_string(y) + "}\n";
+        }
+
+        const string getMsg() {
+            return msg;
         }
     };
 
@@ -75,7 +86,6 @@ namespace shipping {
             }
         };
 
-
         class PositionView {
             const std::vector<Container>* containers = nullptr;
             using iterator_type = typename std::vector<Container>::const_reverse_iterator;
@@ -102,6 +112,13 @@ namespace shipping {
             PositionsItr positionsEnd;
             ContainersItr containersItr;
 
+            void setItrToOccupiedPosition() {
+                while (positionsItr != positionsEnd && (*positionsItr).empty()) {
+                    ++positionsItr;
+                }
+                containersItr = (*positionsItr).begin();
+            }
+
         public:
             iterator(PositionsItr containers_itr, PositionsItr containers_end)
                     : positionsItr(containers_itr), positionsEnd(containers_end) { setItrToOccupiedPosition(); }
@@ -118,26 +135,20 @@ namespace shipping {
             const Container &operator*() const {
                 return *containersItr;
             }
+
             bool operator!=(iterator other) const {
                 return positionsItr != other.positionsItr;
             }
 
-        private:
-            void setItrToOccupiedPosition() {
-                while (positionsItr != positionsEnd && (*positionsItr).empty()) {
-                    ++positionsItr;
-                }
-                containersItr = (*positionsItr).begin();
-            }
         };
-
 
         using Pos2Container = std::unordered_map<Position, const Container&>;
         using Group = std::unordered_map<std::string, Pos2Container>;
         mutable std::unordered_map<std::string, Group> groups;
 
+        /// get upper container in position
         Container& getTopContainerInPos(X xPos, Y yPos) {
-            return stacks[posIndex(xPos, yPos)].back();
+            return getStack(xPos,yPos).back();
         }
 
         void addContainerToGroups(X xPos, Y yPos, Height height) {
@@ -154,6 +165,15 @@ namespace shipping {
         }
 
     private:
+
+        /// check if there is available place to load in position
+        bool hasPlaceInPos(X xPos, Y yPos){
+            int pos = posIndex(xPos, yPos);
+            auto& stack = stacks[pos];
+            return (int)stack.size() < availableHeights[pos];
+        }
+
+        /// calculate 1d position from 2d position
         int posIndex(X xPos, Y yPos) const {
             if(xPos >= 0 && xPos < this->x && yPos >= 0 && yPos < this->y) {
                 return yPos * this->x + xPos;
@@ -161,6 +181,7 @@ namespace shipping {
             throw BadShipOperationException(xPos, yPos, "index out of range");
         }
 
+        /// validates and update restrictions
         void addRestrictions(std::vector<std::tuple<X, Y, Height>> restrictionsParam, Height maxHeight){
             vector<int> availables(x * y, maxHeight);
             set<std::tuple<shipping::X, shipping::Y>> positions;
@@ -171,6 +192,7 @@ namespace shipping {
                     throw BadShipOperationException(xPos, yPos, "duplicate restriction of this position");
                 }
                 positions.insert({xPos, yPos});
+
                 Height height = std::get<2>(rest);
                 if (height < h) {
                     availables[posIndex(xPos, yPos)] = height;
@@ -179,6 +201,16 @@ namespace shipping {
                 }
             }
             this->availableHeights = std::move(availables);
+        }
+
+        /// get stack of containers in specific position
+        vector<Container>& getStack(X xPos, Y yPos){
+            return stacks[posIndex(xPos, yPos)];
+        }
+
+        /// const version of above
+        const vector<Container>& getStack(X xPos, Y yPos) const {
+            return stacks[posIndex(xPos, yPos)];
         }
 
     public:
@@ -194,7 +226,7 @@ namespace shipping {
         Ship(X x, Y y, Height max_height) noexcept : x(x), y(y), h(max_height), stacks(x*y) {
             availableHeights = vector<int>(x * y, max_height);
             for (auto& stack: stacks) {
-                // reserve in order to fix references invalidation
+                // reserve in order to fix reference invalidations
                 stack.reserve(max_height + 1);
             }
         };
@@ -202,30 +234,44 @@ namespace shipping {
         // region Managing Containers
 
         void load(X xPos, Y yPos, Container container) noexcept(false){
-            auto& stack = stacks[posIndex(xPos, yPos)];
+            auto& stack = getStack(xPos, yPos);
             if ((int)stack.size() < availableHeights[posIndex(xPos, yPos)]){
+                // there is available place for loading
                 stack.push_back(container);
                 addContainerToGroups(xPos, yPos, Height{int(stack.size()-1)});
             } else {
                 throw BadShipOperationException(xPos,yPos,"out of space");
             }
-            std::cout << "load successfully" << std::endl;
         }
 
         Container unload(X xPos, Y yPos) noexcept(false){
-            auto& stack = stacks[posIndex(xPos, yPos)];
+            auto& stack = getStack(xPos, yPos);
             if(stack.empty()) { // if !stack
                 throw BadShipOperationException(xPos, yPos, "no container to unload");
             }
             removeContainerFromGroups(xPos, yPos, Height{int(stack.size())-1});
+            // now can pop container
             Container unloaded = stack.back();
             stack.pop_back();
-            std::cout << "unload successfully" << std::endl;
             return unloaded;
         }
 
-        void move(X from_x, Y from_y, X to_x, Y to_y) noexcept(false) {
-            load(to_x, to_y, unload(from_x, from_y));
+        void move(X from_x, Y from_y, X to_x, Y to_y) noexcept(false){
+
+            // validation
+            posIndex(from_x, from_y);
+            posIndex(to_x, to_y);
+
+            if (getStack(from_x, from_y).empty()) {
+                throw BadShipOperationException(from_x, from_y, "can't move from empty position");
+            }
+            if (from_x != to_x || from_y != to_y) { // positions are not equal
+                if (hasPlaceInPos(to_x, to_y)) {
+                    load(to_x, to_y, unload(from_x, from_y));
+                } else {
+                    throw BadShipOperationException(to_x, to_y, "out of space");
+                }
+            }
         }
 
         // endregion
@@ -234,7 +280,7 @@ namespace shipping {
 
         PositionView getContainersViewByPosition(X xPos, Y yPos) const {
             try {
-                auto &stack = stacks[posIndex(xPos, yPos)];
+                auto &stack = getStack(xPos, yPos);
                 return PositionView(stack);
             } catch(BadShipOperationException& e) {
                 return PositionView();
@@ -280,6 +326,7 @@ namespace shipping {
 
 namespace std
 {
+    /// hash function in order to insert Position to hash table (unordered map)
     template<> struct hash<shipping::Position>
     {
         std::size_t operator()(const shipping::Position& pos) const noexcept
